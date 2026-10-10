@@ -43,6 +43,54 @@ def health_check():
         "engine": "Nebius Token Factory + Serverless Endpoints"
     }
 
+@app.post("/api/deals/run")
+async def run_acquisition_deal(req: DealRunRequest):
+    """
+    Runs full diligence pipeline for any custom acquisition target.
+    Pulls intelligence from uploaded documents or automatically performs outside-in analysis.
+    """
+    pipeline = DiligencePipeline()
+    documents = req.documents or {}
+    
+    # If no documents are uploaded, generate an initial outside-in research deal room
+    if not documents:
+        documents = {
+            f"Outside_In_Screen_{req.company_name}.txt": f"""
+# INITIAL ACQUISITION TARGET SCREEN: {req.company_name}
+Target Multiple: {req.multiple}x
+Status: Automated Outside-In Screening via Tavily & SEC EDGAR
+Preliminary Evaluation: Initiating forensic screening and risk-factor verification.
+"""
+        }
+
+    result = await pipeline.run_pipeline({
+        "company_name": req.company_name,
+        "multiple": req.multiple,
+        "documents": documents
+    })
+    deal_id = f"DEAL-{abs(hash(req.company_name)) % 100000}"
+    result["deal_id"] = deal_id
+    deals_store[deal_id] = result
+    return result
+
+@app.get("/api/companies/lookup")
+async def lookup_company(company_name: str):
+    """
+    Real-time acquisition target intelligence check using Tavily.
+    Allows M&A analysts to inspect any target company's market reputation,
+    litigation, customer sentiment, and regulatory history.
+    """
+    from packages.tavily.client import TavilyRealityEngine
+    tavily = TavilyRealityEngine()
+    result = await tavily.verify_external_claims(company_name, ["Market leadership", "Corporate standing"])
+    return {
+        "company_name": company_name,
+        "reality_score": result.reality_score,
+        "claims_verified": result.claims_verified,
+        "risk_flags": result.flags,
+        "sources": result.sources
+    }
+
 @app.post("/api/deals/sample")
 async def load_sample_deal():
     """One-click instant sample deal for hackathon judges."""

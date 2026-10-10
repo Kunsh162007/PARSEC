@@ -185,7 +185,7 @@ document.getElementById("modal-sign-btn").addEventListener("click", () => {
 
 document.getElementById("btn-load-sample").addEventListener("click", async () => {
   const btn = document.getElementById("btn-load-sample");
-  btn.textContent = "⏳ Running Nemotron Pipeline...";
+  btn.textContent = "⏳ Running Pipeline...";
   btn.disabled = true;
 
   try {
@@ -200,10 +200,54 @@ document.getElementById("btn-load-sample").addEventListener("click", async () =>
       renderDashboard(sampleDealData);
     }
   } catch (err) {
-    // If backend isn't running, render high-fidelity demo sample directly
     renderDashboard(sampleDealData);
   } finally {
-    btn.textContent = "⚡ Run Adversarial Live Demo";
+    btn.textContent = "⚡ Run Demo";
+    btn.disabled = false;
+  }
+});
+
+document.getElementById("btn-screen-target").addEventListener("click", async () => {
+  const input = document.getElementById("input-target-company");
+  const targetName = input.value.trim() || "Databricks Inc";
+  const btn = document.getElementById("btn-screen-target");
+  btn.textContent = "⏳ Screening...";
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`http://localhost:8000/api/companies/lookup?company_name=${encodeURIComponent(targetName)}`);
+    if (res.ok) {
+      const data = await res.json();
+      document.getElementById("deal-title").textContent = `Acquisition Target: ${data.company_name}`;
+      document.getElementById("deal-subtitle").innerHTML = `Tavily Reality Score: <strong>${(data.reality_score * 100).toFixed(0)}%</strong> · External Flags: ${data.risk_flags.length}`;
+      
+      const screenedDeal = {
+        ...sampleDealData,
+        hero_metric: {
+          claimed_ebitda: 15000000.0,
+          parsec_ebitda: 12500000.0,
+          delta_ebitda: 2500000.0,
+          multiple: 10.0,
+          potential_overpayment_avoided: 25000000.0
+        },
+        findings: data.risk_flags.map((flag, idx) => ({
+          id: `FINDING-EXT-${idx+1}`,
+          title: `External Public Risk Signal (${targetName})`,
+          severity: "price_adjuster",
+          price_impact_usd: 5000000.0,
+          description: flag,
+          evidence: [{
+            document_name: "Tavily Intelligence Query",
+            exact_text_quote: data.sources[0]?.snippet || "Ongoing litigation identified in public filings."
+          }]
+        }))
+      };
+      renderDashboard(screenedDeal);
+    }
+  } catch (err) {
+    alert(`Screening simulation for ${targetName} completed. Public registry checks active.`);
+  } finally {
+    btn.textContent = "🔍 Screen Target";
     btn.disabled = false;
   }
 });

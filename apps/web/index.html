@@ -46,12 +46,18 @@
     <section class="hero-card">
       <div class="hero-header">
         <div>
-          <h1 class="hero-title">Project Titan Cloud: Diligence Verdict</h1>
-          <p class="hero-subtitle">Target: Enterprise B2B SaaS · Claimed Multiple: 11.0x EBITDA · Status: <span style="color: #f43f5e; font-weight: 700;">KILL CRITERIA BREACHED</span></p>
+          <h1 class="hero-title" id="deal-title">Project Titan Cloud: Diligence Verdict</h1>
+          <p class="hero-subtitle" id="deal-subtitle">Target: Enterprise B2B SaaS · Claimed Multiple: 11.0x EBITDA · Status: <span style="color: #f43f5e; font-weight: 700;">KILL CRITERIA BREACHED</span></p>
         </div>
-        <button id="btn-load-sample" class="btn">
-          <span>⚡ Run Adversarial Live Demo</span>
-        </button>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+          <input type="text" id="input-target-company" placeholder="Acquire Company (e.g. Snowflake)..." style="background: #1e293b; border: 1px solid var(--border-color); color: #fff; padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; width: 260px;" />
+          <button id="btn-screen-target" class="btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+            <span>🔍 Screen Target</span>
+          </button>
+          <button id="btn-load-sample" class="btn">
+            <span>⚡ Run Demo</span>
+          </button>
+        </div>
       </div>
 
       <div class="hero-stats">
