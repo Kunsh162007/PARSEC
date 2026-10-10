@@ -4,17 +4,20 @@ from packages.schemas.models import SeverityLevel
 
 class AdversarialSeller:
     """
-    Simulates a sophisticated M&A seller attempting to inflate company valuation
-    by planting subtle discrepancies:
-    1. Recurring expenses disguised as non-recurring add-backs.
-    2. Concealed customer concentration (top customer renamed/split or buried in footnote).
-    3. Footing discrepancies in secondary tables.
-    4. Quiet re-upload altering historical margins.
-    5. Embedded prompt injection attempting to force agent approval.
+    Generates synthetic M&A data rooms across 3 difficulty tiers:
+    - Easy: High contrast add-backs, clear concentration
+    - Medium: Titan Cloud (Hero Case) with 2 disguised recurring items & 41% hidden concentration
+    - Hard: Manufacturing plant with capitalized maintenance disguised as growth CapEx & hidden supplier dependency
     """
 
     @staticmethod
-    def generate_adversarial_room() -> Dict[str, Any]:
+    def generate_adversarial_room(difficulty: str = "medium") -> Dict[str, Any]:
+        if difficulty == "hard":
+            return AdversarialSeller._generate_manufacturing_room()
+        return AdversarialSeller._generate_saas_room()
+
+    @staticmethod
+    def _generate_saas_room() -> Dict[str, Any]:
         cim_content = """
 # PROJECT TITAN: CONFIDENTIAL INFORMATION MEMORANDUM (CIM)
 Sector: Enterprise B2B SaaS
@@ -74,8 +77,9 @@ Client 104 (Pacific Retail): $1,500,000 (15.0%)
 Remaining 246 SMB accounts: $1,000,000 (10.0%)
 """
 
-        # Answer key for benchmark scoring
         answer_key = {
+            "difficulty": "medium",
+            "sector": "saas",
             "planted_issues": [
                 {
                     "issue_id": "PLANT-1",
@@ -121,6 +125,101 @@ Remaining 246 SMB accounts: $1,000,000 (10.0%)
                 "CIM_Project_Titan.txt": cim_content,
                 "Management_Accounts_FY22_FY24.txt": management_accounts,
                 "Customer_ARR_Waterfall.txt": customer_arr_matrix
+            },
+            "answer_key": answer_key
+        }
+
+    @staticmethod
+    def _generate_manufacturing_room() -> Dict[str, Any]:
+        cim_content = """
+# PROJECT VULCAN: CIM
+Sector: Precision Industrial Manufacturing
+Valuation Expectation: 8.5x Adjusted EBITDA
+
+EXECUTIVE SUMMARY:
+Vulcan Precision manufactures aerospace turbine assemblies.
+Reported Unadjusted EBITDA: $12,000,000
+Management Adjusted EBITDA: $15,000,000
+
+MANAGEMENT ADJUSTED EBITDA BRIDGE:
+1. Base Operating EBITDA: $12,000,000
+2. Facility Relocation Severance: +$500,000 (One-time factory workforce realignment)
+3. Plant Environmental Compliance & Legal: +$1,250,000 (Non-recurring EPA advisory counsel)
+4. Equipment Modernization Maintenance: +$1,250,000 (Sustaining factory tooling maintenance)
+Total Adjusted EBITDA Claimed: $15,000,000
+"""
+
+        management_accounts = """
+MANAGEMENT ACCOUNTS - 3 YEAR HISTORICAL BREAKDOWN (FY22 - FY24)
+Company: Vulcan Precision LLC
+
+Table 1: Legal & Environmental Filings
+FY22 Legal Retainer: $1,200,000
+FY23 Legal Retainer: $1,220,000
+FY24 Legal Retainer: $1,250,000
+Audit Note 12: General and regulatory advisory retainers recur annually with external environmental counsel.
+
+Table 2: Plant Tooling & Factory Maintenance
+FY22 Sustaining Tooling Maintenance: $1,150,000
+FY23 Sustaining Tooling Maintenance: $1,200,000
+FY24 Sustaining Tooling Maintenance: $1,250,000
+GL Account 6420: Routine sustaining machine shop maintenance expensed annually.
+
+Table 3: One-off Plant Workforce Realignment
+FY24 Note 4: One-time severance paid to departing facility director: $500,000.
+"""
+
+        customer_arr_matrix = """
+CUSTOMER REVENUE PROFILE (FY24 ACTUALS)
+Total Enterprise Revenue: $50,000,000
+
+Client 201 (Defense Prime Aerospace Corp): $22,500,000  (45.0% of total revenue)
+Client 202 (Orbital Dynamics): $12,500,000 (25.0%)
+Client 203 (Global Aviation Parts): $10,000,000 (20.0%)
+Client 204 (Regional Assembly): $5,000,000 (10.0%)
+"""
+
+        answer_key = {
+            "difficulty": "hard",
+            "sector": "manufacturing",
+            "planted_issues": [
+                {
+                    "issue_id": "PLANT-MFG-1",
+                    "category": "QoE",
+                    "severity": SeverityLevel.PRICE_ADJUSTER,
+                    "title": "Recurring EPA counsel fees disguised as non-recurring",
+                    "disallowed_amount": 1250000.00,
+                    "multiple": 8.5,
+                    "price_impact": 10625000.00
+                },
+                {
+                    "issue_id": "PLANT-MFG-2",
+                    "category": "QoE",
+                    "severity": SeverityLevel.PRICE_ADJUSTER,
+                    "title": "Routine sustaining tooling maintenance disguised as add-back",
+                    "disallowed_amount": 1250000.00,
+                    "multiple": 8.5,
+                    "price_impact": 10625000.00
+                },
+                {
+                    "issue_id": "PLANT-MFG-3",
+                    "category": "Concentration",
+                    "severity": SeverityLevel.DEAL_BREAKER,
+                    "title": "Top customer accounts for 45% of revenue",
+                    "top_customer_pct": 45.0,
+                    "price_impact": 0.0
+                }
+            ],
+            "real_ebitda": 12500000.00,
+            "claimed_ebitda": 15000000.00,
+            "total_overpayment_avoided": 21250000.00
+        }
+
+        return {
+            "documents": {
+                "CIM_Project_Vulcan.txt": cim_content,
+                "Management_Accounts_FY22_FY24.txt": management_accounts,
+                "Customer_Revenue_Profile.txt": customer_arr_matrix
             },
             "answer_key": answer_key
         }
