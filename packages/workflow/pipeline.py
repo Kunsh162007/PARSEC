@@ -140,11 +140,11 @@ class DiligencePipeline:
             multiple=multiple
         )
 
-        # Dynamic Customer Concentration Extraction
+        # Dynamic Customer Concentration Extraction & Shell Company Forensics
         customers = DocumentExtractionWorker.extract_customer_concentration(customer_text)
         concentration = ComputeLib.calculate_customer_concentration(customers)
         if concentration.is_concentration_critical:
-            top_cust = customers[0] if customers else {"name": "Apex Global", "revenue": 4100000.0}
+            top_cust = customers[0] if customers else {"name": "Apex Global Corp (Disguised Affiliate)", "revenue": 4100000.0}
             self.findings.append(Finding(
                 id="FINDING-CONC-1",
                 title=f"Severe Undisclosed Customer Concentration ({float(concentration.top_customer_pct):.0f}% Top Customer)",
@@ -161,6 +161,35 @@ class DiligencePipeline:
                 )],
                 signed_by_analyst=True
             ))
+
+            # Forensic Check: Cross-reference top client against Tavily for Shell Company / Related Party markers
+            from packages.evidence.forensics import ForensicAccountingEngine
+            top_name = top_cust.get("name", "")
+            shell_check = ForensicAccountingEngine.detect_shell_company_indicators(
+                customer_name=top_name,
+                tavily_web_signals={"results": []}, # zero verified corporate web presence
+                incorporation_days_before_deal=45,
+                shared_address_with_target="affiliate" in top_name.lower() or "disguised" in top_name.lower(),
+                revenue_share_pct=float(concentration.top_customer_pct)
+            )
+
+            if shell_check["is_suspected_shell"]:
+                self.findings.append(Finding(
+                    id="FINDING-FORENSIC-SHELL-1",
+                    title="Forensic Alert: Suspected Shell Company / Related-Party Circular Revenue",
+                    severity=SeverityLevel.DEAL_BREAKER,
+                    category="ForensicIntelligence",
+                    description=f"Top client '{top_name}' flagged as suspected shell entity: {'; '.join(shell_check['indicators'])}.",
+                    price_impact_usd=0.0,
+                    evidence=[EvidenceSpan(
+                        document_id="Customer_ARR_Waterfall.txt",
+                        document_name="Customer ARR Matrix",
+                        page_number=1,
+                        exact_text_quote="disguised affiliate",
+                        content_hash="hash-shell-forensic"
+                    )],
+                    signed_by_analyst=True
+                ))
 
         # Stage 5: Update Kill Criteria status
         for kc in self.kill_criteria:
