@@ -1,0 +1,27 @@
+name: Manufacturing & Industrial
+sector: manufacturing
+default_multiple: 8.5
+key_metrics:
+  - Plant Utilization Rate
+  - Maintenance vs Growth CapEx
+  - Raw Material Price Exposure
+  - Inventory Turns
+  - Unfunded Pension / Environmental Liabilities
+kill_criteria_templates:
+  - id: KC-MFG-1
+    title: "Maintenance CapEx Misclassified as Growth CapEx"
+    condition: "Sustaining plant maintenance expensed under growth CapEx inflating EBITDA by > 10%"
+    severity: "price_adjuster"
+  - id: KC-MFG-2
+    title: "Key Supplier or Single Source Dependency"
+    condition: "Critical component sole-sourced from supplier with no contractual exclusivity"
+    severity: "deal_breaker"
+  - id: KC-MFG-3
+    title: "Inventory Obsolescence & Defective Reserves"
+    condition: "Days Sales of Inventory (DSI) expands > 30% without adequate write-down reserve"
+    severity: "price_adjuster"
+expected_documents:
+  - "CIM (Confidential Information Memorandum)"
+  - "3-Year Audited Financial Statements & Plant Fixed Asset Register"
+  - "BOM & Key Supplier Contracts"
+  - "Environmental Site Assessment (Phase I ESA)"

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PARSEC | M&A Due Diligence Co-Pilot (Nebius x NVIDIA)</title>
+  <meta name="description" content="Find the numbers in a deal that don't hold up, quantify price impact, and verify every claim with clickable spans using Nemotron on Nebius Token Factory.">
+  <link rel="stylesheet" href="index.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Navigation bar with live token & Tavily meters -->
+  <nav class="navbar">
+    <div class="brand">
+      <span>⚡ PARSEC</span>
+      <span class="brand-badge">Nemotron 3 Funnel</span>
+    </div>
+    <div class="nav-meters">
+      <div class="meter-badge" title="Tier 1 High-Speed Screening">
+        <span class="meter-dot dot-nano"></span>
+        <span>Nano: <strong id="meter-nano">1,450 tok</strong></span>
+      </div>
+      <div class="meter-badge" title="Tier 2 Span Extraction">
+        <span class="meter-dot dot-super"></span>
+        <span>Super: <strong id="meter-super">4,200 tok</strong></span>
+      </div>
+      <div class="meter-badge" title="Tier 3 Material Adjudication (≤5% budget)">
+        <span class="meter-dot dot-ultra"></span>
+        <span>Ultra: <strong id="meter-ultra">520 tok</strong></span>
+      </div>
+      <div class="meter-badge" title="Tavily External Intelligence">
+        <span class="meter-dot dot-tavily"></span>
+        <span>Tavily Calls: <strong id="meter-tavily">2 calls</strong></span>
+      </div>
+      <div class="meter-badge" style="border-color: #06b6d4;">
+        <span>Total Deal Cost: <strong id="meter-cost" style="color: #06b6d4;">$0.04</strong></span>
+      </div>
+    </div>
+  </nav>
+
+  <main class="container">
+    <!-- Hero Moment Card -->
+    <section class="hero-card">
+      <div class="hero-header">
+        <div>
+          <h1 class="hero-title">Project Titan Cloud: Diligence Verdict</h1>
+          <p class="hero-subtitle">Target: Enterprise B2B SaaS · Claimed Multiple: 11.0x EBITDA · Status: <span style="color: #f43f5e; font-weight: 700;">KILL CRITERIA BREACHED</span></p>
+        </div>
+        <button id="btn-load-sample" class="btn">
+          <span>⚡ Run Adversarial Live Demo</span>
+        </button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat-box">
+          <div class="stat-label">Claimed EBITDA</div>
+          <div class="stat-value val-info" id="val-claimed">$10.0M</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">Per Seller CIM</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">PARSEC Adjudicated EBITDA</div>
+          <div class="stat-value val-danger" id="val-adjudicated">$7.6M</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">Zero Hallucination Bridge</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">EBITDA Variance</div>
+          <div class="stat-value val-warning" id="val-delta">-$2.4M</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">2 Recurring Disguised Items</div>
+        </div>
+        <div class="stat-box" style="border-color: #f43f5e; background: rgba(244, 63, 94, 0.08);">
+          <div class="stat-label" style="color: #f43f5e;">Overpayment Avoided</div>
+          <div class="stat-value val-danger" id="val-overpayment">$26.4M</div>
+          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">At 11.0x Enterprise Multiple</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Dashboard Grid -->
+    <div class="dashboard-grid">
+      <!-- Left Column: Findings & Quality of Earnings Bridge -->
+      <section>
+        <!-- Findings Board -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>Critical Findings & Evidence Trail</span>
+            <span style="font-size: 0.8rem; font-weight: 400; color: #94a3b8;">Click any finding to inspect verified source span</span>
+          </div>
+          <div id="findings-container">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- EBITDA Waterfall & Add-backs -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>Quality of Earnings: Deterministic EBITDA Bridge</span>
+            <span class="badge badge-verified">Pure Decimal Code · Zero Hallucination</span>
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 1rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-color); text-align: left; color: #9ca3af;">
+                <th style="padding: 0.75rem 0.5rem;">Bridge Item</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: right;">Amount</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: center;">Adjudication (Ultra)</th>
+                <th style="padding: 0.75rem 0.5rem; text-align: right;">Cumulative</th>
+              </tr>
+            </thead>
+            <tbody id="bridge-tbody">
+              <!-- Dynamically populated -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Right Column: Kill Criteria & IC Simulator -->
+      <section>
+        <!-- Kill Criteria Scoreboard -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>Kill-Criteria Scoreboard</span>
+            <span class="badge badge-deal-breaker">Stage 0 Thesis Inversion</span>
+          </div>
+          <div id="kill-criteria-container">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- IC Simulator Panel -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>Investment Committee Simulator</span>
+            <span class="badge" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa;">Ultra Grilling Session</span>
+          </div>
+          <div id="ic-simulator-container" style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.75rem;">
+            <!-- Dynamically populated -->
+          </div>
+        </div>
+
+        <!-- Diligence Arena Benchmark -->
+        <div class="panel">
+          <div class="panel-title">
+            <span>Funnel Proof: Diligence Arena</span>
+            <span class="badge badge-verified">Ablation</span>
+          </div>
+          <div style="font-size: 0.85rem; color: #94a3b8; line-height: 1.6;">
+            <p><strong>Naive All-Ultra Agent:</strong> $4.80/deal · 24% arithmetic error rate · 185s</p>
+            <p style="color: #10b981; margin-top: 0.5rem;"><strong>PARSEC Funnel Architecture:</strong> $0.04/deal · 0% error rate (Code Tools) · 14s</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Evidence Modal -->
+  <div id="evidence-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h3 id="modal-title" style="font-size: 1.15rem; color: #fff;">Verified Evidence Span</h3>
+        <button id="modal-close" style="background: none; border: none; color: #9ca3af; font-size: 1.25rem; cursor: pointer;">✕</button>
+      </div>
+      <p id="modal-description" style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem;"></p>
+      <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">EXACT VERBATIM SOURCE SPAN:</div>
+      <div id="modal-quote" style="background: #0f172a; border: 1px solid #334155; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: #38bdf8; margin-bottom: 1.25rem;"></div>
+      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
+        <button id="modal-sign-btn" class="btn" style="background: #10b981;">Sign & Approve Finding</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

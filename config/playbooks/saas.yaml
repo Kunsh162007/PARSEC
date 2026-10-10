@@ -1,0 +1,32 @@
+name: B2B Enterprise SaaS
+sector: saas
+default_multiple: 12.0
+key_metrics:
+  - Annual Recurring Revenue (ARR)
+  - Net Revenue Retention (NRR)
+  - Customer Acquisition Cost (CAC) Payback
+  - Rule of 40
+  - Gross Margins
+kill_criteria_templates:
+  - id: KC-SAAS-1
+    title: "Customer Concentration Risk"
+    condition: "Single customer accounts for > 30% of ARR"
+    severity: "deal_breaker"
+  - id: KC-SAAS-2
+    title: "Unexplained NRR Decay"
+    condition: "NRR drops below 100% or churn spikes > 15% annualized"
+    severity: "deal_breaker"
+  - id: KC-SAAS-3
+    title: "Capitalized R&D EBITDA Inflation"
+    condition: "Software development capitalization exceeds 25% of total R&D spend"
+    severity: "price_adjuster"
+  - id: KC-SAAS-4
+    title: "Recurring 'One-Off' Professional Services Add-backs"
+    condition: "Implementation or migration cost add-backs recurring across >= 2 fiscal years"
+    severity: "price_adjuster"
+expected_documents:
+  - "CIM (Confidential Information Memorandum)"
+  - "Historical Quality of Earnings / Management Accounts (3 Years)"
+  - "Monthly Customer ARR Waterfall / Cohort Retention Matrix"
+  - "Audited Financial Statements"
+  - "Sales Pipeline & Cap Table"

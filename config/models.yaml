@@ -1,0 +1,92 @@
+# Model routing configuration for PARSEC
+# Unified LLM Gateway routes tasks to specific Nemotron model tiers on Nebius Token Factory
+
+providers:
+  nebius:
+    base_url: "https://api.studio.nebius.ai/v1"
+    api_key_env: "NEBIUS_API_KEY"
+
+routing:
+  # Tier 3: Deep reasoning, long context, executive adjudication, adversarial generation
+  thesis_inversion:
+    model: "nvidia/nemotron-3-ultra"
+    fallback_model: "nvidia/nemotron-3-super"
+    max_tokens: 4096
+    temperature: 0.1
+    token_budget_pct: 0.05
+
+  adjudication:
+    model: "nvidia/nemotron-3-ultra"
+    fallback_model: "nvidia/nemotron-3-super"
+    max_tokens: 2048
+    temperature: 0.0
+    token_budget_pct: 0.05
+
+  ic_simulator:
+    model: "nvidia/nemotron-3-ultra"
+    fallback_model: "nvidia/nemotron-3-super"
+    max_tokens: 3000
+    temperature: 0.4
+    token_budget_pct: 0.05
+
+  adversarial_seller:
+    model: "nvidia/nemotron-3-ultra"
+    fallback_model: "nvidia/nemotron-3-super"
+    max_tokens: 4096
+    temperature: 0.3
+    token_budget_pct: 0.10
+
+  memo_generator:
+    model: "nvidia/nemotron-3-ultra"
+    fallback_model: "nvidia/nemotron-3-super"
+    max_tokens: 4096
+    temperature: 0.1
+    token_budget_pct: 0.05
+
+  # Tier 2: Extraction, structured parsing, consistency analysis
+  claim_extraction:
+    model: "nvidia/nemotron-3-super"
+    fallback_model: "nvidia/nemotron-3-nano"
+    max_tokens: 2048
+    temperature: 0.0
+    token_budget_pct: 0.35
+
+  consistency_worker:
+    model: "nvidia/nemotron-3-super"
+    fallback_model: "nvidia/nemotron-3-nano"
+    max_tokens: 2048
+    temperature: 0.0
+    token_budget_pct: 0.20
+
+  # Tier 1: High speed, low cost screening, classification, triage, prompt injection defense
+  classification:
+    model: "nvidia/nemotron-3-nano"
+    fallback_model: "nvidia/nemotron-3-nano"
+    max_tokens: 512
+    temperature: 0.0
+    token_budget_pct: 0.25
+
+  prompt_injection_guard:
+    model: "nvidia/nemotron-3-nano"
+    fallback_model: "nvidia/nemotron-3-nano"
+    max_tokens: 256
+    temperature: 0.0
+    token_budget_pct: 0.05
+
+  tavily_classifier:
+    model: "nvidia/nemotron-3-nano"
+    fallback_model: "nvidia/nemotron-3-nano"
+    max_tokens: 512
+    temperature: 0.0
+    token_budget_pct: 0.05
+
+pricing_per_million_tokens:
+  "nvidia/nemotron-3-ultra":
+    input: 1.80
+    output: 5.40
+  "nvidia/nemotron-3-super":
+    input: 0.40
+    output: 1.20
+  "nvidia/nemotron-3-nano":
+    input: 0.08
+    output: 0.24
