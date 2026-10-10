@@ -29,7 +29,16 @@ class LLMGateway:
         with open(config_path, "r", encoding="utf-8") as f:
             self.config = yaml.safe_load(f)
         
-        self.api_key = os.getenv("NEBIUS_API_KEY", "mock-token-factory-key")
+        # Load from .env if present
+        env_key = None
+        if os.path.exists(".env"):
+            with open(".env", "r", encoding="utf-8") as env_file:
+                for line in env_file:
+                    if line.startswith("NEBIUS_API_KEY="):
+                        env_key = line.strip().split("=", 1)[1]
+                        break
+
+        self.api_key = os.getenv("NEBIUS_API_KEY", env_key or "mock-token-factory-key")
         self.base_url = self.config.get("providers", {}).get("nebius", {}).get("base_url", "https://api.studio.nebius.ai/v1")
         self.routing = self.config.get("routing", {})
         self.pricing = self.config.get("pricing_per_million_tokens", {})
@@ -62,7 +71,8 @@ class LLMGateway:
     ) -> GatewayResponse:
         task_cfg = self.route_task(task)
         model = task_cfg["model"]
-        tier = "ultra" if "ultra" in model else ("super" if "super" in model else "nano")
+        model_lower = model.lower()
+        tier = "ultra" if "ultra" in model_lower else ("super" if "super" in model_lower else "nano")
 
         # In-memory cache key
         cache_key = f"{task}:{hash(json.dumps(messages, sort_keys=True))}"
