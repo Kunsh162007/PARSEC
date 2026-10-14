@@ -38,6 +38,8 @@ Fine Print also works without the server: open `apps/review/index.html` in a bro
 example documents and all optional reads appear only when the page is served by the API.
 
 Docker: `docker build -f infra/docker/Dockerfile -t parsec . && docker run --env-file .env -p 8000:8000 parsec`
+(tested: a 264 MB image that runs as a non-root user, reports healthy, contains no `.env` or `data/`, and answers live
+model calls with the keys passed by `--env-file`).
 
 ### Keys
 
@@ -59,7 +61,7 @@ company's reconciliation needs the Nebius key; without it the result lists that 
 ## Tests
 
 ```bash
-python -m pytest -q         # 262 Python tests: gateway, AI read, clause pass, requirements, memo, pipeline, bridge, extractor, guard, web check, scoring
+python -m pytest -q         # 263 Python tests: gateway, AI read, clause pass, requirements, memo, pipeline, bridge, extractor, guard, web check, scoring
 npm test                    # 113 tests: rules engine, connections layer, workflow deliverables
 ```
 
@@ -422,6 +424,7 @@ the command to produce it if the file does not exist.
 
 ## Files you may want to read next
 
+- `ARCHITECTURE.md`: flowcharts of the system, one check, and the PARSEC reconciliation path.
 - `SECURITY.md`: what is and is not protected.
 - `FEEDBACK.md`: observations on Nebius, Nemotron and Tavily from real calls.
 - `.env.example`: every configuration variable.

@@ -417,3 +417,15 @@ def test_long_structural_headings_and_contents_rows_are_found_and_matched():
     docs = [{"name": "10-K.txt", "text": text}]
     assert "Item 13." in section_match("Item 13 - Certain Relationships and Related Transactions", docs)
     assert section_match("Credit facility agreement", docs) == ""
+
+
+def test_lease_expense_and_accounting_terms_get_sensible_workstreams():
+    from packages.review.requirements import workstream_of
+
+    assert workstream_of("Operating Expense Reconciliation Statements") == "real_estate"
+    assert workstream_of("CAM reconciliation for 2024") == "real_estate"
+    assert workstream_of("Rent Payment Ledger") == "real_estate"
+    assert workstream_of("Bank reconciliation") == "financial"
+    assert workstream_of("General ledger detail") == "financial"
+    assert workstream_of("Monthly trial balance") == "financial"
+    assert workstream_of("Book-to-tax reconciliation") == "tax"  # tax keeps priority

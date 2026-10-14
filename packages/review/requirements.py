@@ -79,7 +79,8 @@ _KEYWORD_RULES = [
               r"|corporate structure|good standing"),
     ("people", r"employee|employment|payroll|headcount|workforce|compensation|severance|pension|benefit plan"
                r"|\borg chart|\bhr\b"),
-    ("real_estate", r"\bleases?\b|lease agreement|estoppel|rent roll|\bdeeds?\b|zoning|title (insurance|commitment|report|polic)"),
+    ("real_estate", r"\bleases?\b|lease agreement|estoppel|rent roll|\bdeeds?\b|zoning|title (insurance|commitment|report|polic)"
+                    r"|\brent\b|\bcam\b|common area|operating expense reconciliation"),
     ("regulatory", r"\bsec\b|securities and exchange|regulator|enforcement|consent decree|permit|sanction|export control"
                    r"|antitrust|merger control|fcpa|bribery|gdpr|franchise disclosure|\bfdd\b|operating licen[cs]e"),
     ("ip", r"patent|trademark|copyright|intellectual property|\bip\b|open source|licen[cs]e agreement|licen[cs]ing"
@@ -87,7 +88,8 @@ _KEYWORD_RULES = [
     ("financial", r"\b10-?k\b|\b10-?q\b|\b8-?k\b|proxy|def 14a|financial statement|audit|md&a|management.s discussion"
                   r"|ebitda|earnings|revenue|cash flow|\bdebt\b|credit (facility|agreement)|loan|invoice|payment"
                   r"|capex|capital expenditure|budget|projection|forecast|working capital|receivable|payable|restat"
-                  r"|accounting|quarterly|internal control|\bsox\b|\bfinancial\b"),
+                  r"|accounting|quarterly|internal control|\bsox\b|\bfinancial\b"
+                  r"|\bbank\b|ledger|trial balance|reconciliation|operating expense"),
     ("commercial", r"customer|supplier|franchisee|distributor|reseller|pricing|\bsales\b|competitor|market"
                    r"|service level|\bsla"),
     ("legal", r"agreement|contract|amendment|side letter|waiver|non-disclosure|\bnda\b|consent|exhibit"
