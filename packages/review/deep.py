@@ -218,7 +218,7 @@ def _clip(value: Any, limit: int) -> str:
 
 def _render_document(name: str, text: str, part: int, total: int) -> str:
     safe_name = re.sub(r'["<>\n]', " ", name)[:120]
-    safe_text = text.replace("</document", "</ document")
+    safe_text = re.sub(r"</(document)", r"</ \1", text, flags=re.IGNORECASE)
     return f'<document name="{safe_name}" part="{part} of {total}">\n{safe_text}\n</document>'
 
 
@@ -320,6 +320,8 @@ async def deep_review(
         if resp is None:
             continue  # this part could not be read; the parts that were read still count
         meter.add(resp)
+        if len(findings) >= MAX_FINDINGS:
+            continue  # the cap is reached: keep metering what was paid for, but collect nothing more
         for raw in parse_findings(resp.content):
             where = locate_quote(chunk, _clip(raw.get("quote"), MAX_QUOTE_CHARS))
             if where is None:
@@ -384,7 +386,8 @@ async def deep_review(
             if ruling["verdict"] == "reject":
                 rejected_ids.add(f["id"])
                 adjudication["rejected"] += 1
-            elif ruling["verdict"] == "downgrade" and ruling["severity"] in SEVERITIES:
+            elif (ruling["verdict"] == "downgrade" and ruling["severity"] in SEVERITIES
+                  and SEVERITY_RANK[ruling["severity"]] > SEVERITY_RANK[f["severity"]]):
                 f["severity"] = ruling["severity"]
                 adjudication["downgraded"] += 1
         findings = [f for f in findings if f["id"] not in rejected_ids]

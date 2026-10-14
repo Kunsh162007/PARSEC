@@ -29,8 +29,29 @@
   const millions = (n) => `$${(n / 1e6).toFixed(2)}M`;
   const setStatus = (msg, isError) => { const s = $('status'); s.textContent = msg || ''; s.classList.toggle('is-error', Boolean(isError)); };
 
+  // The server may require an access code for its paid endpoints; it says so on /api/review/status.
+  const CODE_KEY = 'parsec-access-code';
+  const accessCode = () => ($('access-code') ? $('access-code').value.trim() : '');
+
+  async function loadAccessRequirement() {
+    try {
+      const res = await fetch('/api/review/status');
+      if (!res.ok) return;
+      const s = await res.json();
+      if (!s.auth_required) return;
+      $('code-row').hidden = false;
+      try { $('access-code').value = sessionStorage.getItem(CODE_KEY) || ''; } catch (err) { /* storage blocked: type it each time */ }
+      $('access-code').addEventListener('change', (e) => {
+        try { sessionStorage.setItem(CODE_KEY, e.target.value.trim()); } catch (err) { /* not remembered */ }
+      });
+    } catch (err) { /* opened without the server: nothing to set up */ }
+  }
+
   async function api(path, options) {
-    const res = await fetch(path, options);
+    const opts = Object.assign({}, options);
+    const code = accessCode();
+    if (code) opts.headers = Object.assign({}, opts.headers, { 'X-Review-Token': code });
+    const res = await fetch(path, opts);
     let body = null;
     try { body = await res.json(); } catch (err) { /* non-JSON error page */ }
     if (!res.ok) {
@@ -50,12 +71,25 @@
     $('lookup').disabled = !$('company').value.trim();
   }
 
+  // Documents are sent keyed by name, so two files called "ledger.csv" would overwrite each other.
+  // The second becomes "ledger (2).csv", the third "ledger (3).csv"; the extension is kept.
+  function uniqueName(name, taken) {
+    if (!taken.has(name)) return name;
+    const dot = name.lastIndexOf('.');
+    const stem = dot > 0 ? name.slice(0, dot) : name;
+    const ext = dot > 0 ? name.slice(dot) : '';
+    let n = 2;
+    while (taken.has(`${stem} (${n})${ext}`)) n += 1;
+    return `${stem} (${n})${ext}`;
+  }
+
   async function addFiles(fileList) {
     for (const file of Array.from(fileList)) {
       if (file.size > MAX_FILE_BYTES) { setStatus(`${file.name} is larger than 5 MB.`, true); continue; }
       const text = await file.text();
       if (!text.trim()) { setStatus(`${file.name} has no text.`, true); continue; }
-      state.docs.push({ name: file.name, text });
+      const name = uniqueName(file.name, new Set(state.docs.map((d) => d.name)));
+      state.docs = [...state.docs, { name, text }];
     }
     $('files').value = '';
     refreshInput();
@@ -63,11 +97,19 @@
 
   function collectDocuments() {
     const documents = {};
-    state.docs.forEach((d) => { documents[d.name] = d.text; });
+    const taken = new Set();
+    const add = (name, text) => {
+      const unique = uniqueName(name, taken);
+      taken.add(unique);
+      documents[unique] = text;
+    };
+    state.docs.forEach((d) => add(d.name, d.text));
     const pasted = $('paste').value.trim();
-    if (pasted) documents['Pasted_document.txt'] = pasted;
+    if (pasted) add('Pasted_document.txt', pasted);
     return documents;
   }
+
+  const isWebUrl = (url) => /^https?:\/\//i.test(String(url || ''));
 
   /* ---------------------------------------------------------------- render */
   function renderMeters(deal) {
@@ -247,7 +289,9 @@
     $('meters').replaceChildren();
     $('findings-container').replaceChildren(...(data.sources.length
       ? data.sources.map((s) => h('div', { class: 'finding-card' },
-        h('span', { class: 'finding-title' }, h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title || s.url })),
+        h('span', { class: 'finding-title' }, isWebUrl(s.url)
+          ? h('a', { href: s.url, target: '_blank', rel: 'noopener noreferrer', text: s.title || s.url })
+          : h('span', { text: s.title || String(s.url || '') })),
         h('span', { class: 'finding-desc', text: s.snippet })))
       : [h('p', { class: 'muted', text: 'No results named this company.' })]));
     $('bridge-tbody').replaceChildren();
@@ -265,7 +309,7 @@
     const evidence = finding.evidence || [];
     $('modal-evidence').replaceChildren(...(evidence.length ? evidence.map((ev) => {
       const where = ev.char_start != null ? `characters ${ev.char_start} to ${ev.char_end}` : 'position not recorded';
-      const isUrl = /^https?:\/\//i.test(ev.document_id || '');
+      const isUrl = isWebUrl(ev.document_id);
       return h('div', { class: 'evidence' },
         h('div', { class: 'muted' }, isUrl
           ? h('a', { href: ev.document_id, target: '_blank', rel: 'noopener noreferrer', text: ev.document_name || ev.document_id })
@@ -348,4 +392,5 @@
   $('modal-sign-btn').addEventListener('click', sign);
 
   refreshInput();
+  loadAccessRequirement();
 })();

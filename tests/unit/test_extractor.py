@@ -59,6 +59,36 @@ def test_every_evidence_span_the_extractor_returns_exists_in_the_source():
         assert item.evidence_span == "" or item.evidence_span in ACCOUNTS
 
 
+def test_an_add_back_with_base_inside_a_word_is_not_skipped():
+    cim = "2. Database Migration Costs: +$250,000 (One-time)\n3. Base Operating EBITDA: +$7,000,000\n"
+    items = Extractor.extract_addback_candidates(cim, "")
+    assert [i.description for i in items] == ["Database Migration Costs"]
+
+
+def test_the_documented_add_back_line_format_is_read():
+    cim = "- Add-back: Litigation Legal Fees: +$1,200,000 (Non-recurring litigation)\n"
+    items = Extractor.extract_addback_candidates(cim, "")
+    assert [(i.description, i.amount) for i in items] == [("Litigation Legal Fees", Decimal("1200000"))]
+    assert items[0].claimed_rationale == "Non-recurring litigation"
+
+
+def test_base_ebitda_applies_a_stated_unit():
+    cases = {
+        "Base Operating EBITDA: $7.0 million": Decimal("7000000"),
+        "Reported Unadjusted EBITDA: $7.5M\nManagement view": Decimal("7500000"),
+        "Unadjusted EBITDA: $850 thousand": Decimal("850000"),
+        "Unadjusted EBITDA: $850k": Decimal("850000"),
+        "Unadjusted EBITDA: $12.5mm": Decimal("12500000"),
+        "Unadjusted EBITDA: $1.2 billion": Decimal("1200000000"),
+        "Unadjusted EBITDA: $1.2bn": Decimal("1200000000"),
+        "Unadjusted EBITDA: $7,000,000\nMargin was 20%": Decimal("7000000"),
+    }
+    for text, expected in cases.items():
+        value, span = Extractor.extract_base_ebitda(text)
+        assert value == expected, text
+        assert span in text
+
+
 def test_a_bucket_of_many_small_accounts_is_not_a_single_customer():
     text = ("Client 101 (Atlas Retail): $1,000,000 (10.0%)\n"
             "Remaining SMB accounts: $9,000,000 (90.0%)\n"

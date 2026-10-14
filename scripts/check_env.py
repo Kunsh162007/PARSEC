@@ -18,7 +18,7 @@ from packages.gateway.llm import GatewayUnavailable, LLMGateway  # noqa: E402
 from packages.tavily.client import TavilyRealityEngine, TavilyUnavailable  # noqa: E402
 
 SERVICES = (
-    ("NEBIUS_API_KEY", "Nebius Token Factory", "AI deep read, PARSEC committee questions", "https://studio.nebius.com"),
+    ("NEBIUS_API_KEY", "Nebius Token Factory", "AI deep read, clause check, what the file still needs, memo, PARSEC reconciliation reading and committee questions", "https://studio.nebius.com"),
     ("TAVILY_API_KEY", "Tavily Search", "public-source check on named companies", "https://app.tavily.com"),
 )
 

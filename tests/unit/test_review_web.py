@@ -119,6 +119,37 @@ def test_a_transient_failure_is_retried_once():
     assert out["lookups"][0]["error"] == ""
 
 
+def test_risk_terms_inside_other_words_are_not_disputes():
+    async def search(query):
+        return [{"title": "Brightwell Components Ltd refined its defined benefit plan",
+                 "url": "https://n.example/b", "content": "Brightwell Components Ltd issued new shares."}]
+
+    out = run(web_check(DOCS, search=search, max_entities=1))
+    assert out["findings"] == []
+    assert out["lookups"][0]["relevant"] == 0
+
+
+def test_inflected_risk_terms_still_count():
+    async def search(query):
+        return [{"title": "Brightwell Components Ltd faces sanctions",
+                 "url": "https://n.example/s", "content": "Brightwell Components Ltd sanctions imposed."}]
+
+    assert len(run(web_check(DOCS, search=search, max_entities=1))["findings"]) == 1
+
+
+def test_a_name_with_irregular_spacing_or_a_line_break_is_still_located():
+    for spaced in ("Acme  Holdings Ltd", "Acme\nHoldings Ltd"):
+        docs = [{"name": "d.txt", "text": f"This Agreement is with {spaced}. {spaced} shall pay."}]
+
+        async def search(query):
+            return [{"title": "Acme Holdings Ltd sued", "url": "https://n.example/a", "content": "Acme Holdings Ltd lawsuit"}]
+
+        out = run(web_check(docs, search=search, max_entities=1))
+        assert out["checked"] == ["Acme Holdings Ltd"]
+        span = out["findings"][0]["spans"][0]
+        assert docs[0]["text"][span["start"]:span["end"]] == spaced
+
+
 def test_search_errors_do_not_become_findings():
     async def search(query):
         raise RuntimeError("network down")

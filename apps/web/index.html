@@ -39,6 +39,10 @@
         <textarea id="paste" rows="5" spellcheck="false" placeholder="Paste text from a CIM, ledger or customer table"></textarea>
       </label>
       <ul id="doc-list" class="doc-list" aria-label="Documents added"></ul>
+      <div class="form-grid" id="code-row" hidden>
+        <label>Access code <input id="access-code" type="password" autocomplete="off" spellcheck="false"></label>
+        <p class="muted">This server needs an access code for analyses that call paid models or web search.</p>
+      </div>
       <div class="actions">
         <button id="run" class="btn" disabled>Run analysis</button>
         <button id="lookup" class="btn btn-secondary" disabled>Public-source check only</button>

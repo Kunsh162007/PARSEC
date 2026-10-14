@@ -14,6 +14,7 @@
   const MAX_SPANS = 6;
   const MAX_HITS_PER_DOC = 25;
   const DAY = 86400000;
+  const STALE_DAYS = 548; // about 18 months
 
   const LENSES = [
     { id: 'financial', name: 'Financial', blurb: "Figures that don't add up, adjusted-profit claims, audit qualifications, covenants and cash stress." },
@@ -616,10 +617,11 @@
           order.push({ span: { doc: doc.index, start: d.start, end: next.end }, date: d.date, next: next.date });
         }
       });
-      const past = dates.filter((d) => d.date <= today);
-      if (past.length) {
-        const latest = past.reduce((a, b) => (a.date > b.date ? a : b));
-        if ((today - latest.date) / DAY > 548) {
+      // Stale means even the latest date anywhere in the document (a term end, a renewal) is long past. A document
+      // signed years ago whose term runs into the future is current.
+      if (dates.length) {
+        const latest = dates.reduce((a, b) => (a.date > b.date ? a : b));
+        if ((today - latest.date) / DAY > STALE_DAYS) {
           stale.push({ span: { doc: doc.index, start: latest.start, end: latest.end }, date: latest.date });
         }
       } else if (!dates.length && wordCount(doc.text) > 150) {
@@ -1095,5 +1097,29 @@
     };
   }
 
-  return { analyze, verdictFor, sentenceAround, LENSES, INTEGRITY, SEVERITIES, LENS_NAME, LENS_ORDER, RANK, wordCount };
+  // The server (Python) reports offsets in code points; JavaScript strings index UTF-16 code units. They differ
+  // after any astral character (emoji, some CJK), so server spans are converted before they touch the text.
+  function codePointToUtf16(text, cpOffset) {
+    const str = String(text || '');
+    const target = Math.max(0, Math.floor(Number(cpOffset) || 0));
+    let units = 0;
+    let points = 0;
+    while (points < target && units < str.length) {
+      const code = str.charCodeAt(units);
+      const next = units + 1 < str.length ? str.charCodeAt(units + 1) : 0;
+      units += code >= 0xd800 && code <= 0xdbff && next >= 0xdc00 && next <= 0xdfff ? 2 : 1;
+      points += 1;
+    }
+    return units;
+  }
+
+  function convertServerSpans(spans, docs) {
+    return (spans || []).map((s) => {
+      const doc = docs && docs[s.doc];
+      if (!doc) return Object.assign({}, s);
+      return Object.assign({}, s, { start: codePointToUtf16(doc.text, s.start), end: codePointToUtf16(doc.text, s.end) });
+    });
+  }
+
+  return { analyze, verdictFor, sentenceAround, codePointToUtf16, convertServerSpans, LENSES, INTEGRITY, SEVERITIES, LENS_NAME, LENS_ORDER, RANK, wordCount };
 });

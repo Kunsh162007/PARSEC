@@ -110,3 +110,33 @@ def test_one_as_a_pronoun_is_not_treated_as_a_figure():
     ev = build_evidence(FINDINGS, NEEDS)
     out = validate_memo(memo({"text": "One of the parties has unlimited liability.", "cites": ["F1"]}), ev)
     assert out["dropped"]["unsupported_numbers"] == 0
+
+
+def test_a_number_word_hidden_inside_another_word_does_not_back_it():
+    ev = build_evidence([{"severity": "high", "title": "Claims", "where": "c.txt",
+                          "quote": "The content of the claims schedule is incomplete.", "detail": ""}], [])
+    out = validate_memo(memo({"text": "Ten claims are pending.", "cites": ["F1"]}), ev)
+    assert out["dropped"]["unsupported_numbers"] == 1
+
+
+def test_citing_f3_does_not_let_an_invented_3_through():
+    findings = FINDINGS + [{"severity": "medium", "title": "Liability cap", "where": "msa.txt",
+                            "quote": "Liability is capped at a multiple of the fees paid.", "detail": ""}]
+    ev = build_evidence(findings, NEEDS)
+    out = validate_memo(memo({"text": "Liability capped at 3 times fees.", "cites": ["F3"]}), ev)
+    assert out["dropped"]["unsupported_numbers"] == 1
+
+
+def test_inline_evidence_ids_in_brackets_or_lists_are_not_figures():
+    ev = build_evidence(FINDINGS, NEEDS)
+    out = validate_memo(memo({"text": "Liability is unlimited [F1] and accounts are unaudited (F1, N1).",
+                              "cites": ["F1", "N1"]}), ev)
+    assert out["dropped"]["unsupported_numbers"] == 0
+
+
+def test_a_number_with_a_different_magnitude_than_the_evidence_is_dropped():
+    ev = build_evidence([{"severity": "high", "title": "Cap", "where": "c.txt",
+                          "quote": "Total liability is capped at 3 million.", "detail": ""}], [])
+    assert validate_memo(memo({"text": "Cap of 3 billion.", "cites": ["F1"]}), ev)["dropped"]["unsupported_numbers"] == 1
+    assert validate_memo(memo({"text": "Cap of 3 million.", "cites": ["F1"]}), ev)["dropped"]["unsupported_numbers"] == 0
+    assert validate_memo(memo({"text": "Cap of 3%.", "cites": ["F1"]}), ev)["dropped"]["unsupported_numbers"] == 1

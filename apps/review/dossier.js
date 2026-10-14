@@ -118,10 +118,32 @@
     return events.slice(0, MAX_ITEMS * 2);
   }
 
+  // A label counts as supplied only where it stands as a heading: alone on its line, followed by a heading
+  // separator, or followed by a short title. "Schedule 2 hereto sets out ..." is a sentence, not the schedule, and
+  // "Schedule 1.2" is a different schedule from "Schedule 1".
+  const HEADING_SEPARATOR = /^\s*[.:\-—–]/;
+  const SENTENCE_END = /[.!?;,](?:\s|$)/;
+  const MAX_TITLE_WORDS = 8;
+
+  function standsAsHeading(rest) {
+    if (/^\.\d/.test(rest) || /^[A-Za-z0-9]/.test(rest)) return false;
+    const tail = rest.trim();
+    if (!tail || HEADING_SEPARATOR.test(rest)) return true;
+    return words(tail) <= MAX_TITLE_WORDS && !SENTENCE_END.test(tail);
+  }
+
   function provided(label, docs) {
     const needle = label.toLowerCase();
-    const lineStart = new RegExp(`^\\s*${label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'im');
-    return docs.some((d) => d.name.toLowerCase().includes(needle) || lineStart.test(d.text));
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    return docs.some((d) => {
+      if (d.name.toLowerCase().includes(needle)) return true;
+      const lineStart = new RegExp(`^[ \\t]*${escaped}([^\\n]*)$`, 'gim');
+      let m;
+      while ((m = lineStart.exec(d.text))) {
+        if (standsAsHeading(m[1])) return true;
+      }
+      return false;
+    });
   }
 
   function referencedDocuments(docs) {
@@ -251,7 +273,13 @@
     return out;
   }
 
-  const baseId = (id) => String(id).replace(/-\d+$/, '');
+  // Only the deterministic engine numbers repeats of one check (one per table, conflict or document). AI, clause and
+  // web ids are numbered per finding, so each of those is its own theme.
+  const ENGINE_NUMBERED = /^(int-footing|int-conflict|leg-missing)-\d+$/;
+  const baseId = (id) => {
+    const m = ENGINE_NUMBERED.exec(String(id));
+    return m ? m[1] : String(id);
+  };
 
   function themes(docs, findings) {
     const map = new Map();

@@ -275,6 +275,48 @@ test('contract terms are not downgraded for lacking a date', () => {
   assert.equal(f.severity, 'high');
 });
 
+test('a document signed long ago but running into the future is not stale', () => {
+  const text = 'This agreement was signed on 12 March 2021. The term ends on 31 December 2030.';
+  const r = FP.analyze([{ name: 'c', text }], { lenses: [], today: '2026-10-14' });
+  assert.ok(!r.findings.some((f) => f.id === 'int-stale'));
+});
+
+test('a document whose latest date is over 18 months old is stale', () => {
+  const text = 'This agreement was signed on 12 March 2021. The first review happened on 1 June 2022.';
+  const r = FP.analyze([{ name: 'c', text }], { lenses: [], today: '2026-10-14' });
+  const f = r.findings.find((x) => x.id === 'int-stale');
+  assert.ok(f, 'stale finding present');
+  assert.equal(text.slice(f.spans[0].start, f.spans[0].end), '1 June 2022');
+});
+
+test('codePointToUtf16 is the identity on plain ASCII', () => {
+  const text = 'The fee is $2.5 million.';
+  for (const n of [0, 5, text.length]) assert.equal(FP.codePointToUtf16(text, n), n);
+});
+
+test('codePointToUtf16 shifts offsets after an emoji', () => {
+  const text = 'Hi \u{1F600} there: the fee is uncapped.';
+  const cp = [...text];
+  const cpStart = cp.indexOf('u');
+  const cpEnd = cpStart + 'uncapped'.length;
+  const start = FP.codePointToUtf16(text, cpStart);
+  const end = FP.codePointToUtf16(text, cpEnd);
+  assert.equal(start, cpStart + 1);
+  assert.equal(text.slice(start, end), 'uncapped');
+  assert.equal(FP.codePointToUtf16(text, 3), 3);
+  assert.equal(FP.codePointToUtf16(text, 4), 5);
+  assert.equal(FP.codePointToUtf16(text, 10_000), text.length);
+});
+
+test('convertServerSpans maps code-point spans to UTF-16 per document', () => {
+  const docs = [{ text: 'plain text' }, { text: '\u{1F4C4} file: liability is unlimited' }];
+  const spans = [{ doc: 0, start: 0, end: 5 }, { doc: 1, start: 8, end: 17 }];
+  const out = FP.convertServerSpans(spans, docs);
+  assert.deepEqual(out[0], { doc: 0, start: 0, end: 5 });
+  assert.equal(docs[1].text.slice(out[1].start, out[1].end), 'liability');
+  assert.equal(spans[1].start, 8, 'input is not mutated');
+});
+
 test('"unaware of a data breach" is not reported as an incident', () => {
   const r = FP.analyze([{ name: 'n', text: 'To date we are unaware of a data breach that has been material to us.' }], { lenses: ['tech'], today: TODAY });
   assert.ok(!r.findings.some((f) => f.id === 'tech-incident'));

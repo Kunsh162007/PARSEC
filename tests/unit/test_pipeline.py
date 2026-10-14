@@ -171,3 +171,63 @@ def test_ledger_lines_are_not_mistaken_for_customers():
     result = run({"CIM_Test.txt": CIM, "Management_Accounts.txt": ACCOUNTS})
     assert result["concentration"] is None
     assert not [f for f in result["findings"] if f["category"] == "Concentration"]
+
+
+def test_reconciliation_evidence_uses_the_bridge_offsets_not_the_first_copy():
+    from decimal import Decimal
+
+    row = "Net income 100\n"
+    text = row + "Adjusted EBITDA reconciliation\n" + row + "Adjusted EBITDA 110\n"
+    second = text.index(row, 1)
+    total_at = text.index("Adjusted EBITDA 110")
+    rec = {
+        "status": "foots", "document": "cim.txt", "units": "in millions", "period": "FY24",
+        "start": {"label": "Net income", "value": Decimal("100"), "ok": True, "start": second, "end": second + len(row) - 1},
+        "total": {"label": "Adjusted EBITDA", "value": Decimal("110"), "ok": True,
+                  "start": total_at, "end": total_at + len("Adjusted EBITDA 110")},
+        "adjustments": [{"label": "Depreciation", "value": Decimal("10"), "ok": True, "periods": [10]}],
+    }
+    found = []
+    pipeline = DiligencePipeline(gateway=DownGateway(), tavily=DownTavily())
+    pipeline._reconciliation_findings(rec, {"cim.txt": text}, Decimal("10"), lambda fid, **kw: found.append(kw))
+    spans = found[0]["evidence"]
+    assert spans[0].char_start == second and spans[0].char_end == second + len(row) - 1
+    assert spans[0].exact_text_quote == text[second:second + len(row) - 1]
+
+
+def test_reconciliation_reads_at_most_two_candidate_documents(monkeypatch):
+    import packages.workflow.bridge as bridge
+
+    calls = []
+
+    async def fake_extract(gateway, text):
+        calls.append(text)
+        return {"status": "unreadable", "reason": "test"}
+
+    monkeypatch.setattr(bridge, "extract_bridge", fake_extract)
+    docs = {f"doc{n}.txt": f"Adjusted EBITDA table {n}" for n in range(4)}
+    pipeline = DiligencePipeline(gateway=UpGateway(), tavily=DownTavily())
+    asyncio.run(pipeline._read_reconciliation(docs, "doc0.txt", []))
+    assert len(calls) == 2
+
+
+class CostingGateway(UpGateway):
+    total_cost_usd = 1.0   # spend from earlier runs on a shared gateway must not be counted again
+
+    async def complete(self, task, messages, **k):
+        self.total_cost_usd += 0.25
+        return await super().complete(task, messages, **k)
+
+
+class FailingTavily:
+    call_count = 0
+
+    async def verify_external_claims(self, company, claims):
+        self.call_count += 1   # a paid request was made even though it failed
+        return RealityCheckResult(query="q", available=False, reason="Tavily returned HTTP 500")
+
+
+def test_run_reports_the_paid_cost_of_this_run_and_tavily_calls():
+    result = run(ROOM, gateway=CostingGateway(), tavily=FailingTavily())
+    assert result["cost_usd"] == pytest.approx(0.25)
+    assert result["tavily_meter"]["api_calls"] == 1

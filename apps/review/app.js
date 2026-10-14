@@ -14,6 +14,13 @@
   const PDFJS_URL = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
   const PDFJS_WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
   const MAMMOTH_URL = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+  // Subresource integrity for the script tags (cdnjs-published sha512, re-computed from the downloaded files).
+  // The pdf.js worker is fetched by pdf.js itself from GlobalWorkerOptions.workerSrc, not by a script tag, so the
+  // browser offers no integrity check for it.
+  const SCRIPT_INTEGRITY = {
+    [PDFJS_URL]: 'sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==',
+    [MAMMOTH_URL]: 'sha512-sG5Q7boJL+ft/weuz6Mmi9XBD+bEzE9AI2FMP4YMFxp3FpTFUQSQQm5K5cSgJCyed6bWs3W8f8h0lp36lHXhQA==',
+  };
   const TEXT_EXT = ['txt', 'md', 'markdown', 'csv', 'tsv', 'json', 'log', 'html', 'htm', 'xml'];
 
   const narrow = window.matchMedia('(max-width: 959px)');
@@ -37,6 +44,7 @@
     cursor: {},
     view: 'findings',
     seq: 0,
+    memoToken: 0, // bumped by every new run and memo request; a memo answer for an older token is discarded
     ai: { available: false, live: false, model: '' },
     aiSummary: null,
   };
@@ -211,6 +219,8 @@
     if (!scriptCache[url]) {
       scriptCache[url] = new Promise((resolve, reject) => {
         const s = document.createElement('script');
+        if (SCRIPT_INTEGRITY[url]) s.integrity = SCRIPT_INTEGRITY[url];
+        s.crossOrigin = 'anonymous';
         s.src = url;
         s.onload = resolve;
         s.onerror = () => {
@@ -949,19 +959,26 @@
 
   async function draftMemo() {
     const { refs, body } = memoInputs();
+    state.memoToken += 1;
+    const token = state.memoToken;
     state.memoRefs = refs;
     state.memo = { loading: true };
     renderMemo();
     const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
     const code = state.ai.authRequired ? $('ai-code').value.trim() : '';
     if (code) headers['X-Review-Token'] = code;
+    let memo;
     try {
       const res = await fetch('/api/review/memo', { method: 'POST', headers, body: JSON.stringify(body) });
       const out = await res.json().catch(() => ({}));
-      state.memo = res.ok ? out : { available: false, reason: typeof out.detail === 'string' ? out.detail : `the server answered ${res.status}.` };
+      memo = res.ok ? out : { available: false, reason: typeof out.detail === 'string' ? out.detail : `the server answered ${res.status}.` };
     } catch (err) {
-      state.memo = { available: false, reason: 'the server could not be reached.' };
+      memo = { available: false, reason: 'the server could not be reached.' };
     }
+    // The check was re-run (or a newer memo requested) while this one was drafting: its citations point at
+    // findings that are no longer on screen, so it is dropped.
+    if (token !== state.memoToken) return;
+    state.memo = memo;
     renderMemo();
   }
 
@@ -1152,6 +1169,7 @@
     $('setup').hidden = true;
     $('results').hidden = false;
     state.dossier = DS ? DS.build(state.analyzed, state.result.findings, { requirements: state.requirements }) : null;
+    state.memoToken += 1;
     state.memo = null;
     $('memo-btn').hidden = !(state.ai.available && state.ai.live);
     renderMemo();
@@ -1303,22 +1321,28 @@
     };
   }
 
+  // Server spans count code points; the document text here is indexed in UTF-16 units. Convert before any use.
+  function withLocalSpans(raw, docs) {
+    if (!Array.isArray(raw.spans) || !raw.spans.length || !docs[raw.spans[0].doc]) return null;
+    return Object.assign({}, raw, { spans: FP.convertServerSpans(raw.spans.filter((s) => docs[s.doc]), docs) });
+  }
+
   function mergeOptionalReads(result, payload, docs, reads) {
     const overlaps = (a, b) => a.doc === b.doc && a.start < b.end && b.start < a.end;
     const existing = result.findings.flatMap((f) => f.spans);
     const added = [];
     let overlapped = 0;
-    for (const raw of payload.findings || []) {
-      const span = raw.spans && raw.spans[0];
-      if (!span || !docs[span.doc]) continue;
-      if (existing.some((s) => overlaps(s, span))) { overlapped += 1; continue; }
+    for (const serverRaw of payload.findings || []) {
+      const raw = withLocalSpans(serverRaw, docs);
+      if (!raw) continue;
+      if (existing.some((s) => overlaps(s, raw.spans[0]))) { overlapped += 1; continue; }
       added.push(toFinding(raw, docs));
     }
     const web = payload.web || null;
     let webAdded = 0;
-    for (const raw of (web && web.findings) || []) {
-      const span = raw.spans && raw.spans[0];
-      if (!span || !docs[span.doc]) continue;
+    for (const serverRaw of (web && web.findings) || []) {
+      const raw = withLocalSpans(serverRaw, docs);
+      if (!raw) continue;
       added.push(toFinding(raw, docs));
       webAdded += 1;
     }

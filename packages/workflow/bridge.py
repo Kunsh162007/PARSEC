@@ -63,23 +63,36 @@ def _to_decimal(value: Any) -> Optional[Decimal]:
 
 
 _DASHES = {"—", "–", "-", "— ", "−"}
+_PERIOD_WORDS = re.compile(
+    r"\b(?:years?|ended|ending|quarters?|months|weeks|fiscal|fy|periods?|as\s+of|q[1-4]|h[12]|"
+    r"january|february|march|april|may|june|july|august|september|october|november|december)\b", re.IGNORECASE)
 
 
 def row_values(row: str) -> List[Decimal]:
-    """The numbers in a table row's value cells. Parentheses mean negative; a dash means zero; years are skipped."""
+    """The numbers in a table row's value cells. Parentheses mean negative; a dash means zero.
+
+    A bare 4-digit 19xx/20xx is skipped as a year only where a year is expected: in a cell that also holds words
+    (a date such as "September 30, 2025", or a row without cells), or in a period header row, whose label is empty
+    or speaks of periods ("Year ended", "Three Months Ended"). Elsewhere, "Other items | 2023" is the value 2023."""
     parts = row.split("|")
     cells = parts[1:] if len(parts) > 1 else [row]
+    label = parts[0] if len(parts) > 1 else ""
+    header = len(parts) > 1 and (not label.strip() or bool(_PERIOD_WORDS.search(label)))
     out: List[Decimal] = []
     for cell in cells:
         c = cell.strip()
         if c in _DASHES:
             out.append(Decimal("0"))
             continue
+        years_here = header or bool(re.search(r"[A-Za-z]", c))
         for m in _NUM.findall(c):
             raw = m.strip()
             negative = (raw.startswith("(") and raw.endswith(")")) or raw.startswith("-") or c.startswith("$(")
             digits = re.sub(r"[^\d.]", "", raw)
-            if not digits or (len(digits) == 4 and digits.startswith(("19", "20")) and "," not in raw and "$" not in raw):
+            # A year is a whole number: "20.0" is twenty, not a year.
+            is_year = (len(digits) == 4 and digits.isdigit() and digits.startswith(("19", "20"))
+                       and "," not in raw and "$" not in raw)
+            if not digits or (is_year and years_here):
                 continue
             d = _to_decimal(digits)
             if d is not None:
@@ -102,15 +115,32 @@ def _clean_label(label: str) -> str:
     return label.strip()
 
 
+def _label_precedes(text: str, found, row: str, key: str) -> bool:
+    """The copied row names the line, or the document line names it before the value, or the document line's own
+    label is part of the model's label (a sub-line given with its heading: "Stock compensation expense: Included in
+    cost of services"). Without this, a "row" that is only a number ("1,234,567") would verify against any line
+    that happens to contain that number."""
+    if not key:
+        return bool(re.search(r"[A-Za-z]", row))
+    line_start = text.rfind("\n", 0, found[0]) + 1
+    if key in _norm(row) or key in _norm(text[line_start:found[1]]):
+        return True
+    line_end = text.find("\n", found[1])
+    line = text[line_start:line_end if line_end != -1 else len(text)]
+    own = _norm(_clean_label(line.split("|")[0])) if "|" in line else ""
+    return len(own) >= 4 and own in key
+
+
 def _find_row(text: str, row: str, label: str, value: Decimal):
     """Where the line is in the document: the exact row, the row without added currency signs, or a line with the
-    same label that contains this exact value. In every case the number is traced to a real line."""
-    for candidate in (row, row.replace("$", "")):
-        found = locate_quote(text, candidate) if candidate.strip() else None
-        if found and (value in row_values(text[found[0]:found[1]])):
-            return found
+    same label that contains this exact value. In every case the number is traced to a real line that carries
+    the line's label."""
     label = _clean_label(label)
     key = _norm(label)
+    for candidate in (row, row.replace("$", "")):
+        found = locate_quote(text, candidate) if candidate.strip() else None
+        if found and (value in row_values(text[found[0]:found[1]])) and _label_precedes(text, found, candidate, key):
+            return found
     if len(key) < 4:
         return None
     for m in re.finditer(r"(?m)^.*\|.*$", text):
@@ -227,7 +257,7 @@ def recurs_in_every_period(line: Dict[str, Any]) -> bool:
     return all(v > 0 for v in periods) or all(v < 0 for v in periods)
 
 
-_YEAR = re.compile(r"\b(?:FY\s?'?(\d{2})|(20\d{2}))\b")
+_YEAR = re.compile(r"\b(?:FY\s?'?(20\d{2}|\d{2})|(20\d{2}))\b")  # FY23, FY'23, FY2023, FY 2023, 2023
 _STOP = {"and", "the", "of", "for", "net", "costs", "cost", "expense", "expenses", "other", "related", "charges", "fees"}
 
 
@@ -246,7 +276,8 @@ def ledger_years(label: str, documents: Dict[str, str], skip: str = "") -> Dict[
             if not all(w in low for w in words[:2]) or not re.search(r"\d[\d,]{2,}", line):
                 continue
             for m in _YEAR.finditer(line):
-                years.add(f"20{m.group(1)}" if m.group(1) else m.group(2))
+                fy = m.group(1)
+                years.add((fy if len(fy) == 4 else f"20{fy}") if fy else m.group(2))
             if _YEAR.search(line):
                 lines.append({"document": name, "line": line.strip()[:200]})
     return {"years": sorted(years), "lines": lines[:4]}

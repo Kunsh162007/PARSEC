@@ -27,6 +27,9 @@ RISK_TERMS = (
     "investigated", "probe", "sanction", "recall", "bankrupt", "insolven", "settlement", "indicted",
     "data breach", "cease and desist", "violation", "regulator", "enforcement", "whistleblower",
 )
+# A term must start a word, so "fined" is not found in "refined" nor "sued" in "issued"; endings are allowed, so
+# "sanctions" and "insolvency" still count.
+RISK_PATTERNS = tuple((term, re.compile(rf"\b{re.escape(term)}\w*")) for term in RISK_TERMS)
 QUERY_SUFFIX = "lawsuit OR fined OR investigation OR fraud OR recall OR sanctions OR bankruptcy"
 
 
@@ -64,10 +67,13 @@ def _is_http_url(url: str) -> bool:
 
 
 def _first_mention(documents: List[Dict[str, str]], name: str) -> Optional[Dict[str, int]]:
+    """The name's first span in the documents. The name was rebuilt with single spaces, so the document may have
+    several spaces or a line break between its words: any run of whitespace is accepted there."""
+    pattern = re.compile(r"\s+".join(re.escape(w) for w in name.split()))
     for index, doc in enumerate(documents):
-        at = str(doc.get("text", "")).find(name)
-        if at != -1:
-            return {"doc": index, "start": at, "end": at + len(name)}
+        match = pattern.search(str(doc.get("text", "")))
+        if match:
+            return {"doc": index, "start": match.start(), "end": match.end()}
     return None
 
 
@@ -77,7 +83,7 @@ def _about_entity(result: Dict[str, Any], name: str) -> Optional[str]:
     core = re.sub(rf"\s+{_SUFFIX}$", "", name, flags=re.IGNORECASE).lower()
     if core not in text:
         return None
-    return next((term for term in RISK_TERMS if term in text), None)
+    return next((term for term, pattern in RISK_PATTERNS if pattern.search(text)), None)
 
 
 async def web_check(

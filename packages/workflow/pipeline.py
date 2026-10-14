@@ -62,6 +62,7 @@ def _line_containing(text: str, *needles: str) -> str:
 
 STANDARD_EBITDA_LINES = re.compile(r"interest|tax|depreciation|amortization|amortisation", re.I)
 UNIT_SCALE = {"thousand": Decimal("1000"), "million": Decimal("1000000"), "billion": Decimal("1000000000")}
+MAX_RECONCILIATION_READS = 2  # each read is a paid model call; the CIM and one other candidate are enough
 
 
 def _jsonable(value: Any) -> Any:
@@ -107,7 +108,7 @@ class DiligencePipeline:
             unavailable.append("EBITDA reconciliation reading (no Nebius API key)")
             return None
         last: Optional[Dict[str, Any]] = None
-        for name in dict.fromkeys(candidates):
+        for name in list(dict.fromkeys(candidates))[:MAX_RECONCILIATION_READS]:
             out = await extract_bridge(self.gateway, documents[name])
             out["document"] = name
             last = out
@@ -126,8 +127,17 @@ class DiligencePipeline:
         name, text = rec["document"], documents[rec["document"]]
         units = rec.get("units") or "units as stated"
 
-        def ev(line: Dict[str, Any]):
-            return _span(name, text, text[line["start"]:line["end"]]) if line.get("ok") else None
+        def ev(line: Dict[str, Any]) -> Optional[EvidenceSpan]:
+            # The bridge already located this exact row; re-searching would point a repeated row at its first copy.
+            if not line.get("ok"):
+                return None
+            start, end = line["start"], line["end"]
+            if not (0 <= start < end <= len(text)):
+                return None
+            return EvidenceSpan(
+                document_id=name, document_name=name, page_number=1, exact_text_quote=text[start:end],
+                char_start=start, char_end=end, content_hash=_sha256(text),
+            )
 
         if rec["status"] == "does_not_foot":
             add("FINDING-EBITDA-RECON-UNRESOLVED", title="The Adjusted EBITDA reconciliation could not be made to add up",
@@ -245,6 +255,9 @@ class DiligencePipeline:
 
         self.findings = []
         unavailable: List[str] = []
+        # What this run spends, so a caller can charge it to a budget even when the gateway is shared.
+        cost_before = float(getattr(self.gateway, "total_cost_usd", 0.0) or 0.0)
+        tavily_calls_before = int(getattr(self.tavily, "call_count", 0) or 0)
 
         def add(finding_id: str, **kwargs: Any) -> Finding:
             f = Finding(id=finding_id, **kwargs)
@@ -327,8 +340,10 @@ class DiligencePipeline:
         except Exception as exc:  # a failing service must not take the pipeline down
             web = None
             tavily_state["reason"] = type(exc).__name__
+        # Tavily reports no price, so its spend is counted in requests made, including ones that failed.
+        tavily_state["api_calls"] = int(getattr(self.tavily, "call_count", 0) or 0) - tavily_calls_before
         if web is not None and web.available:
-            tavily_state.update(available=True, api_calls=getattr(self.tavily, "call_count", 0))
+            tavily_state["available"] = True
             for flag in web.flags:
                 src = next((s for s in web.sources if s.get("title") and s["title"] in flag), None)
                 if src is None:
@@ -412,4 +427,5 @@ class DiligencePipeline:
                 "total_cost_usd": self.gateway.total_cost_usd,
             },
             "tavily_meter": tavily_state,
+            "cost_usd": round(max(0.0, float(self.gateway.total_cost_usd) - cost_before), 6),
         }

@@ -1,0 +1,14 @@
+# Keep secrets and bulk out of the Docker build context. Keys are passed at run time with --env-file.
+.env
+.env.*
+!.env.example
+data/
+.git/
+.venv/
+venv/
+node_modules/
+**/__pycache__/
+**/*.pyc
+.pytest_cache/
+*.egg-info/
+.serena/

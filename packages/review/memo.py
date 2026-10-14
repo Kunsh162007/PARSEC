@@ -2,14 +2,16 @@
 
 The model writes prose, which is where invented facts creep in. So the memo is held to the evidence:
 - every point must cite at least one evidence item ([F3], [N2]); a point citing nothing that exists is dropped;
-- every number in a point, in digits or in words, must appear in the evidence it cites; otherwise it is dropped.
+- every number in a point, in digits or in whole words, must appear in the evidence it cites, and a magnitude
+  written after it ("million", "%") must follow the same number there; otherwise the point is dropped.
+  Evidence ids written in the text ([F3], N2) are removed first, so they neither count as figures nor excuse one.
 What was dropped is counted and returned, so the reader knows the memo was edited and why.
 """
 from __future__ import annotations
 
 import json
 import re
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 from packages.gateway.llm import GatewayUnavailable
 
@@ -30,9 +32,6 @@ on. Every number you write must appear in the evidence you cite.
 Reply with JSON only:
 {"sections": [{"heading": "...", "points": [{"text": "...", "cites": ["F1", "N2"]}]}]}
 """
-
-_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
-
 
 def build_evidence(findings: List[Dict[str, Any]], needs: List[Dict[str, Any]]) -> Dict[str, Dict[str, str]]:
     """Numbered evidence items. The text of each is what its citations are checked against."""
@@ -60,14 +59,49 @@ _WORDS = {
 }
 _WORD_RE = re.compile(r"\b(" + "|".join(_WORDS) + r")\b", re.IGNORECASE)
 
+# A magnitude written right after a figure: "3 million", "40%", "12 percent". "3 million" and "3 billion" share the
+# digit 3, so the digit alone proves nothing: the rule is that a figure's magnitude in the memo must also follow that
+# same figure somewhere in the cited evidence. A figure written without a magnitude is checked on the digits only.
+_MAGNITUDE = r"(?:\s*(%|percent|thousand|million|billion)(?![A-Za-z]))?"
+_NUMBER_MAG = re.compile(r"(\d[\d,]*(?:\.\d+)?)" + _MAGNITUDE, re.IGNORECASE)
+_WORD_MAG = re.compile(r"\b(" + "|".join(_WORDS) + r")\b" + _MAGNITUDE, re.IGNORECASE)
 
-def _numbers(text: str) -> List[str]:
-    return [m.replace(",", "") for m in _NUMBER.findall(text)]
+
+def _magnitude(raw: str) -> str:
+    low = (raw or "").lower()
+    return "%" if low == "percent" else low
 
 
-def _number_words(text: str) -> List[str]:
+def _numbers(text: str) -> List[Tuple[str, str]]:
+    """(figure, magnitude) for each figure in digits, e.g. ("12.4", "million"); magnitude is "" when none."""
+    return [(n.replace(",", ""), _magnitude(m)) for n, m in _NUMBER_MAG.findall(text)]
+
+
+def _number_words(text: str) -> List[Tuple[str, str]]:
+    """(word, magnitude) for each figure in words, matched as whole words only ("ten" is not in "content")."""
     # "one" is skipped: as in "one of the parties" it is usually not a figure.
-    return [w.lower() for w in _WORD_RE.findall(text) if w.lower() != "one"]
+    return [(w.lower(), _magnitude(m)) for w, m in _WORD_MAG.findall(text) if w.lower() != "one"]
+
+
+def _strip_ids(text: str, evidence: Dict[str, Dict[str, str]]) -> str:
+    """Remove inline evidence ids (F3, [N12], (F3, N2)) so their digits are not read as figures in the point."""
+    return re.sub(r"\b[FN]\d+\b", lambda m: " " if m.group(0) in evidence else m.group(0), text)
+
+
+def _figures_backed(text: str, backing: str) -> bool:
+    """Every figure in text, in digits or words, appears in backing, with the same magnitude if one is written."""
+    digits = _numbers(backing)
+    words = _number_words(backing)
+    known = {n for n, _ in digits} | {w for w, _ in words}
+    with_magnitude = {pair for pair in digits + words if pair[1]}
+    for figure, magnitude in _numbers(text):
+        if figure not in known or (magnitude and (figure, magnitude) not in with_magnitude):
+            return False
+    for word, magnitude in _number_words(text):
+        forms = {word, str(_WORDS[word])}  # "six" is backed by "six" or by "6"
+        if not forms & known or (magnitude and not any((f, magnitude) in with_magnitude for f in forms)):
+            return False
+    return True
 
 
 def _parse(raw: str) -> List[Dict[str, Any]]:
@@ -98,11 +132,8 @@ def validate_memo(raw: str, evidence: Dict[str, Dict[str, str]]) -> Dict[str, An
             if not text or not cites:
                 uncited += 1
                 continue
-            backing_numbers = set(_numbers(" ".join(evidence[c]["text"] for c in cites)))
-            cite_numbers = {c[1:] for c in cites}  # "F3" -> "3", so an id written in the text is not a claim
-            backing_text = " ".join(evidence[c]["text"] for c in cites).lower()
-            words_ok = all(w in backing_text or str(_WORDS[w]) in backing_numbers for w in _number_words(text))
-            if not words_ok or any(n not in backing_numbers and n not in cite_numbers for n in _numbers(text)):
+            backing_text = " ".join(evidence[c]["text"] for c in cites)
+            if not _figures_backed(_strip_ids(text, evidence), backing_text):
                 unsupported += 1
                 continue
             kept.append({"text": text, "cites": cites})

@@ -79,6 +79,58 @@ test('many documents switch on themes, reading order and duplicate detection', (
   assert.ok(d.duplicates.some((p) => p.a === 0 && p.b === 9));
 });
 
+test('AI, clause and web findings each stand alone as themes; numbered engine ids still group', () => {
+  const docs = Array.from({ length: 9 }, (_, i) => ({ name: `d${i}.txt`, text: `Document ${i}.` }));
+  const at = (doc) => [{ doc, start: 0, end: 5 }];
+  const findings = [
+    { id: 'ai-1', title: 'Uncapped indemnity', severity: 'high', spans: at(0) },
+    { id: 'ai-2', title: 'Key person leaves', severity: 'medium', spans: at(1) },
+    { id: 'ai-3', title: 'Unpaid tax', severity: 'medium', spans: at(2) },
+    { id: 'web-4', title: 'Lawsuit reported', severity: 'high', spans: at(3) },
+    { id: 'clause-cap-1', title: 'Cap on liability', severity: 'low', spans: at(4) },
+    { id: 'clause-cap-2', title: 'Cap on liability', severity: 'low', spans: at(5) },
+    { id: 'leg-missing-1', title: 'Missing provisions', severity: 'medium', spans: at(6) },
+    { id: 'leg-missing-2', title: 'Missing provisions', severity: 'medium', spans: at(7) },
+    { id: 'leg-missing-3', title: 'Missing provisions', severity: 'medium', spans: at(8) },
+    { id: 'int-footing-1', title: 'Total does not add up', severity: 'high', spans: at(0) },
+    { id: 'int-footing-2', title: 'Total does not add up', severity: 'high', spans: at(1) },
+  ];
+  const d = D.build(docs, findings);
+  const byId = Object.fromEntries(d.themes.map((t) => [t.id, t]));
+  for (const id of ['ai-1', 'ai-2', 'ai-3', 'web-4', 'clause-cap-1', 'clause-cap-2']) {
+    assert.ok(byId[id], `${id} is its own theme`);
+    assert.equal(byId[id].occurrences, 1);
+    assert.equal(byId[id].systemic, false);
+  }
+  assert.equal(byId['ai-1'].title, 'Uncapped indemnity');
+  assert.ok(!byId.ai && !byId.web);
+  assert.equal(byId['leg-missing'].occurrences, 3);
+  assert.equal(byId['leg-missing'].systemic, true);
+  assert.equal(byId['int-footing'].occurrences, 2);
+});
+
+test('a line that merely starts with a schedule label does not count as supplying it', () => {
+  const ref = { name: 'a.txt', text: `This agreement is qualified by Schedule 2 and Schedule 1. ${FILLER}` };
+  const prose = { name: 'b.txt', text: `Schedule 2 hereto sets out the pricing that applies to each order placed under this agreement.\nSchedule 1.2 Fees\n${FILLER}` };
+  const d = D.build([ref, prose], []);
+  const supplied = Object.fromEntries(d.references.map((r) => [r.label, r.supplied]));
+  assert.equal(supplied['Schedule 2'], false);
+  assert.equal(supplied['Schedule 1'], false);
+});
+
+test('a schedule heading in a supplied document counts as supplied', () => {
+  const ref = { name: 'a.txt', text: `This agreement is qualified by Schedule 2, Schedule 3, Schedule 4, Schedule 5 and Schedule 6. ${FILLER}` };
+  const sched = {
+    name: 'b.txt',
+    text: `Schedule 2\nPricing\nSchedule 3: Service levels\nSchedule 4 - Key personnel\nSchedule 5 Data Processing Terms\nSCHEDULE 6. Insurance\n${FILLER}`,
+  };
+  const d = D.build([ref, sched], []);
+  const supplied = Object.fromEntries(d.references.map((r) => [r.label, r.supplied]));
+  for (const label of ['Schedule 2', 'Schedule 3', 'Schedule 4', 'Schedule 5', 'Schedule 6']) {
+    assert.equal(supplied[label], true, label);
+  }
+});
+
 test('normal-sized sets do not produce themes or a reading order', () => {
   const d = D.build([contract, accounts], []);
   assert.deepEqual(d.themes, []);

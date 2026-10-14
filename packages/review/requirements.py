@@ -471,9 +471,11 @@ def clean_items(raw_items: Any, documents: List[Dict[str, Any]]) -> List[Dict[st
 #   * name: the shortest (fewest words, then fewest characters) among the members with the winning status, with that
 #     member's description, reason, evidence, note and workstream. Nothing is unioned across members.
 # DEFAULT_SAMPLES is the number of calls determine_requirements makes when the caller does not say. It stays 1: on the
-# 8 sample sets (benchmarks/requirements/stability.py, history/samples_*), run-to-run overlap was 0.25 for single calls,
-# 0.26 for 3-sample consensus at the route's temperature 0.0 (the concurrent calls are strongly correlated), and 0.33
-# at temperature 0.7 only because the lists shrank to 1-7 items. Three times the cost bought no real stability.
+# 8 sample sets (benchmarks/requirements/stability.py, history/samples_*), run-to-run overlap was 0.26 for 3-sample
+# consensus at the route's temperature 0.0 (the concurrent calls are strongly correlated) and 0.33 at temperature 0.7
+# only because the lists shrank to 1-7 items. A single-call baseline of 0.25 was printed during that work, but one of
+# its two files was overwritten; the single-call pairs still saved give 0.15-0.16 across prompt versions. Three times
+# the cost bought no stability that could be shown.
 DEFAULT_SAMPLES = 1
 MAX_SAMPLES = 7
 _PRIORITY_RANK = {p: i for i, p in enumerate(PRIORITIES)}

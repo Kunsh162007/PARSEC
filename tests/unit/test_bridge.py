@@ -161,6 +161,64 @@ def test_ledger_years_finds_a_cost_booked_in_several_years():
     assert ledger_years("Building exit costs", {"ledger.txt": ledger})["years"] == []
 
 
+def test_ledger_years_reads_four_digit_fiscal_years():
+    from packages.workflow.bridge import ledger_years
+
+    ledger = "FY2023 Legal Fees 1,150,000\nFY 2024 Legal Fees 1,180,000\nFY'22 Legal Fees 1,100,000"
+    assert ledger_years("Legal Fees", {"ledger.txt": ledger})["years"] == ["2022", "2023", "2024"]
+
+
+def test_a_bare_number_row_does_not_verify_against_a_line_with_another_label():
+    from packages.workflow.bridge import _find_row
+
+    text = "Revenue | 1,234,567 | 1,100,000\nLegal fees | 50,000 | 40,000\n"
+    assert _find_row(text, "1,234,567", "Legal fees", Decimal("1234567")) is None
+    found = _find_row(text, "1,234,567", "Revenue", Decimal("1234567"))
+    assert found is not None and text[found[0]:found[1]].startswith(("Revenue", "1,234,567"))
+
+
+def test_a_sub_line_labelled_with_its_heading_still_verifies():
+    # Found on the real benchmark (Select Medical): the model prefixes the group heading to the sub-line's label.
+    from packages.workflow.bridge import _find_row
+
+    text = "Stock compensation expense:\nIncluded in general and administrative | 8,560 | 9,658\n"
+    found = _find_row(text, "Included in general and administrative | 8,560 | 9,658",
+                      "Stock compensation expense: Included in general and administrative", Decimal("8560"))
+    assert found is not None and text[found[0]:found[1]].startswith("Included in general")
+
+
+def test_a_bare_number_row_does_not_verify_in_running_text_without_its_label_before_it():
+    from packages.workflow.bridge import _find_row
+
+    text = "Total revenue was 1,234,567 for the year. Legal fees were 50,000."
+    assert _find_row(text, "1,234,567", "Legal fees", Decimal("1234567")) is None
+
+
+def test_an_unformatted_value_that_looks_like_a_year_is_still_a_value():
+    assert row_values("Other income | 2023 | 1,950") == [Decimal("2023"), Decimal("1950")]
+
+
+def test_a_decimal_like_20_0_is_never_mistaken_for_a_year():
+    # Found on the real benchmark (Koppers 20.0, EnLink (19.0)): "20.0" was dropped as if it were the year 2000-ish.
+    assert row_values("Impairment, restructuring and plant closure costs | 20.0 | 0.0") == [Decimal("20.0"), Decimal("0.0")]
+    assert row_values("Plant closure costs 20.0 and (19.5) in total") == [Decimal("20.0"), Decimal("-19.5")]
+
+
+def test_years_in_a_period_header_row_are_not_values():
+    assert row_values("Year ended December 31 | 2023 | 2022") == []
+    assert row_values(" | 2025 | 2024") == []
+    assert row_values("Three Months Ended | September 30, 2025 | September 30, 2024") == [Decimal("30"), Decimal("30")]
+
+
+def test_a_line_whose_value_is_2023_is_traced():
+    text = "Net income | 5,000 | 4,000\nOther items | 2023 | 1,950\nAdjusted EBITDA | 7,023 | 5,950\n"
+    raw = json.dumps({"period": "2024", "units": "",
+                      "start": line("Net income", 5000, "Net income | 5,000 | 4,000"),
+                      "adjustments": [line("Other items", 2023, "Other items | 2023 | 1,950")],
+                      "total": line("Adjusted EBITDA", 7023, "Adjusted EBITDA | 7,023 | 5,950")})
+    assert verify_bridge(raw, text)["status"] == "foots"
+
+
 def test_pipeline_flags_recurring_add_backs_and_ledger_matches_with_evidence():
     ledger = "Management accounts\nFY22 Stock-based compensation expense 1,100,000\nFY23 Stock-based compensation expense 1,300,000"
     pipeline = DiligencePipeline(gateway=BridgeGateway(), tavily=DownTavily())

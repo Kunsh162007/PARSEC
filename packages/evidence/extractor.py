@@ -3,6 +3,12 @@ from decimal import Decimal
 from typing import List, Dict, Any, Tuple
 from packages.compute.lib import AddBackItem
 
+_UNIT_MULTIPLIERS = {
+    "thousand": Decimal(1_000), "k": Decimal(1_000),
+    "million": Decimal(1_000_000), "m": Decimal(1_000_000), "mm": Decimal(1_000_000),
+    "billion": Decimal(1_000_000_000), "bn": Decimal(1_000_000_000),
+}
+
 class DocumentExtractionWorker:
     """
     Tier 2 Extraction Worker (Nemotron 3 Super capability).
@@ -12,18 +18,21 @@ class DocumentExtractionWorker:
 
     @staticmethod
     def extract_base_ebitda(cim_text: str) -> Tuple[Decimal, str]:
-        """Extract reported unadjusted EBITDA and its verbatim span."""
+        """Extract reported unadjusted EBITDA and its verbatim span. A unit written after the figure ("$7.0 million",
+        "$850k", "$1.2bn") is applied, so the value is always in units of currency."""
+        amount = r"\$?([0-9,]+(?:\.[0-9]+)?)(?:[ \t]*(thousand|million|billion|mm|bn|k|m)\b)?"
         patterns = [
-            r"Reported Unadjusted EBITDA:\s*\$?([0-9,]+(?:\.[0-9]+)?)",
-            r"Base Operating EBITDA:\s*\$?([0-9,]+(?:\.[0-9]+)?)",
-            r"Unadjusted EBITDA:\s*\$?([0-9,]+(?:\.[0-9]+)?)"
+            r"Reported Unadjusted EBITDA:\s*" + amount,
+            r"Base Operating EBITDA:\s*" + amount,
+            r"Unadjusted EBITDA:\s*" + amount,
         ]
         for pat in patterns:
             match = re.search(pat, cim_text, re.IGNORECASE)
             if match:
                 clean_num = match.group(1).replace(",", "")
+                unit = (match.group(2) or "").lower()
                 span = match.group(0)
-                return Decimal(clean_num), span
+                return Decimal(clean_num) * _UNIT_MULTIPLIERS.get(unit, Decimal(1)), span
         return Decimal("0.00"), ""
 
     @staticmethod
@@ -39,13 +48,16 @@ class DocumentExtractionWorker:
         # "1. Base Operating EBITDA: $7,000,000" (ignored, handled by base EBITDA)
         # "2. Management Restructuring & Severance: +$600,000 (One-time...)"
         # "- Add-back: Litigation Legal Fees: +$1,200,000 (Non-recurring...)"
-        pattern = r"(?:(?:\d+\.|\-)\s*)([^\:\n]+):\s*\+\$?([0-9,]+(?:\.[0-9]+)?)\s*(?:\(([^)]+)\))?"
+        # An optional "Add-back:" lead-in before the title is not part of the title.
+        pattern = (r"(?:(?:\d+\.|\-)\s*)(?:(?i:add[- ]?backs?)\s*:\s*)?([^\:\n]+):\s*\+\$?([0-9,]+(?:\.[0-9]+)?)"
+                   r"\s*(?:\(([^)]+)\))?")
         matches = re.findall(pattern, cim_text)
 
         idx = 1
         for title, amt_str, rationale in matches:
             title_clean = title.strip()
-            if "ebitda" in title_clean.lower() or "base" in title_clean.lower():
+            # Whole words: "Database Migration Costs" is an add-back, "Base Operating EBITDA" is not.
+            if re.search(r"\b(?:base|ebitda)\b", title_clean, re.IGNORECASE):
                 continue
 
             clean_amt = Decimal(amt_str.replace(",", ""))

@@ -117,7 +117,10 @@ class LLMGateway:
                 last = f"{model}: {type(exc).__name__}"
             else:
                 if resp.status_code == 200:
-                    data = resp.json()
+                    try:
+                        data = resp.json()
+                    except ValueError:
+                        raise GatewayUnavailable(f"{model}: HTTP 200 but the response body was not JSON")
                     try:
                         choice = data["choices"][0]
                         content = choice["message"]["content"]
@@ -193,9 +196,11 @@ class LLMGateway:
             if clean.endswith("```"):
                 clean = clean[:-3]
             try:
-                parsed_json = json.loads(clean.strip())
+                parsed = json.loads(clean.strip())
             except (ValueError, TypeError):
-                parsed_json = None
+                parsed = None
+            # Only an object is a parsed answer; an array or a bare value stays readable in content.
+            parsed_json = parsed if isinstance(parsed, dict) else None
 
         res = GatewayResponse(
             content=content,

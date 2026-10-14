@@ -78,3 +78,61 @@ def test_from_env_reads_configuration(monkeypatch):
 def test_from_env_ignores_garbage_values(monkeypatch):
     monkeypatch.setenv("REVIEW_RATE_PER_MINUTE", "lots")
     assert ReviewGuard.from_env().per_minute == 6
+
+
+def test_concurrent_reservations_cannot_overshoot_the_budget():
+    guard = ReviewGuard(daily_budget_usd=0.10, clock=Clock())
+    first = guard.reserve(0.05)
+    second = guard.reserve(0.05)
+    assert first is not None and second is not None
+    # Both requests are still running and nothing is recorded yet; a third must wait for them.
+    assert guard.reserve(0.05) is None
+    assert guard.budget_ok() is False
+
+
+def test_settling_charges_the_actual_cost_and_frees_the_estimate():
+    guard = ReviewGuard(daily_budget_usd=0.10, clock=Clock())
+    with guard.reserve(0.08) as spend:
+        spend.record(0.01)
+    assert guard.status()["budget_remaining_usd"] == 0.09
+    assert guard.reserve(0.05) is not None
+
+
+def test_a_failed_call_releases_its_reservation():
+    guard = ReviewGuard(daily_budget_usd=0.10, clock=Clock())
+    try:
+        with guard.reserve(0.10):
+            raise RuntimeError("model down")
+    except RuntimeError:
+        pass
+    assert guard.budget_ok() is True
+    assert guard.status()["budget_remaining_usd"] == 0.10
+
+
+def test_reservations_are_safe_across_threads():
+    import threading
+
+    guard = ReviewGuard(daily_budget_usd=1.0, clock=Clock())
+    granted = []
+    barrier = threading.Barrier(50)
+
+    def worker():
+        barrier.wait()
+        granted.append(guard.reserve(0.1))
+
+    threads = [threading.Thread(target=worker) for _ in range(50)]
+    for t in threads:
+        t.start()
+    for t in threads:
+        t.join()
+    assert sum(1 for g in granted if g is not None) == 10
+
+
+def test_idle_clients_are_pruned_from_the_rate_table():
+    clock = Clock()
+    guard = ReviewGuard(per_minute=3, clock=clock)
+    for n in range(100):
+        guard.rate_ok(f"10.0.0.{n}")
+    clock.now += 61
+    guard.rate_ok("1.1.1.1")
+    assert set(guard._hits) == {"1.1.1.1"}

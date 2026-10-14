@@ -162,3 +162,16 @@ def test_an_empty_answer_with_no_fallback_left_reports_the_reason():
     gw = LLMGateway(api_key="k", transport=httpx.MockTransport(handler), retries=0, retry_delay=0)
     with pytest.raises(GatewayUnavailable, match="finish_reason=length"):
         asyncio.run(gw.complete("clause_verification_json", [{"role": "user", "content": "x"}], use_cache=False))
+
+
+def test_a_json_array_reply_keeps_its_content_but_is_not_parsed_as_an_object():
+    gateway = make_gateway(lambda request: ok('[{"quote": "x"}]'))
+    res = run(gateway.complete(task="document_review_json", messages=[{"role": "user", "content": "x"}], use_cache=False))
+    assert res.content == '[{"quote": "x"}]'
+    assert res.parsed_json is None
+
+
+def test_a_non_json_success_body_is_reported_as_unavailable():
+    gateway = make_gateway(lambda request: httpx.Response(200, text="<html>gateway error</html>"))
+    with pytest.raises(GatewayUnavailable, match="not JSON"):
+        run(gateway.complete(task="document_review_json", messages=[{"role": "user", "content": "x"}], use_cache=False))
