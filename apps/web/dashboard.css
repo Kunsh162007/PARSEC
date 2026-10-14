@@ -1,0 +1,48 @@
+/* Additions for the data-driven dashboard. Variables come from index.css. */
+.muted { color: var(--text-muted); font-size: 0.875rem; }
+.is-error { color: var(--accent-rose); }
+.link { background: none; border: 0; color: var(--text-main); text-decoration: underline; cursor: pointer; padding: 4px; }
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.form-grid label, label.wide { display: grid; gap: 0.35rem; font-size: 0.85rem; color: var(--text-muted); }
+label.wide { margin-top: 1rem; }
+input[type="text"], input[type="number"], select, textarea, input[type="file"] {
+  background: var(--bg-card-subtle); border: 1px solid var(--border-color); color: var(--text-main);
+  border-radius: 8px; padding: 0.6rem 0.8rem; font: inherit; width: 100%; box-sizing: border-box;
+}
+textarea { resize: vertical; font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.85rem; }
+:focus-visible { outline: 3px solid var(--accent-cyan); outline-offset: 2px; }
+
+.doc-list { list-style: none; padding: 0; margin: 1rem 0 0; display: grid; gap: 0.35rem; }
+.doc-list:empty { display: none; }
+.doc-list li { display: flex; justify-content: space-between; gap: 1rem; font-size: 0.875rem; }
+.actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem; margin-top: 1.25rem; }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.notice { margin: 1rem 0; padding: 0.75rem 1rem; border-left: 4px solid var(--accent-amber); background: rgba(245, 158, 11, 0.08); font-size: 0.9rem; }
+.stat-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+#results { margin-top: 1.5rem; }
+
+button.finding-card { display: grid; gap: 0.4rem; width: 100%; text-align: left; font: inherit; color: inherit; cursor: pointer; margin-bottom: 0.75rem; }
+.finding-card .finding-header { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; }
+.finding-desc { font-size: 0.85rem; color: #cbd5e1; }
+
+.bridge { width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 1rem; }
+.bridge th, .bridge td { padding: 0.65rem 0.5rem; border-bottom: 1px solid var(--border-color); text-align: left; }
+.bridge .num { text-align: right; font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.bridge .center { text-align: center; }
+
+.kc { padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 6px; border: 1px solid var(--border-color); background: rgba(15, 23, 42, 0.6); }
+.kc-head { display: flex; justify-content: space-between; gap: 1rem; align-items: center; }
+.kc-not_tested { opacity: 0.8; }
+.ic-list { padding-left: 1.25rem; display: grid; gap: 0.6rem; font-size: 0.9rem; }
+.plain-list { padding-left: 1.1rem; font-size: 0.9rem; display: grid; gap: 0.3rem; }
+
+.modal-overlay[hidden] { display: none; }
+.modal-overlay { display: flex; }
+.modal-head { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1rem; }
+.modal-head h2 { font-size: 1.15rem; margin: 0; }
+.icon-btn { background: none; border: 1px solid var(--border-color); color: var(--text-main); border-radius: 6px; padding: 0.35rem 0.7rem; cursor: pointer; }
+.evidence { margin: 1rem 0; }
+pre.quote { white-space: pre-wrap; overflow-wrap: anywhere; background: #0f172a; border: 1px solid #334155; padding: 1rem; border-radius: 8px; font-size: 0.85rem; color: #38bdf8; margin: 0.4rem 0; }
+.hash { font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.7rem; overflow-wrap: anywhere; }

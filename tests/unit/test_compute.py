@@ -80,3 +80,26 @@ def test_footing_reconciliation():
     res_fail = ComputeLib.verify_footing(line_items, 651.00)
     assert res_fail.passed is False
     assert len(res_fail.discrepancies) == 1
+
+
+def test_concentration_denominator_includes_buckets_but_they_are_never_ranked():
+    from packages.compute.lib import ComputeLib
+
+    customers = [
+        {"name": "Atlas", "revenue": 4_100_000},
+        {"name": "Nordic", "revenue": 1_900_000},
+        {"name": "Remaining SMB accounts", "revenue": 4_000_000, "is_bucket": True},
+    ]
+    result = ComputeLib.calculate_customer_concentration(customers)
+    assert float(result.top_customer_pct) == 41.0           # 4.1M of 10.0M total, not of 6.0M
+    assert result.is_concentration_critical is True
+    assert all(b["name"] != "Remaining SMB accounts" for b in result.customer_breakdown)
+
+
+def test_only_buckets_means_no_named_customer_to_rank():
+    from packages.compute.lib import ComputeLib
+
+    result = ComputeLib.calculate_customer_concentration(
+        [{"name": "All other accounts", "revenue": 1_000_000, "is_bucket": True}])
+    assert float(result.top_customer_pct) == 0.0
+    assert result.is_concentration_critical is False

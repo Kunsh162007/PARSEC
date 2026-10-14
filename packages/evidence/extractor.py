@@ -53,31 +53,44 @@ class DocumentExtractionWorker:
             evidence_span = ""
             source_doc = "Management Accounts"
 
+            lowered = title_clean.lower()
+
+            def has_word(words: List[str]) -> bool:
+                # Whole words only: "it" must not match inside "Acquisition" or "Capital".
+                return any(re.search(rf"\b{re.escape(w)}\b", lowered) for w in words)
+
+            def ledger_line(text: str, pattern: str) -> str:
+                # The first ledger line that shows the repeating cost: real text from the document, or "".
+                m = re.search(rf"^.*(?:{pattern}).*$", text, re.IGNORECASE | re.MULTILINE)
+                return m.group(0).strip() if m else ""
+
             # Check severance / restructuring / one-off separation
-            if any(w in title_clean.lower() for w in ["severance", "restructuring", "separation", "realignment"]):
+            if has_word(["severance", "restructuring", "separation", "realignment"]):
                 note_match = re.search(r"(?:Note \d+|Executive|Workforce):[^\n]+", accounts_text)
-                evidence_span = note_match.group(0) if note_match else "One-time executive separation payment"
+                evidence_span = note_match.group(0) if note_match else ""
                 is_recurring = False
 
             # Check legal / environmental / regulatory counsel
-            elif any(w in title_clean.lower() for w in ["legal", "litigation", "compliance", "regulatory", "epa"]):
+            elif has_word(["legal", "litigation", "compliance", "regulatory", "epa"]):
                 # Check Table 1: Legal ledger
                 table1_text = accounts_text[:accounts_text.find("Table 2")] if "Table 2" in accounts_text else accounts_text
                 fy_matches = re.findall(r"(?:FY\d{2}|20\d{2})\s*(?:Legal|Retainer|Counsel)", table1_text, re.IGNORECASE)
                 if len(fy_matches) >= 2 or "annual" in table1_text.lower():
                     is_recurring = True
                     note_match = re.search(r"(?:Audit Note \d+|Note \d+|Ledger):[^\n]+", table1_text)
-                    evidence_span = note_match.group(0) if note_match else "Recurring annual legal retainer"
+                    evidence_span = note_match.group(0) if note_match else ledger_line(
+                        table1_text, r"(?:FY\d{2}|20\d{2})\s*(?:Legal|Retainer|Counsel)")
 
             # Check software / ERP / modernization / sustaining tooling maintenance
-            elif any(w in title_clean.lower() for w in ["erp", "it", "software", "modernization", "subscription", "maintenance", "tooling", "equipment"]):
+            elif has_word(["erp", "it", "software", "modernization", "subscription", "maintenance", "tooling", "equipment"]):
                 # Check Table 2: Maintenance ledger
                 table2_text = accounts_text[accounts_text.find("Table 2"):] if "Table 2" in accounts_text else accounts_text
                 fy_matches = re.findall(r"(?:FY\d{2}|20\d{2})\s*(?:SaaS|Cloud|ERP|Software|Tooling|Maintenance)", table2_text, re.IGNORECASE)
                 if len(fy_matches) >= 2 or "annual" in table2_text.lower() or "recurring" in table2_text.lower():
                     is_recurring = True
                     note_match = re.search(r"(?:GL Account \d+|Account \d+|Ledger):[^\n]+", table2_text)
-                    evidence_span = note_match.group(0) if note_match else "Routine sustaining maintenance/licenses"
+                    evidence_span = note_match.group(0) if note_match else ledger_line(
+                        table2_text, r"(?:FY\d{2}|20\d{2})\s*(?:SaaS|Cloud|ERP|Software|Tooling|Maintenance)|recurring|annual")
 
             candidates.append(AddBackItem(
                 id=f"AB-{idx}",
@@ -99,11 +112,30 @@ class DocumentExtractionWorker:
         customers = []
         lines = waterfall_text.splitlines()
         for line in lines:
-            match = re.search(r"(?:Client\s*\d+\s*\(([^)]+)\)|([A-Za-z0-9\s]+)):\s*\$?([0-9,]+(?:\.[0-9]+)?)", line)
+            # Anchored at the start of the line: a customer row begins with the customer's name. Searching
+            # mid-line picked up fragments of ledger notes such as "GL Account 6420: Ongoing recurring: $300,000".
+            match = re.match(
+                r"^\s*(?:[-*]\s*)?(?:Client\s*\d+\s*\(([^)]+)\)|([A-Za-z0-9][A-Za-z0-9 &.\-]*?))\s*:\s*\$?([0-9,]+(?:\.[0-9]+)?)",
+                line,
+            )
             if match:
                 name = (match.group(1) or match.group(2)).strip()
                 amt_str = match.group(3).replace(",", "")
                 rev = float(amt_str)
-                if rev > 0 and "total enterprise" not in name.lower() and "total" not in name.lower():
-                    customers.append({"name": name, "revenue": rev})
+                # A "Total" line repeats the revenue and is not a customer at all. A bucket of many small accounts
+                # ("Remaining SMB accounts") is real revenue but not one customer: it stays in the denominator
+                # and is flagged so it is never ranked as a single customer.
+                if re.search(r"\btotal\b", name, re.IGNORECASE):
+                    continue
+                # Ledger and note lines ("FY22 Legal Fees: $1,150,000", "Audit Note 12: ...") are not customers.
+                if re.match(r"^\s*(?:FY\s?\d{2,4}|(?:19|20)\d{2})\b", name, re.IGNORECASE):
+                    continue
+                if re.search(r"\b(?:fees?|costs?|expenses?|ebitda|subscriptions?|maintenance|retainers?|"
+                             r"audit note|gl account|table \d+|note \d+)\b", name, re.IGNORECASE):
+                    continue
+                is_bucket = bool(re.search(
+                    r"\b(?:remaining|others?|smb|various|miscellaneous|sundry|all other|aggregate)\b",
+                    name, re.IGNORECASE))
+                if rev > 0:
+                    customers.append({"name": name, "revenue": rev, "is_bucket": is_bucket})
         return customers

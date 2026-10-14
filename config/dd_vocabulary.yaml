@@ -1,0 +1,255 @@
+# Reference vocabulary for due diligence requests, compiled from the public sources listed under `sources`.
+# It is NOT a checklist. Nothing here decides what a file needs: the model decides that from the documents, and may
+# borrow a standard name from this list when one fits. Items are never added because they appear here.
+# Workstream ids are consumed by the review UI; keep them exactly as written.
+
+sources:
+  - https://carta.com/wp-content/uploads/2023/03/Sample-due-diligence-request-list.pdf
+  - https://files.klgates.com/files/uploads/documents/ma_event/rtac-acc_cle_sampleduediligencelist.pdf
+  - https://pro.bloomberglaw.com/insights/contracts/ma-due-diligence-checklist
+  - https://cassels.com/wp-content/uploads/ScheduleA-DueDiligenceRequestList_CasselsCPD.pdf
+  - https://www.americanbar.org/groups/young_lawyers/resources/after-the-bar/practice-areas/conducting-legal-due-diligence-in-ma-transactions
+  - https://www.smartsheet.com/sites/default/files/IC-M-and-A-Buyer-Due-Diligence-Checklist-Template-10584_PDF.pdf
+  - https://www.govern365.com/blog/ma/ma-due-diligence-checklist
+  - https://www.kroll.com/en/publications/critical-role-proof-cash-reconciliation-financial-due-diligence
+  - https://www.v7labs.com/blog/quality-of-earnings-analysis
+  - https://www.plantemoran.com/explore-our-thinking/insight/2025/04/navigating-state-and-local-tax-nexus-issues-during-ma-due-diligence
+  - https://www.bdemerson.com/article/soc-2-cybersecurity-ma-due-diligence
+  - https://www.praetorian.com/security-101/ma-cybersecurity-due-diligence
+  - https://www.thompsoncoburn.com/insights/due-diligence-checklist-for-commercial-real-estate-acquisitions-2
+  - https://impactbuying.com/environmental-due-diligence
+  - https://www.neotas.com/esg-due-diligence-checklist-for-m-and-a-transactions
+  - https://www.descartes.com/resources/knowledge-center/how-export-compliance-due-diligence-can-mitigate-compliance-risks
+  - https://www.venable.com/insights/publications/ip-quick-bytes/intellectual-property-due-diligence-red-flags
+  - https://www.upcounsel.com/ip-due-diligence-checklist
+  - https://soteriahr.com/hr-due-diligence-checklist
+  - https://www.deel.com/blog/hr-due-diligence-in-ma
+  - https://mariopeshev.com/commercial-due-diligence-red-flags-in-b2b-businesses
+  - https://www.diligent.com/resources/blog/mergers-acquisitions-due-diligence-checklist
+
+workstreams:
+  financial:
+    requested:
+      - "Audited financial statements (3 years) and interim statements"
+      - "Quality of earnings report (QoE)"
+      - "EBITDA bridge / schedule of adjustments (add-back schedule)"
+      - "Monthly trial balance and general ledger detail"
+      - "Net working capital analysis / NWC peg"
+      - "AR aging and AP aging"
+      - "Inventory valuation and obsolescence analysis"
+      - "Debt schedule / loan agreements"
+      - "Budget and projections"
+      - "Auditor management letters"
+      - "Proof of cash / bank statements"
+      - "Capex history"
+      - "Revenue by customer/product"
+      - "Debt covenant compliance certificates (no-default certificates)"
+    red_flags:
+      - "Aggressive revenue recognition or cut-off issues"
+      - "Unsupported or excessive EBITDA add-backs"
+      - "EBITDA rising while operating cash flow falls, rising DSO"
+      - "NWC peg set on a convenient month"
+      - "Related-party transactions not at arm's length"
+      - "Scope limitations in the QoE"
+
+  legal:
+    requested:
+      - "Charter/articles and bylaws/operating agreement"
+      - "Board and stockholder minutes and written consents"
+      - "Cap table"
+      - "Stockholder, voting and ROFR agreements"
+      - "Equity plans and award agreements"
+      - "409A valuation reports"
+      - "Corporate structure chart / subsidiary list"
+      - "Good standing certificates"
+      - "Material contracts"
+      - "Related-party agreements"
+      - "Litigation schedule"
+      - "Attorney audit response letters"
+      - "Insurance policies and loss runs"
+      - "UCC lien, judgment and litigation searches"
+      - "Broker/finder fee agreements"
+    red_flags:
+      - "Cap table not reconciling to stock ledger"
+      - "Change-of-control or anti-assignment consents in material contracts"
+      - "Non-compete, exclusivity or MFN restrictions"
+      - "Accelerated payments or vesting on the transaction"
+      - "Defaults under financing agreements"
+      - "Undisclosed or recently settled litigation"
+
+  commercial:
+    requested:
+      - "Top customers list and contracts (top 10-15)"
+      - "Top suppliers list and contracts"
+      - "Sole-source supply agreements"
+      - "Revenue by customer, product and channel"
+      - "Customer cohort / retention analysis (GRR, NRR, churn)"
+      - "KPI dashboard (ARR/MRR, LTV/CAC)"
+      - "Sales pipeline / CRM export"
+      - "Market studies and analyst reports"
+      - "Competitor list"
+      - "Standard terms and conditions and warranty terms"
+      - "Distributor/reseller agreements"
+    red_flags:
+      - "Customer concentration without contractual lock-in"
+      - "Change-of-control termination rights in top customer contracts"
+      - "NRR below 100% or churn hidden by aggregate growth"
+      - "Projections far above history or market, revenue spike before sale"
+      - "CRM data contradicting reported bookings"
+
+  tax:
+    requested:
+      - "Income tax returns (3 closed years plus open years)"
+      - "Tax audit history and notices (revenue agent reports)"
+      - "Statute of limitations waivers"
+      - "Tax sharing/allocation agreements"
+      - "Sales and use tax returns and nexus study"
+      - "Payroll tax filings (Forms 940/941)"
+      - "Property tax filings"
+      - "NOL schedule and Section 382 analysis"
+      - "Transfer pricing study"
+      - "R&D credit documentation"
+      - "Sales tax exemption certificates"
+      - "Tax provision / book-to-tax reconciliation"
+    red_flags:
+      - "Nexus in states without filings"
+      - "Successor liability for unpaid state and local taxes"
+      - "Missing or invalid exemption certificates"
+      - "Open audits and transfer pricing adjustments"
+      - "Missed unitary/combined filings"
+
+  people:
+    requested:
+      - "Employee census"
+      - "Org chart"
+      - "Employment agreements and offer letters"
+      - "Change-in-control, severance, retention and transaction bonus agreements"
+      - "PIIA / invention assignment agreements"
+      - "Benefit plan documents (SPDs, Form 5500, determination letters, actuarial reports)"
+      - "Collective bargaining agreements"
+      - "Employee handbook"
+      - "Independent contractor list and Forms 1099"
+      - "Form I-9 sample"
+      - "EEO-1 reports"
+      - "Terminations in the last 2 years (WARN)"
+      - "Employment litigation and agency charges"
+      - "OSHA logs and inspections"
+    red_flags:
+      - "Contractor or exempt misclassification"
+      - "Wage-and-hour violations"
+      - "Change-of-control payouts and guaranteed bonuses"
+      - "Unfunded benefit or pension obligations"
+      - "Key-person dependency or high turnover"
+      - "Employment class actions"
+
+  it_security:
+    requested:
+      - "SOC 2 Type II report"
+      - "ISO 27001 certificate"
+      - "PCI DSS attestation of compliance (AOC)"
+      - "Penetration test reports (last 2-3)"
+      - "Vulnerability scan results"
+      - "Security incident / breach history (3-5 years)"
+      - "Information security policies"
+      - "IT asset / systems inventory"
+      - "Network / architecture diagrams"
+      - "BCP/DR plan and test results"
+      - "Vendor inventory / third-party risk assessments"
+      - "Software license agreements"
+      - "Privacy policy, DPAs, data inventory / data map"
+    red_flags:
+      - "Same critical pen-test finding open across tests"
+      - "Undisclosed incidents or evasive answers"
+      - "SOC 2 carved-down scope or exceptions"
+      - "No MFA, shared admin credentials, no EDR or central logging"
+      - "Missing or untested backups, unpatched critical internet-facing vulnerabilities"
+      - "Privacy policy not matching practice"
+
+  esg_environmental:
+    requested:
+      - "Phase I environmental site assessment (Phase I ESA, ASTM E1527-21)"
+      - "Phase II ESA"
+      - "Environmental permits"
+      - "Notices of violation and consent decrees"
+      - "Hazardous materials and waste records"
+      - "Underground storage tank (UST) records"
+      - "CERCLA PRP notices"
+      - "Remediation reports"
+      - "Asbestos survey"
+      - "GHG emissions data (Scope 1/2/3)"
+      - "Sustainability / ESG report"
+      - "Climate risk assessment"
+      - "Modern slavery statement / supplier code of conduct"
+    red_flags:
+      - "Recognized environmental conditions (RECs) in the Phase I"
+      - "USTs, releases, vapor intrusion, PFAS"
+      - "Unreported violations or fines"
+      - "Child or forced labour in the supply chain"
+      - "Undisclosed emissions or greenwashing risk"
+      - "Phase I older than 180 days at closing (single source)"
+
+  real_estate:
+    requested:
+      - "Owned/leased property schedule"
+      - "Deeds and vesting documents"
+      - "Title commitment / owner's title insurance policy"
+      - "ALTA/NSPS survey"
+      - "Leases with amendments and side letters"
+      - "Certified rent roll"
+      - "Tenant estoppel certificates"
+      - "SNDA (subordination, non-disturbance and attornment agreement)"
+      - "Zoning report and certificate of occupancy"
+      - "Property condition assessment (PCA)"
+      - "Mortgages / deeds of trust"
+      - "Security deposit ledger"
+      - "Service contracts"
+    red_flags:
+      - "Title exceptions or encroachments not matching the survey"
+      - "Estoppel terms conflicting with the lease, undisclosed tenant defaults"
+      - "Open code violations or non-permitted use"
+      - "ROFRs, co-tenancy or termination rights surviving a sale"
+      - "Delinquencies or unexpired free-rent periods"
+      - "Roof, MEP or ADA failures in the PCA"
+
+  regulatory:
+    requested:
+      - "Licenses and permits schedule"
+      - "Regulator correspondence and inspection reports"
+      - "Required government consents / merger-control analysis"
+      - "Anti-corruption (FCPA / UK Bribery Act) policies and training"
+      - "List of third-party intermediaries"
+      - "Export classification (ECCN/ITAR)"
+      - "Encryption registration"
+      - "Sanctions/OFAC screening records"
+      - "Government contracts and FAR/DFARS compliance"
+      - "Privacy compliance records (GDPR/CCPA)"
+      - "Whistleblower complaints"
+      - "Consent decrees and orders"
+    red_flags:
+      - "Missing or expired permits"
+      - "Dealings with SDNs or embargoed countries"
+      - "Payments to officials via intermediaries"
+      - "Pending bribery or export-control investigations"
+      - "Government contracts needing novation"
+      - "Breaches not properly notified"
+
+  ip:
+    requested:
+      - "IP schedule (patents, trademarks, copyrights, domains)"
+      - "Chain of title / recorded assignments"
+      - "Invention assignment / PIIA and confidentiality agreements"
+      - "Inbound license agreements"
+      - "Outbound license agreements"
+      - "Open source inventory (OSS audit)"
+      - "Source code escrow / source code disclosures"
+      - "Infringement claims and demand letters"
+      - "Freedom-to-operate (FTO) analysis"
+      - "Maintenance/renewal fee records"
+      - "Government or university funding agreements"
+    red_flags:
+      - "Missing employee or contractor IP assignments"
+      - "IP or domains registered to a founder"
+      - "Lapsed or abandoned registrations"
+      - "Open source licence non-compliance (copyleft in distributed products)"
+      - "Pending IP litigation"
+      - "Weak trade secret protection"

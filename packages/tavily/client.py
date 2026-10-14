@@ -1,89 +1,92 @@
 import os
+import re
+from typing import Any, Dict, List, Optional
+
 import httpx
-from typing import List, Dict, Any, Optional
 from pydantic import BaseModel
+
+from packages.common.envfile import load_env_defaults
+
+SEARCH_URL = "https://api.tavily.com/search"
+RESULTS_PER_QUERY = 8
+LITIGATION_TERMS = ("litigation", "lawsuit", "dispute", "class action", "sued", "fined", "investigation", "fraud")
+_SUFFIX = r"(?:Inc|Incorporated|Corp|Corporation|Ltd|Limited|plc|LLC|LLP|GmbH|AG|Co|Company|Holdings|Group)"
+
+
+class TavilyUnavailable(Exception):
+    """No real Tavily result is available (no key, or the request failed). Nothing is simulated."""
+
 
 class RealityCheckResult(BaseModel):
     query: str
-    claims_verified: bool
-    reality_score: float  # 0.0 to 1.0 (1.0 = fully corroborated)
-    flags: List[str]
-    sources: List[Dict[str, str]]
+    available: bool = True
+    reason: str = ""
+    claims_verified: Optional[bool] = None   # None when the check could not run
+    flags: List[str] = []
+    sources: List[Dict[str, str]] = []
+
 
 class TavilyRealityEngine:
     """
-    Tavily-powered outside-in screening and reality check engine.
-    Checks external litigation, executive departures, market size credibility, and competitor pricing.
+    Outside-in screening with the Tavily Search API.
+
+    Only real search results are ever returned. Without a key, or when a request fails, the result says the
+    check was unavailable; it never substitutes invented results or scores. Results are kept only if they
+    actually name the target company, so a search for one company cannot flag another company's lawsuit.
     """
 
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or os.getenv("TAVILY_API_KEY", "mock-tavily-key")
-        self.base_url = "https://api.tavily.com"
+        if api_key is None:
+            load_env_defaults()
+            api_key = os.getenv("TAVILY_API_KEY", "")
+        self.api_key = api_key.strip()
         self.call_count = 0
         self.cache: Dict[str, Any] = {}
 
-    async def search(self, query: str, search_depth: str = "advanced") -> Dict[str, Any]:
-        self.call_count += 1
+    @property
+    def is_configured(self) -> bool:
+        return bool(self.api_key)
+
+    async def search(self, query: str, search_depth: str = "basic") -> Dict[str, Any]:
+        if not self.is_configured:
+            raise TavilyUnavailable("TAVILY_API_KEY is not set.")
         if query in self.cache:
             return self.cache[query]
-
-        if self.api_key and not self.api_key.startswith("mock"):
-            try:
-                async with httpx.AsyncClient(timeout=30.0) as client:
-                    resp = await client.post(
-                        f"{self.base_url}/search",
-                        json={
-                            "api_key": self.api_key,
-                            "query": query,
-                            "search_depth": search_depth,
-                            "include_answer": True
-                        }
-                    )
-                    data = resp.json()
-                    self.cache[query] = data
-                    return data
-            except Exception:
-                pass
-
-        # Realistic fallback simulation for local testing
-        simulated = {
-            "query": query,
-            "answer": "External market checks reveal ongoing sector deceleration and active patent dispute.",
-            "results": [
-                {
-                    "title": "Sector Legal Ledger: Ongoing Trade Secret Litigation",
-                    "url": "https://legal-monitor.com/cases/2024-cv-8912",
-                    "content": "Federal court docket shows active patent litigation filed against key subsidiary in Q3 2024.",
-                    "score": 0.94
-                },
-                {
-                    "title": "Industry Market Benchmark 2024",
-                    "url": "https://tech-benchmarks.org/reports/saas-2024",
-                    "content": "Peer median growth rate is 14% vs company claimed 35%. Pricing pressure increasing across core customer cohort.",
-                    "score": 0.88
-                }
-            ]
-        }
-        self.cache[query] = simulated
-        return simulated
+        self.call_count += 1
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                resp = await client.post(
+                    SEARCH_URL,
+                    headers={"Authorization": f"Bearer {self.api_key}"},
+                    json={"query": query, "search_depth": search_depth, "max_results": RESULTS_PER_QUERY},
+                )
+        except httpx.HTTPError as exc:
+            raise TavilyUnavailable(f"Tavily request failed: {type(exc).__name__}") from exc
+        if resp.status_code != 200:
+            raise TavilyUnavailable(f"Tavily returned HTTP {resp.status_code}")
+        data = resp.json()
+        self.cache[query] = data
+        return data
 
     async def verify_external_claims(self, company_name: str, claims: List[str]) -> RealityCheckResult:
         query = f"{company_name} litigation regulatory actions customer controversies"
-        data = await self.search(query)
-        
-        flags = []
-        sources = []
-        for r in data.get("results", []):
-            sources.append({"title": r.get("title", ""), "url": r.get("url", ""), "snippet": r.get("content", "")[:120]})
-            content_lower = r.get("content", "").lower()
-            if "litigation" in content_lower or "dispute" in content_lower or "lawsuit" in content_lower:
-                flags.append(f"Unsettled litigation detected: {r.get('title')}")
+        try:
+            data = await self.search(query)
+        except TavilyUnavailable as exc:
+            return RealityCheckResult(query=query, available=False, reason=str(exc))
 
-        reality_score = 0.55 if flags else 0.92
+        core = re.sub(rf"\s+{_SUFFIX}\.?$", "", company_name.strip(), flags=re.IGNORECASE).lower()
+        results = [
+            r for r in data.get("results", [])
+            if core and core in f"{r.get('title', '')} {r.get('content', '')}".lower()
+        ]
+        sources: List[Dict[str, str]] = []
+        flags: List[str] = []
+        for r in results:
+            sources.append({"title": r.get("title", ""), "url": r.get("url", ""), "snippet": r.get("content", "")[:240]})
+            text = f"{r.get('title', '')} {r.get('content', '')}".lower()
+            if any(term in text for term in LITIGATION_TERMS):
+                flags.append(f"Public sources mention a dispute: {r.get('title')}")
         return RealityCheckResult(
-            query=query,
-            claims_verified=len(flags) == 0,
-            reality_score=reality_score,
-            flags=flags,
-            sources=sources
+            query=query, available=True, claims_verified=len(flags) == 0, flags=flags, sources=sources,
         )

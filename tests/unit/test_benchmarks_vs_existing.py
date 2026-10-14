@@ -6,10 +6,9 @@ from packages.evidence.extractor import DocumentExtractionWorker
 
 def test_financial_competitor_comparison_metric():
     """
-    Demonstrates PARSEC's superiority over naive LLM Diligence tools:
-    1. Zero Hallucination: Decimal precision vs float/LLM drift
-    2. Exact Span Verification: Every number is guaranteed to exist verbatim in source
-    3. Adversarial Immunity: Disguised recurring items identified across multiple fiscal years
+    Arithmetic check on hand-typed inputs: the EBITDA bridge uses Decimal, so it does not drift the way float
+    arithmetic does, and a disallowed add-back is priced at amount times multiple. This tests the maths. It says
+    nothing about how well add-backs are found in real documents.
     """
     # 1. Naive LLM failure mode: Floating point drift on large enterprise values
     # In standard floating point, cumulative operations on large financial amounts suffer precision drift:

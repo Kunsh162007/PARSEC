@@ -1,0 +1,173 @@
+{
+  "status": "ok",
+  "generated_at": "2026-10-13T04:27:20+00:00",
+  "dataset": {
+    "name": "CUAD v1 (Contract Understanding Atticus Dataset)",
+    "origin": "510 real commercial contracts from SEC EDGAR, clauses labeled by lawyers",
+    "license": "CC BY 4.0",
+    "citation": "Hendrycks, Burns, Chen, Ball. CUAD: An Expert-Annotated NLP Dataset for Legal Contract Review. NeurIPS 2021. The Atticus Project, CC BY 4.0. DOI 10.5281/zenodo.4595826.",
+    "contracts_total": 510,
+    "contracts_scored": 255,
+    "split": "dev",
+    "label_offsets_not_matching_text": 0,
+    "sample_seed": null
+  },
+  "baseline": {
+    "share_of_text_inside_a_mapped_clause": 0.0474,
+    "meaning": "A rule that highlighted text at random would have about this precision."
+  },
+  "rules": {
+    "categories": {
+      "Anti-Assignment": {
+        "contracts_with_clause": 190,
+        "detected": 162,
+        "recall": 0.853
+      },
+      "Change Of Control": {
+        "contracts_with_clause": 62,
+        "detected": 34,
+        "recall": 0.548
+      },
+      "Exclusivity": {
+        "contracts_with_clause": 81,
+        "detected": 67,
+        "recall": 0.827
+      },
+      "Ip Ownership Assignment": {
+        "contracts_with_clause": 62,
+        "detected": 39,
+        "recall": 0.629
+      },
+      "Joint Ip Ownership": {
+        "contracts_with_clause": 26,
+        "detected": 20,
+        "recall": 0.769
+      },
+      "Liquidated Damages": {
+        "contracts_with_clause": 32,
+        "detected": 17,
+        "recall": 0.531
+      },
+      "Minimum Commitment": {
+        "contracts_with_clause": 89,
+        "detected": 22,
+        "recall": 0.247
+      },
+      "Most Favored Nation": {
+        "contracts_with_clause": 11,
+        "detected": 1,
+        "recall": 0.091
+      },
+      "No-Solicit Of Customers": {
+        "contracts_with_clause": 16,
+        "detected": 5,
+        "recall": 0.312
+      },
+      "No-Solicit Of Employees": {
+        "contracts_with_clause": 32,
+        "detected": 16,
+        "recall": 0.5
+      },
+      "Non-Compete": {
+        "contracts_with_clause": 63,
+        "detected": 17,
+        "recall": 0.27
+      },
+      "Renewal Term": {
+        "contracts_with_clause": 85,
+        "detected": 43,
+        "recall": 0.506
+      },
+      "Rofr/Rofo/Rofn": {
+        "contracts_with_clause": 42,
+        "detected": 15,
+        "recall": 0.357
+      },
+      "Termination For Convenience": {
+        "contracts_with_clause": 92,
+        "detected": 60,
+        "recall": 0.652
+      },
+      "Uncapped Liability": {
+        "contracts_with_clause": 49,
+        "detected": 13,
+        "recall": 0.265
+      }
+    },
+    "rules": {
+      "leg-assignment": {
+        "hits": 256,
+        "on_label": 195,
+        "on_any_label": 219,
+        "contracts_fired": 167,
+        "precision": 0.762,
+        "precision_any_label": 0.855
+      },
+      "leg-autorenew": {
+        "hits": 52,
+        "on_label": 43,
+        "on_any_label": 44,
+        "contracts_fired": 47,
+        "precision": 0.827,
+        "precision_any_label": 0.846
+      },
+      "leg-coc": {
+        "hits": 254,
+        "on_label": 95,
+        "on_any_label": 119,
+        "contracts_fired": 66,
+        "precision": 0.374,
+        "precision_any_label": 0.469
+      },
+      "leg-ip": {
+        "hits": 244,
+        "on_label": 115,
+        "on_any_label": 129,
+        "contracts_fired": 69,
+        "precision": 0.471,
+        "precision_any_label": 0.529
+      },
+      "leg-penalty": {
+        "hits": 236,
+        "on_label": 107,
+        "on_any_label": 118,
+        "contracts_fired": 51,
+        "precision": 0.453,
+        "precision_any_label": 0.5
+      },
+      "leg-restrictive": {
+        "hits": 927,
+        "on_label": 247,
+        "on_any_label": 340,
+        "contracts_fired": 177,
+        "precision": 0.266,
+        "precision_any_label": 0.367
+      },
+      "leg-tfc": {
+        "hits": 299,
+        "on_label": 74,
+        "on_any_label": 111,
+        "contracts_fired": 133,
+        "precision": 0.247,
+        "precision_any_label": 0.371
+      },
+      "leg-unlimited": {
+        "hits": 33,
+        "on_label": 16,
+        "on_any_label": 20,
+        "contracts_fired": 25,
+        "precision": 0.485,
+        "precision_any_label": 0.606
+      }
+    }
+  },
+  "notes": [
+    "Recall: of contracts where a lawyer labeled a clause category, how many had a finding overlapping it.",
+    "Precision is a lower bound: a clause the labelers did not mark counts as a miss here.",
+    "Only categories Fine Print has rules for are scored; the rest of CUAD's 41 categories are not."
+  ],
+  "ai": {
+    "ran": false,
+    "reason": "not requested (use --ai N)"
+  }
+}

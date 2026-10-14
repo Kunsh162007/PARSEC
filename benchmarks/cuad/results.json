@@ -1,0 +1,374 @@
+{
+  "status": "ok",
+  "generated_at": "2026-10-13T04:35:30+00:00",
+  "dataset": {
+    "name": "CUAD v1 (Contract Understanding Atticus Dataset)",
+    "origin": "510 real commercial contracts from SEC EDGAR, clauses labeled by lawyers",
+    "license": "CC BY 4.0",
+    "citation": "Hendrycks, Burns, Chen, Ball. CUAD: An Expert-Annotated NLP Dataset for Legal Contract Review. NeurIPS 2021. The Atticus Project, CC BY 4.0. DOI 10.5281/zenodo.4595826.",
+    "contracts_total": 510,
+    "contracts_scored": 255,
+    "split": "test",
+    "label_offsets_not_matching_text": 0,
+    "sample_seed": null
+  },
+  "baseline": {
+    "share_of_text_inside_a_mapped_clause": 0.0458,
+    "meaning": "A rule that highlighted text at random would have about this precision."
+  },
+  "rules": {
+    "categories": {
+      "Anti-Assignment": {
+        "contracts_with_clause": 184,
+        "detected": 157,
+        "recall": 0.853
+      },
+      "Change Of Control": {
+        "contracts_with_clause": 59,
+        "detected": 27,
+        "recall": 0.458
+      },
+      "Exclusivity": {
+        "contracts_with_clause": 99,
+        "detected": 72,
+        "recall": 0.727
+      },
+      "Ip Ownership Assignment": {
+        "contracts_with_clause": 62,
+        "detected": 41,
+        "recall": 0.661
+      },
+      "Joint Ip Ownership": {
+        "contracts_with_clause": 20,
+        "detected": 11,
+        "recall": 0.55
+      },
+      "Liquidated Damages": {
+        "contracts_with_clause": 29,
+        "detected": 12,
+        "recall": 0.414
+      },
+      "Minimum Commitment": {
+        "contracts_with_clause": 76,
+        "detected": 19,
+        "recall": 0.25
+      },
+      "Most Favored Nation": {
+        "contracts_with_clause": 17,
+        "detected": 3,
+        "recall": 0.176
+      },
+      "No-Solicit Of Customers": {
+        "contracts_with_clause": 18,
+        "detected": 4,
+        "recall": 0.222
+      },
+      "No-Solicit Of Employees": {
+        "contracts_with_clause": 27,
+        "detected": 17,
+        "recall": 0.63
+      },
+      "Non-Compete": {
+        "contracts_with_clause": 56,
+        "detected": 29,
+        "recall": 0.518
+      },
+      "Renewal Term": {
+        "contracts_with_clause": 91,
+        "detected": 47,
+        "recall": 0.516
+      },
+      "Rofr/Rofo/Rofn": {
+        "contracts_with_clause": 43,
+        "detected": 21,
+        "recall": 0.488
+      },
+      "Termination For Convenience": {
+        "contracts_with_clause": 91,
+        "detected": 63,
+        "recall": 0.692
+      },
+      "Uncapped Liability": {
+        "contracts_with_clause": 62,
+        "detected": 15,
+        "recall": 0.242
+      }
+    },
+    "rules": {
+      "leg-assignment": {
+        "hits": 271,
+        "on_label": 212,
+        "on_any_label": 238,
+        "contracts_fired": 164,
+        "precision": 0.782,
+        "precision_any_label": 0.878
+      },
+      "leg-autorenew": {
+        "hits": 63,
+        "on_label": 48,
+        "on_any_label": 48,
+        "contracts_fired": 49,
+        "precision": 0.762,
+        "precision_any_label": 0.762
+      },
+      "leg-coc": {
+        "hits": 182,
+        "on_label": 66,
+        "on_any_label": 94,
+        "contracts_fired": 65,
+        "precision": 0.363,
+        "precision_any_label": 0.516
+      },
+      "leg-ip": {
+        "hits": 210,
+        "on_label": 98,
+        "on_any_label": 108,
+        "contracts_fired": 65,
+        "precision": 0.467,
+        "precision_any_label": 0.514
+      },
+      "leg-penalty": {
+        "hits": 161,
+        "on_label": 80,
+        "on_any_label": 92,
+        "contracts_fired": 43,
+        "precision": 0.497,
+        "precision_any_label": 0.571
+      },
+      "leg-restrictive": {
+        "hits": 1091,
+        "on_label": 291,
+        "on_any_label": 391,
+        "contracts_fired": 188,
+        "precision": 0.267,
+        "precision_any_label": 0.358
+      },
+      "leg-tfc": {
+        "hits": 284,
+        "on_label": 69,
+        "on_any_label": 110,
+        "contracts_fired": 138,
+        "precision": 0.243,
+        "precision_any_label": 0.387
+      },
+      "leg-unlimited": {
+        "hits": 45,
+        "on_label": 17,
+        "on_any_label": 24,
+        "contracts_fired": 36,
+        "precision": 0.378,
+        "precision_any_label": 0.533
+      }
+    }
+  },
+  "notes": [
+    "Recall: of contracts where a lawyer labeled a clause category, how many had a finding overlapping it.",
+    "Precision is a lower bound: a clause the labelers did not mark counts as a miss here.",
+    "Only categories Fine Print has rules for are scored; the rest of CUAD's 41 categories are not."
+  ],
+  "ai": {
+    "ran": true,
+    "models": {
+      "super": "nvidia/nemotron-3-super-120b-a12b"
+    },
+    "usage": {
+      "tokens": 614947,
+      "cost_usd": 0.4567,
+      "errors": 0,
+      "truncated_contracts": 5,
+      "failed_chunks": 12
+    },
+    "score": {
+      "contracts_scored": 30,
+      "findings": 289,
+      "findings_per_contract": 9.63,
+      "precision_mapped_labels": 0.125,
+      "precision_any_label": 0.266,
+      "labeled_spans_excluded_beyond_read_window": 2,
+      "categories": {
+        "Anti-Assignment": {
+          "contracts_with_clause": 25,
+          "detected": 5,
+          "recall": 0.2
+        },
+        "Change Of Control": {
+          "contracts_with_clause": 7,
+          "detected": 3,
+          "recall": 0.429
+        },
+        "Exclusivity": {
+          "contracts_with_clause": 10,
+          "detected": 1,
+          "recall": 0.1
+        },
+        "Ip Ownership Assignment": {
+          "contracts_with_clause": 10,
+          "detected": 2,
+          "recall": 0.2
+        },
+        "Joint Ip Ownership": {
+          "contracts_with_clause": 4,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "Liquidated Damages": {
+          "contracts_with_clause": 2,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "Minimum Commitment": {
+          "contracts_with_clause": 12,
+          "detected": 5,
+          "recall": 0.417
+        },
+        "Most Favored Nation": {
+          "contracts_with_clause": 1,
+          "detected": 0,
+          "recall": 0.0
+        },
+        "No-Solicit Of Customers": {
+          "contracts_with_clause": 1,
+          "detected": 1,
+          "recall": 1.0
+        },
+        "No-Solicit Of Employees": {
+          "contracts_with_clause": 5,
+          "detected": 1,
+          "recall": 0.2
+        },
+        "Non-Compete": {
+          "contracts_with_clause": 10,
+          "detected": 4,
+          "recall": 0.4
+        },
+        "Renewal Term": {
+          "contracts_with_clause": 7,
+          "detected": 1,
+          "recall": 0.143
+        },
+        "Rofr/Rofo/Rofn": {
+          "contracts_with_clause": 7,
+          "detected": 2,
+          "recall": 0.286
+        },
+        "Termination For Convenience": {
+          "contracts_with_clause": 14,
+          "detected": 4,
+          "recall": 0.286
+        },
+        "Uncapped Liability": {
+          "contracts_with_clause": 8,
+          "detected": 1,
+          "recall": 0.125
+        }
+      }
+    },
+    "rules_vs_model_vs_either": {
+      "Anti-Assignment": {
+        "contracts_with_clause": 25,
+        "rules": 19,
+        "model": 5,
+        "either": 19,
+        "either_recall": 0.76
+      },
+      "Change Of Control": {
+        "contracts_with_clause": 7,
+        "rules": 6,
+        "model": 3,
+        "either": 6,
+        "either_recall": 0.857
+      },
+      "Exclusivity": {
+        "contracts_with_clause": 10,
+        "rules": 8,
+        "model": 1,
+        "either": 8,
+        "either_recall": 0.8
+      },
+      "Ip Ownership Assignment": {
+        "contracts_with_clause": 10,
+        "rules": 6,
+        "model": 2,
+        "either": 7,
+        "either_recall": 0.7
+      },
+      "Joint Ip Ownership": {
+        "contracts_with_clause": 4,
+        "rules": 2,
+        "model": 0,
+        "either": 2,
+        "either_recall": 0.5
+      },
+      "Liquidated Damages": {
+        "contracts_with_clause": 2,
+        "rules": 2,
+        "model": 0,
+        "either": 2,
+        "either_recall": 1.0
+      },
+      "Minimum Commitment": {
+        "contracts_with_clause": 12,
+        "rules": 3,
+        "model": 5,
+        "either": 8,
+        "either_recall": 0.667
+      },
+      "Most Favored Nation": {
+        "contracts_with_clause": 1,
+        "rules": 0,
+        "model": 0,
+        "either": 0,
+        "either_recall": 0.0
+      },
+      "No-Solicit Of Customers": {
+        "contracts_with_clause": 1,
+        "rules": 0,
+        "model": 1,
+        "either": 1,
+        "either_recall": 1.0
+      },
+      "No-Solicit Of Employees": {
+        "contracts_with_clause": 5,
+        "rules": 4,
+        "model": 1,
+        "either": 4,
+        "either_recall": 0.8
+      },
+      "Non-Compete": {
+        "contracts_with_clause": 10,
+        "rules": 2,
+        "model": 4,
+        "either": 5,
+        "either_recall": 0.5
+      },
+      "Renewal Term": {
+        "contracts_with_clause": 7,
+        "rules": 4,
+        "model": 1,
+        "either": 4,
+        "either_recall": 0.571
+      },
+      "Rofr/Rofo/Rofn": {
+        "contracts_with_clause": 7,
+        "rules": 4,
+        "model": 2,
+        "either": 5,
+        "either_recall": 0.714
+      },
+      "Termination For Convenience": {
+        "contracts_with_clause": 14,
+        "rules": 8,
+        "model": 4,
+        "either": 10,
+        "either_recall": 0.714
+      },
+      "Uncapped Liability": {
+        "contracts_with_clause": 8,
+        "rules": 1,
+        "model": 1,
+        "either": 2,
+        "either_recall": 0.25
+      }
+    }
+  }
+}

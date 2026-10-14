@@ -1,0 +1,804 @@
+{
+  "generated_at": "2026-10-13T12:37:33+00:00",
+  "note": "Model output on real document sets, kept for human review. Not a score.",
+  "sets": [
+    {
+      "name": "Licence agreement",
+      "documents": [
+        "AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content License Agreement.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Due diligence review of material contracts for a potential acquisition of Allied Esports Entertainment, Inc.",
+      "items": [
+        {
+          "name": "Additional Provisions attachment to the Joint Content License Agreement",
+          "name_known": true,
+          "what_it_is": "The exhibit containing definitions and supplementary terms incorporated by reference in the agreement.",
+          "why_needed": "The agreement states definitions are set forth in the Additional Provisions; without it key terms are undefined.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Signature pages / execution copy of the Joint Content License Agreement",
+          "name_known": true,
+          "what_it_is": "The final signed pages showing the parties' authorized representatives and dates of execution.",
+          "why_needed": "To confirm the agreement was validly executed and binding on the parties.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Board of Directors resolution authorizing WPT to enter the agreement",
+          "name_known": true,
+          "what_it_is": "Corporate resolution approving the content license agreement and delegating authority to sign.",
+          "why_needed": "Required to verify WPT had proper internal authority to bind itself under the agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Organizational chart of WPT and its affiliates (including Zynga entities)",
+          "name_known": true,
+          "what_it_is": "Diagram showing parent\u2011subsidiary relationships and affiliate entities referenced in the agreement.",
+          "why_needed": "The agreement defines 'Zynga' to include affiliates; the chart clarifies which entities are bound.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Schedule of all material contracts of Allied Esports Entertainment",
+          "name_known": true,
+          "what_it_is": "List of significant agreements (licenses, partnerships, debt, etc.) to which the company is a party.",
+          "why_needed": "To assess cumulative obligations, exclusivity conflicts, and change\u2011of\u2011control provisions.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Most recent audited financial statements of Allied Esports Entertainment",
+          "name_known": true,
+          "what_it_is": "Balance sheet, income statement, cash flow statement, and accompanying notes audited by an independent CPA.",
+          "why_needed": "Needed to evaluate the financial impact of the license agreement and overall company health.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Federal and state tax returns for the last three years",
+          "name_known": true,
+          "what_it_is": "Completed corporate tax returns (Form 1120, state equivalents) and related schedules.",
+          "why_needed": "To identify tax liabilities, credits, and any positions that could affect post\u2011closing value.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Litigation, claims, and contingent liability schedule",
+          "name_known": true,
+          "what_it_is": "Summary of pending or threatened lawsuits, arbitrations, regulatory investigations, and indemnities.",
+          "why_needed": "To assess risks that could affect the value or enforceability of the licensed content.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Intellectual property register (including ZYNGA POKER\u00ae trademarks)",
+          "name_known": true,
+          "what_it_is": "Catalog of owned and licensed patents, trademarks, copyrights, and domain names with status and renewal dates.",
+          "why_needed": "To verify that the IP underlying the licensed game is properly protected and enforceable.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Complete SEC filings (8\u2011K, 10\u2011Q, 10\u2011K) referencing the agreement",
+          "name_known": true,
+          "what_it_is": "The full periodic reports where the agreement is disclosed as an exhibit or described in MD&A.",
+          "why_needed": "To confirm public disclosure compliance and see any additional context or amendments reported.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.002508
+    },
+    {
+      "name": "Franchise agreement",
+      "documents": [
+        "AIRTECHINTERNATIONALGROUPINC_05_08_2000-EX-10.4-FRANCHISE AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Due diligence review of a franchise acquisition involving AirSopure International Group, Inc.",
+      "items": [
+        {
+          "name": "Franchise Disclosure Document (FDD)",
+          "name_known": true,
+          "what_it_is": "Legal disclosure document containing Items 1\u201123 required for franchise offerings.",
+          "why_needed": "To verify all statutory disclosures and assess risks inherent in the franchise system.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Audited financial statements of AirSopure International Group, Inc.",
+          "name_known": true,
+          "what_it_is": "Audited balance sheet, income statement, cash flow for the last three fiscal years.",
+          "why_needed": "To evaluate franchisor\u2019s financial stability and ability to support franchisees.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Current franchisee list with contact information",
+          "name_known": true,
+          "what_it_is": "Spreadsheet or database of all active franchisees, including addresses and phone numbers.",
+          "why_needed": "To contact franchisees for validation of performance and satisfaction.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Litigation history summary",
+          "name_known": true,
+          "what_it_is": "Document detailing any past, pending, or threatened lawsuits involving the franchisor.",
+          "why_needed": "To identify legal exposures that could affect the franchise system.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Trademark registration certificates for Licensed Marks",
+          "name_known": true,
+          "what_it_is": "USPTO registration certificates for 'AIRSOPURE' and related marks.",
+          "why_needed": "To confirm ownership and enforceability of the licensed intellectual property.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Sample lease agreement for a typical franchise location",
+          "name_known": true,
+          "what_it_is": "Template or actual lease used by franchisees for premises.",
+          "why_needed": "To assess real\u2011estate obligations and potential hidden costs.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Insurance certificates (general liability, property)",
+          "name_known": true,
+          "what_it_is": "Certificates of insurance showing coverage limits and effective dates.",
+          "why_needed": "To verify compliance with the INSURANCE section and adequacy of protection.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "UCC search report for liens on franchisor assets",
+          "name_known": true,
+          "what_it_is": "Report from state UCC filings showing any secured interests.",
+          "why_needed": "To detect encumbrances that could affect asset transfers or financing.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "note": ""
+        },
+        {
+          "name": "Operations Manual (sample)",
+          "name_known": true,
+          "what_it_is": "Copy of the confidential manual referenced in section 8 governing daily operations.",
+          "why_needed": "To evaluate operational standards, training, and consistency across units.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "low",
+          "note": "A section with a similar heading exists in AIRTECHINTERNATIONALGROUPINC_05_08_2000-EX-10.4-FRANCHISE AGREEMENT.txt: \"8.  OPERATIONS MANUAL\". Check whether it is what is needed."
+        },
+        {
+          "name": "Franchisor tax returns (last three years)",
+          "name_known": true,
+          "what_it_is": "Signed federal and state tax returns filed by AirSopure International Group, Inc.",
+          "why_needed": "To uncover undisclosed tax liabilities or aggressive positions.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.00331
+    },
+    {
+      "name": "Endorsement agreement",
+      "documents": [
+        "ADAMSGOLFINC_03_21_2005-EX-10.17-ENDORSEMENT AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Due diligence review of material contracts (the Tom Watson endorsement agreement) for a securities offering or M&A transaction involving Adams Golf, Ltd.",
+      "items": [
+        {
+          "name": "Complete, unredacted Endorsement Agreement (Exhibit 10.17)",
+          "name_known": true,
+          "what_it_is": "The full endorsement contract without redactions, showing all compensation, term, and obligations.",
+          "why_needed": "To assess total financial exposure and compliance with disclosure requirements.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Confidential Treatment Request filing with the SEC",
+          "name_known": true,
+          "what_it_is": "The letter and supporting documents requesting confidential treatment for redacted portions.",
+          "why_needed": "To verify legitimacy of redactions and ensure no material information is improperly hidden.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "note": "A section with a similar heading exists in ADAMSGOLFINC_03_21_2005-EX-10.17-ENDORSEMENT AGREEMENT.txt: \"CONFIDENTIAL TREATMENT REQUESTED\". Check whether it is what is needed."
+        },
+        {
+          "name": "Board of Directors approval or minutes authorizing the agreement",
+          "name_known": true,
+          "what_it_is": "Corporate resolution or meeting minutes showing Adams Golf\u2019s board endorsed the deal.",
+          "why_needed": "Confirms proper corporate authority and avoids claims of ultra vires.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Executed signature page of the Endorsement Agreement",
+          "name_known": true,
+          "what_it_is": "Page bearing signatures of Tom Watson and Adams Golf representative with dates.",
+          "why_needed": "Validates that the agreement is enforceable and not merely a draft.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Underlying SEC filing (e.g., Form 10-K or 8-K) where Exhibit 10.17 is attached",
+          "name_known": true,
+          "what_it_is": "The periodic report containing the exhibit index and contextual disclosures.",
+          "why_needed": "Places the contract in the company\u2019s reporting obligations and assesses materiality.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Adams Golf\u2019s audited financial statements for the fiscal year covering the agreement",
+          "name_known": true,
+          "what_it_is": "Balance sheet, income statement, cash flow statement and notes for the relevant year.",
+          "why_needed": "To evaluate the financial impact of compensation and performance bonuses.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "note": "A section with a similar heading exists in ADAMSGOLFINC_03_21_2005-EX-10.17-ENDORSEMENT AGREEMENT.txt: \"ADAMS GOLF'S OBLIGATIONS\". Check whether it is what is needed."
+        },
+        {
+          "name": "Any amendments, waivers, or side letters to the Endorsement Agreement post\u20112005",
+          "name_known": true,
+          "what_it_is": "Written modifications extending term, altering compensation, or adding obligations.",
+          "why_needed": "Ensures the current obligations reflect the parties\u2019 latest understanding.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Related\u2011party disclosure and conflict\u2011of\u2011interest policy applicable to Adams Golf",
+          "name_known": true,
+          "what_it_is": "Corporate governance document outlining how endorsements with individuals are reviewed.",
+          "why_needed": "Checks whether the agreement was properly vetted for conflicts.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Insurance or indemnity coverage documents for Adams Golf\u2019s obligations under Sections 14 & 21",
+          "name_known": true,
+          "what_it_is": "Policies or self\u2011insurance arrangements covering indemnity payments to Watson.",
+          "why_needed": "Assesses ability to satisfy indemnity liabilities if triggered.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Trademark and licensing verification for Adams Golf\u2019s golf clubs referenced in the agreement",
+          "name_known": true,
+          "what_it_is": "USPTO registrations or license agreements showing Adams Golf\u2019s rights to the clubs.",
+          "why_needed": "Confirms the company can lawfully grant the endorsement rights contemplated.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.004204
+    },
+    {
+      "name": "Services agreement",
+      "documents": [
+        "ABILITYINC_06_15_2020-EX-4.25-SERVICES AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Due diligence review of a services agreement between Provider and Recipients (Telcostar Pte Ltd and Ability Computer & Software Industries Ltd) to assess contractual obligations, performance, and risk.",
+      "items": [
+        {
+          "name": "Services Agreement (core document)",
+          "name_known": true,
+          "what_it_is": "The main agreement governing services between Provider and Recipients.",
+          "why_needed": "Baseline for all obligations and rights.",
+          "status": "supplied",
+          "evidence": "SERVICES AGREEMENT This Services Agreement (this \"Agreement\") is entered into on October 1, 2019 and is made effective as of November 1, 2019 (the \"Effective Date\"), by and between [ * * * ] (the \"Provider\"), and TELCOSTAR PTE, LTD., a company organized and existing under the laws of Singapore and Ability Computer & Software Industries Ltd, a company organized and existing under the laws of the State of Israel (each and both of them \"Recipient\").",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Exhibit A \u2013 Service Description",
+          "name_known": true,
+          "what_it_is": "Schedule detailing the specific services, deliverables, timelines, and performance metrics to be provided under the agreement.",
+          "why_needed": "To verify scope of services matches business needs and assess performance obligations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Amendment and Waiver Log",
+          "name_known": true,
+          "what_it_is": "Record of any amendments, waivers, or side letters to the Services Agreement since its effective date.",
+          "why_needed": "To understand changes that may affect obligations, fees, or termination rights.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Invoice and Payment Records",
+          "name_known": true,
+          "what_it_is": "Billing statements and proof of payment for services rendered under the agreement.",
+          "why_needed": "To confirm compliance with payment terms and identify any arrears or overcharges.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Insurance Certificates",
+          "name_known": true,
+          "what_it_is": "Certificates of liability, cyber, and professional indemnity insurance held by the Provider.",
+          "why_needed": "To ensure adequate coverage for risks arising from service delivery.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Data Protection / Privacy Compliance Documentation",
+          "name_known": true,
+          "what_it_is": "Evidence of compliance with GDPR, PDPA, or other relevant data protection laws (e.g., DPA, privacy impact assessment).",
+          "why_needed": "Because the agreement likely involves processing personal or confidential data.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Provider\u2019s Audited Financial Statements (last 2 years)",
+          "name_known": true,
+          "what_it_is": "Audited balance sheet, income statement, cash flow, and notes for the Provider.",
+          "why_needed": "To assess Provider\u2019s financial capacity to perform services and meet obligations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Conflict of Interest Disclosures",
+          "name_known": true,
+          "what_it_is": "Statements from Provider and Recipients disclosing any relationships that could create a conflict.",
+          "why_needed": "To evaluate potential bias or breach of exclusivity clauses.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "note": ""
+        },
+        {
+          "name": "Regulatory Approvals or Licenses",
+          "name_known": true,
+          "what_it_is": "Any government or industry licenses required for the Provider to deliver the services (e.g., telecom, software export).",
+          "why_needed": "To verify legality of service provision under applicable jurisdictions.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.003308
+    },
+    {
+      "name": "SEC enforcement order",
+      "documents": [
+        "sec-order-latch.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Review of SEC administrative settlement concerning Latch, Inc.'s revenue recognition violations under ASC 606 to assess financial, legal, and remedial implications.",
+      "items": [
+        {
+          "name": "Offer of Settlement",
+          "name_known": true,
+          "what_it_is": "The settlement offer submitted by Latch to the SEC resolving the cease\u2011and\u2011desist proceeding.",
+          "why_needed": "To determine monetary penalties, injunctive terms, and any admission\u2011equivalent obligations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Internal Investigation and Restatement Report",
+          "name_known": true,
+          "what_it_is": "Report of Latch's internal review and the resulting restatement of financials due to revenue recognition errors.",
+          "why_needed": "To quantify the misstatement and evaluate adequacy of remedial actions.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"Respondent\u2019s Internal Investigation and Restatement\". Check whether it is what is needed."
+        },
+        {
+          "name": "Restated Financial Statements",
+          "name_known": true,
+          "what_it_is": "Revised GAAP financial statements (e.g., 10\u2011K/10\u2011Q) reflecting corrected revenue recognition.",
+          "why_needed": "To assess impact on liquidity, leverage, and compliance with covenants.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Auditor's Report on Restated Financials",
+          "name_known": true,
+          "what_it_is": "Independent auditor's opinion on the restated financial statements.",
+          "why_needed": "To verify reliability of the corrected numbers and identify any audit\u2011related issues.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "ASC 606 Revenue Recognition Policy Documentation",
+          "name_known": true,
+          "what_it_is": "Latch's formal accounting policy memorandum describing its ASC 606 application.",
+          "why_needed": "To evaluate whether the policy was properly designed and applied prior to the violation.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"1. These proceedings arise out of revenue recognition errors by Respondent, a\". Check whether it is what is needed."
+        },
+        {
+          "name": "SEC\u2011Latch Correspondence File",
+          "name_known": false,
+          "what_it_is": "Letters, emails, and meeting minutes exchanged between Latch and SEC staff regarding the proceeding.",
+          "why_needed": "To understand negotiation dynamics, any factual admissions, and procedural history.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Form 8\u2011K Disclosure of Settlement",
+          "name_known": true,
+          "what_it_is": "Company's current report announcing the SEC settlement and its terms.",
+          "why_needed": "To gauge market disclosure adequacy and potential reputational effect.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Board Minutes Approving Settlement",
+          "name_known": true,
+          "what_it_is": "Excerpt of board of directors' meeting minutes where the settlement was authorized.",
+          "why_needed": "To confirm governance oversight and authorization of the remedial agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.002611
+    },
+    {
+      "name": "Annual report (10-K)",
+      "documents": [
+        "UPS_10-K_2020.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Due diligence review of United Parcel Service, Inc.'s 2020 Form 10\u2011K to assess financial health, governance, and risk for investment or credit analysis.",
+      "items": [
+        {
+          "name": "Proxy Statement (DEF 14A)",
+          "name_known": true,
+          "what_it_is": "Annual shareholder meeting materials detailing director elections, executive compensation, and shareholder proposals.",
+          "why_needed": "To evaluate governance and compensation practices complementing the 10\u2011K disclosures.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Most recent Form 10-Q (quarterly report)",
+          "name_known": true,
+          "what_it_is": "Unaudited quarterly financial statements and MD&A for the period after the 10\u2011K fiscal year.",
+          "why_needed": "To assess recent performance trends and any material changes since year\u2011end.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Recent Form 8\u2011K filings",
+          "name_known": true,
+          "what_it_is": "Current reports of material events such as acquisitions, debt issuances, or leadership changes.",
+          "why_needed": "To capture post\u2011year\u2011end developments that could affect the investment thesis.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Auditor's report on the financial statements",
+          "name_known": true,
+          "what_it_is": "Independent auditor\u2019s opinion on the fairness of the consolidated financial statements.",
+          "why_needed": "To verify the reliability of the financial data presented in the 10\u2011K.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Management's Discussion and Analysis (MD&A)",
+          "name_known": true,
+          "what_it_is": "Narrative explanation of financial results, liquidity, and known trends.",
+          "why_needed": "To understand the drivers behind the numbers and forward\u2011looking risks.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Debt agreements and covenant certificates",
+          "name_known": true,
+          "what_it_is": "Loan instruments, indentures, and compliance certificates showing debt terms and covenant status.",
+          "why_needed": "To assess leverage, interest coverage, and any restrictions on operations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Federal tax returns (or tax provision details)",
+          "name_known": true,
+          "what_it_is": "Detailed tax return schedules or reconciliation showing actual tax paid and positions.",
+          "why_needed": "To validate the tax expense and deferred tax balances reported in the 10\u2011K.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.004846
+    },
+    {
+      "name": "Earnings release",
+      "documents": [
+        "earnings-release.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Financial performance review/due diligence of Franklin Covey Co. based on its Q4 FY2025 earnings release.",
+      "items": [
+        {
+          "name": "Audited Consolidated Financial Statements (Form 10-K)",
+          "name_known": true,
+          "what_it_is": "Complete audited balance sheet, income statement, cash flow statement, and statement of shareholders' equity for fiscal year 2025.",
+          "why_needed": "To verify the condensed figures in the release and assess overall financial health.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Notes to the Consolidated Financial Statements",
+          "name_known": true,
+          "what_it_is": "Disclosures accompanying the audited financial statements, including accounting policies, contingencies, and breakdowns.",
+          "why_needed": "Essential for understanding revenue recognition, debt terms, and segment details.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Management Discussion & Analysis (MD&A)",
+          "name_known": true,
+          "what_it_is": "Narrative explanation of financial results, liquidity, and forward-looking statements from management.",
+          "why_needed": "Provides context for performance trends and risks highlighted in the release.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Auditor's Report",
+          "name_known": true,
+          "what_it_is": "Independent auditor's opinion on the fairness of the financial statements.",
+          "why_needed": "Confirms reliability of the audited numbers used for due diligence.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Quarterly Form 10-Q for Q4 FY2025",
+          "name_known": true,
+          "what_it_is": "Unaudited interim financial statements and MD&A for the fourth quarter.",
+          "why_needed": "Allows comparison of quarterly trends and validation of quarterly figures.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Debt Agreement / Credit Facility Details",
+          "name_known": true,
+          "what_it_is": "Copy of the $62.5 million credit facility agreement, including covenants, interest rates, and maturity.",
+          "why_needed": "Press release mentions liquidity and no drawdowns; need to assess debt capacity and compliance.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Stock Repurchase Authorization Details",
+          "name_known": true,
+          "what_it_is": "Board resolution or press release detailing the $10 million repurchase program, including timing and price limits.",
+          "why_needed": "To evaluate capital return strategy and impact on shares outstanding.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        },
+        {
+          "name": "Tax Provision Reconciliation",
+          "name_known": true,
+          "what_it_is": "Reconciliation of effective tax rate to statutory rate, showing permanent differences and credits.",
+          "why_needed": "Helps assess sustainability of net income and future tax liability.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.003274
+    },
+    {
+      "name": "Small data room: contract, order and release",
+      "documents": [
+        "accuray-distributor-agreement.txt",
+        "sec-order-latch.txt",
+        "earnings-release.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Revenue recognition and commercial contract due diligence for a potential transaction involving technology distributors.",
+      "items": [
+        {
+          "name": "Audited financial statements",
+          "name_known": true,
+          "what_it_is": "Complete set of audited balance sheet, income statement, cash flow statement, and statement of shareholders' equity.",
+          "why_needed": "To verify the financial condition and assess the impact of revenue recognition errors noted in the SEC order.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Notes to the financial statements",
+          "name_known": true,
+          "what_it_is": "Disclosures accompanying the audited financial statements, including accounting policies and detail.",
+          "why_needed": "Needed to understand revenue recognition policies and any side\u2011agreement disclosures.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Management's Discussion and Analysis (MD&A)",
+          "name_known": true,
+          "what_it_is": "Narrative explanation of financial results, liquidity, and known trends.",
+          "why_needed": "Provides context for the revenue recognition issues and business outlook.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Auditor's report",
+          "name_known": true,
+          "what_it_is": "Independent auditor's opinion on the financial statements and internal controls.",
+          "why_needed": "Confirms reliability of financials and highlights any audit findings related to revenue.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Internal control over financial reporting (SOX 404) documentation",
+          "name_known": true,
+          "what_it_is": "Reports and evidence of controls over financial reporting, especially revenue processes.",
+          "why_needed": "Directly relevant to the revenue\u2011recognition deficiencies cited in the SEC order.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Revenue recognition policy document (ASC 606)",
+          "name_known": true,
+          "what_it_is": "Formal written policy describing how the company recognizes revenue under ASC 606.",
+          "why_needed": "Needed to evaluate whether the policy was properly designed and applied.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"1. These proceedings arise out of revenue recognition errors by Respondent, a\". Check whether it is what is needed."
+        },
+        {
+          "name": "Side agreements or supplemental contracts affecting revenue",
+          "name_known": true,
+          "what_it_is": "Any ancillary agreements (e.g., rebates, warranties, licensing) that modify transaction price.",
+          "why_needed": "The SEC order cites failure to consider sales terms in side agreements as a violation.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "note": ""
+        },
+        {
+          "name": "Condensed consolidated financial statements",
+          "name_known": true,
+          "what_it_is": "Summarized income statement, balance sheet, and cash flow presented in the earnings release.",
+          "why_needed": "Provides interim financial data already available for quick assessment.",
+          "status": "supplied",
+          "evidence": "Condensed Consolidated Income Statements",
+          "priority": "medium",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.00398
+    }
+  ]
+}

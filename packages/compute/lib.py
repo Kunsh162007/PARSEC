@@ -124,12 +124,22 @@ class ComputeLib:
                 customer_breakdown=[]
             )
 
+        # Buckets ("Remaining SMB accounts") are real revenue, so they stay in the denominator, but they are
+        # many customers, never one, so they are not ranked.
         total_rev = sum(to_decimal(c["revenue"]) for c in customers)
         if total_rev == Decimal("0.00"):
             total_rev = Decimal("1.00")
 
+        named = [c for c in customers if not c.get("is_bucket")]
+        if not named:
+            return ConcentrationResult(
+                top_customer_pct=Decimal("0.00"), top_3_pct=Decimal("0.00"), top_5_pct=Decimal("0.00"),
+                herfindahl_index=Decimal("0.00"), is_concentration_critical=False,
+                is_concentration_warning=False, customer_breakdown=[],
+            )
+
         # Sort descending by revenue
-        sorted_custs = sorted(customers, key=lambda x: to_decimal(x["revenue"]), reverse=True)
+        sorted_custs = sorted(named, key=lambda x: to_decimal(x["revenue"]), reverse=True)
         breakdown = []
         hhi = Decimal("0.0000")
 

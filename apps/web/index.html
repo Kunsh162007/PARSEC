@@ -3,175 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PARSEC | M&A Due Diligence Co-Pilot (Nebius x NVIDIA)</title>
-  <meta name="description" content="Find the numbers in a deal that don't hold up, quantify price impact, and verify every claim with clickable spans using Nemotron on Nebius Token Factory.">
+  <title>PARSEC: M&amp;A due diligence analysis</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111827'/%3E%3Cpath d='M8 22l6-6 4 4 6-8' stroke='%2338bdf8' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+  <meta name="description" content="Upload a data room and see adjusted EBITDA, disallowed add-backs and customer concentration, each tied to a verbatim source span.">
   <link rel="stylesheet" href="index.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 
-  <!-- Navigation bar with live token & Tavily meters -->
   <nav class="navbar">
-    <div class="brand">
-      <span>⚡ PARSEC</span>
-      <span class="brand-badge">Nemotron 3 Funnel</span>
-    </div>
-    <div class="nav-meters">
-      <div class="meter-badge" title="Tier 1 High-Speed Screening">
-        <span class="meter-dot dot-nano"></span>
-        <span>Nano: <strong id="meter-nano">1,450 tok</strong></span>
-      </div>
-      <div class="meter-badge" title="Tier 2 Span Extraction">
-        <span class="meter-dot dot-super"></span>
-        <span>Super: <strong id="meter-super">4,200 tok</strong></span>
-      </div>
-      <div class="meter-badge" title="Tier 3 Material Adjudication (≤5% budget)">
-        <span class="meter-dot dot-ultra"></span>
-        <span>Ultra: <strong id="meter-ultra">520 tok</strong></span>
-      </div>
-      <div class="meter-badge" title="Tavily External Intelligence">
-        <span class="meter-dot dot-tavily"></span>
-        <span>Tavily Calls: <strong id="meter-tavily">2 calls</strong></span>
-      </div>
-      <div class="meter-badge" style="border-color: #06b6d4;">
-        <span>Total Deal Cost: <strong id="meter-cost" style="color: #06b6d4;">$0.04</strong></span>
-      </div>
-    </div>
+    <div class="brand"><span>PARSEC</span><span class="brand-badge">M&amp;A diligence</span></div>
+    <div class="nav-meters" id="meters" aria-label="Model usage for this run"></div>
   </nav>
 
   <main class="container">
-    <!-- Hero Moment Card -->
-    <section class="hero-card">
-      <div class="hero-header">
-        <div>
-          <h1 class="hero-title" id="deal-title">Project Titan Cloud: Diligence Verdict</h1>
-          <p class="hero-subtitle" id="deal-subtitle">Target: Enterprise B2B SaaS · Claimed Multiple: 11.0x EBITDA · Status: <span style="color: #f43f5e; font-weight: 700;">KILL CRITERIA BREACHED</span></p>
-        </div>
-        <div style="display: flex; gap: 0.75rem; align-items: center;">
-          <input type="text" id="input-target-company" placeholder="Acquire Company (e.g. Snowflake)..." style="background: #1e293b; border: 1px solid var(--border-color); color: #fff; padding: 0.65rem 1rem; border-radius: 8px; font-size: 0.9rem; outline: none; width: 260px;" />
-          <button id="btn-screen-target" class="btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-            <span>🔍 Screen Target</span>
-          </button>
-          <button id="btn-load-sample" class="btn">
-            <span>⚡ Run Demo</span>
-          </button>
-        </div>
+    <section class="panel" aria-labelledby="input-title">
+      <div class="panel-title"><span id="input-title">Analyse a data room</span></div>
+      <p class="muted">Add the CIM, management accounts and customer revenue table. Nothing is analysed until you add documents; there is no built-in sample.</p>
+      <div class="form-grid">
+        <label>Company <input id="company" type="text" autocomplete="off" placeholder="Target company name"></label>
+        <label>Enterprise multiple <input id="multiple" type="number" min="1" max="50" step="0.1" value="10"></label>
+        <label>Sector playbook
+          <select id="sector">
+            <option value="saas">B2B SaaS</option>
+            <option value="manufacturing">Manufacturing</option>
+          </select>
+        </label>
       </div>
-
-      <div class="hero-stats">
-        <div class="stat-box">
-          <div class="stat-label">Claimed EBITDA</div>
-          <div class="stat-value val-info" id="val-claimed">$10.0M</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">Per Seller CIM</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">PARSEC Adjudicated EBITDA</div>
-          <div class="stat-value val-danger" id="val-adjudicated">$7.6M</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">Zero Hallucination Bridge</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">EBITDA Variance</div>
-          <div class="stat-value val-warning" id="val-delta">-$2.4M</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">2 Recurring Disguised Items</div>
-        </div>
-        <div class="stat-box" style="border-color: #f43f5e; background: rgba(244, 63, 94, 0.08);">
-          <div class="stat-label" style="color: #f43f5e;">Overpayment Avoided</div>
-          <div class="stat-value val-danger" id="val-overpayment">$26.4M</div>
-          <div style="font-size: 0.75rem; color: #94a3b8; margin-top: 4px;">At 11.0x Enterprise Multiple</div>
-        </div>
+      <div class="form-grid">
+        <label class="wide">Files (.txt, .md, .csv)
+          <input id="files" type="file" multiple accept=".txt,.md,.csv,.tsv,.json,.log">
+        </label>
+      </div>
+      <label class="wide">Or paste a document
+        <textarea id="paste" rows="5" spellcheck="false" placeholder="Paste text from a CIM, ledger or customer table"></textarea>
+      </label>
+      <ul id="doc-list" class="doc-list" aria-label="Documents added"></ul>
+      <div class="actions">
+        <button id="run" class="btn" disabled>Run analysis</button>
+        <button id="lookup" class="btn btn-secondary" disabled>Public-source check only</button>
+        <span id="status" class="muted" role="status" aria-live="polite"></span>
       </div>
     </section>
 
-    <!-- Main Dashboard Grid -->
-    <div class="dashboard-grid">
-      <!-- Left Column: Findings & Quality of Earnings Bridge -->
-      <section>
-        <!-- Findings Board -->
-        <div class="panel">
-          <div class="panel-title">
-            <span>Critical Findings & Evidence Trail</span>
-            <span style="font-size: 0.8rem; font-weight: 400; color: #94a3b8;">Click any finding to inspect verified source span</span>
-          </div>
-          <div id="findings-container">
-            <!-- Dynamically populated -->
+    <section id="results" hidden>
+      <div class="hero-card">
+        <div class="hero-header">
+          <div>
+            <h1 class="hero-title" id="deal-title"></h1>
+            <p class="hero-subtitle" id="deal-subtitle"></p>
           </div>
         </div>
+        <div id="not-computed" class="notice" hidden></div>
+        <div class="hero-stats" id="hero-stats">
+          <div class="stat-box"><div class="stat-label">Claimed EBITDA</div><div class="stat-value val-info" id="val-claimed">-</div><div class="stat-note">Reported plus every add-back claimed</div></div>
+          <div class="stat-box"><div class="stat-label">Adjudicated EBITDA</div><div class="stat-value val-danger" id="val-adjudicated">-</div><div class="stat-note">Add-backs the ledger contradicts are removed</div></div>
+          <div class="stat-box"><div class="stat-label">EBITDA variance</div><div class="stat-value val-warning" id="val-delta">-</div><div class="stat-note" id="note-delta"></div></div>
+          <div class="stat-box"><div class="stat-label">Price impact</div><div class="stat-value val-danger" id="val-overpayment">-</div><div class="stat-note" id="note-multiple"></div></div>
+        </div>
+      </div>
 
-        <!-- EBITDA Waterfall & Add-backs -->
-        <div class="panel">
-          <div class="panel-title">
-            <span>Quality of Earnings: Deterministic EBITDA Bridge</span>
-            <span class="badge badge-verified">Pure Decimal Code · Zero Hallucination</span>
-          </div>
-          <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; margin-top: 1rem;">
-            <thead>
-              <tr style="border-bottom: 1px solid var(--border-color); text-align: left; color: #9ca3af;">
-                <th style="padding: 0.75rem 0.5rem;">Bridge Item</th>
-                <th style="padding: 0.75rem 0.5rem; text-align: right;">Amount</th>
-                <th style="padding: 0.75rem 0.5rem; text-align: center;">Adjudication (Ultra)</th>
-                <th style="padding: 0.75rem 0.5rem; text-align: right;">Cumulative</th>
-              </tr>
-            </thead>
-            <tbody id="bridge-tbody">
-              <!-- Dynamically populated -->
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <div id="unavailable" class="notice" hidden></div>
 
-      <!-- Right Column: Kill Criteria & IC Simulator -->
-      <section>
-        <!-- Kill Criteria Scoreboard -->
-        <div class="panel">
-          <div class="panel-title">
-            <span>Kill-Criteria Scoreboard</span>
-            <span class="badge badge-deal-breaker">Stage 0 Thesis Inversion</span>
+      <div class="dashboard-grid">
+        <section>
+          <div class="panel">
+            <div class="panel-title"><span>Findings and evidence</span><span class="muted">Select a finding to see the exact source text</span></div>
+            <div id="findings-container"></div>
           </div>
-          <div id="kill-criteria-container">
-            <!-- Dynamically populated -->
+          <div class="panel">
+            <div class="panel-title"><span>EBITDA bridge</span><span class="badge badge-verified" id="bridge-source">Computed in code, not by a model</span></div>
+            <table class="bridge">
+              <thead><tr><th>Item</th><th class="num">Amount</th><th class="center">Treatment</th><th class="num">Running total</th></tr></thead>
+              <tbody id="bridge-tbody"></tbody>
+            </table>
           </div>
-        </div>
+        </section>
 
-        <!-- IC Simulator Panel -->
-        <div class="panel">
-          <div class="panel-title">
-            <span>Investment Committee Simulator</span>
-            <span class="badge" style="background: rgba(139, 92, 246, 0.2); color: #a78bfa;">Ultra Grilling Session</span>
+        <section>
+          <div class="panel">
+            <div class="panel-title"><span>Kill criteria</span></div>
+            <div id="kill-criteria-container"></div>
           </div>
-          <div id="ic-simulator-container" style="font-size: 0.85rem; display: flex; flex-direction: column; gap: 0.75rem;">
-            <!-- Dynamically populated -->
+          <div class="panel">
+            <div class="panel-title"><span>Questions for the committee</span><span class="muted" id="ic-note"></span></div>
+            <ol id="ic-container" class="ic-list"></ol>
           </div>
-        </div>
-
-        <!-- Diligence Arena Benchmark -->
-        <div class="panel">
-          <div class="panel-title">
-            <span>Funnel Proof: Diligence Arena</span>
-            <span class="badge badge-verified">Ablation</span>
+          <div class="panel">
+            <div class="panel-title"><span>Missing from the data room</span></div>
+            <ul id="gaps" class="plain-list"></ul>
           </div>
-          <div style="font-size: 0.85rem; color: #94a3b8; line-height: 1.6;">
-            <p><strong>Naive All-Ultra Agent:</strong> $4.80/deal · 24% arithmetic error rate · 185s</p>
-            <p style="color: #10b981; margin-top: 0.5rem;"><strong>PARSEC Funnel Architecture:</strong> $0.04/deal · 0% error rate (Code Tools) · 14s</p>
-          </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </section>
   </main>
 
-  <!-- Evidence Modal -->
-  <div id="evidence-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h3 id="modal-title" style="font-size: 1.15rem; color: #fff;">Verified Evidence Span</h3>
-        <button id="modal-close" style="background: none; border: none; color: #9ca3af; font-size: 1.25rem; cursor: pointer;">✕</button>
+  <div id="evidence-modal" class="modal-overlay" hidden>
+    <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <h2 id="modal-title"></h2>
+        <button id="modal-close" class="icon-btn" aria-label="Close">Close</button>
       </div>
-      <p id="modal-description" style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem;"></p>
-      <div style="font-size: 0.8rem; color: #94a3b8; margin-bottom: 0.5rem;">EXACT VERBATIM SOURCE SPAN:</div>
-      <div id="modal-quote" style="background: #0f172a; border: 1px solid #334155; padding: 1rem; border-radius: 8px; font-family: monospace; font-size: 0.85rem; color: #38bdf8; margin-bottom: 1.25rem;"></div>
-      <div style="display: flex; justify-content: flex-end; gap: 0.75rem;">
-        <button id="modal-sign-btn" class="btn" style="background: #10b981;">Sign & Approve Finding</button>
+      <p id="modal-description"></p>
+      <div id="modal-evidence"></div>
+      <div class="actions">
+        <button id="modal-sign-btn" class="btn">Mark as reviewed</button>
+        <span id="modal-status" class="muted" role="status"></span>
       </div>
     </div>
   </div>

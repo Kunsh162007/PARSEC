@@ -11,6 +11,7 @@ class SeverityLevel(str, Enum):
     MINOR = "minor"
 
 class KillCriterionStatus(str, Enum):
+    NOT_TESTED = "not_tested"  # the documents did not contain what is needed to test it
     HOLDING = "holding"
     AT_RISK = "at_risk"
     BROKEN = "broken"
@@ -19,7 +20,7 @@ class KillCriterion(BaseModel):
     id: str
     title: str
     condition: str
-    status: KillCriterionStatus = KillCriterionStatus.HOLDING
+    status: KillCriterionStatus = KillCriterionStatus.NOT_TESTED
     linked_findings: List[str] = Field(default_factory=list)
     rationale: Optional[str] = None
 

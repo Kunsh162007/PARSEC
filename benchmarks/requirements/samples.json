@@ -1,0 +1,588 @@
+{
+  "generated_at": "2026-10-13T16:14:52+00:00",
+  "note": "Model output on real document sets, kept for human review. Not a score.",
+  "sets": [
+    {
+      "name": "Licence agreement",
+      "documents": [
+        "AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content License Agreement.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Due diligence review of a joint content license agreement to assess IP rights, financial obligations, and compliance for potential investment or acquisition.",
+      "items": [
+        {
+          "name": "Royalty Payment Schedule and Reports",
+          "name_known": true,
+          "what_it_is": "Detail of royalty rates, reporting periods, and actual payments received/paid under the Agreement.",
+          "why_needed": "To verify that monetary obligations are being met and to project cash flows.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "ip",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Trademark Certificates",
+          "name_known": true,
+          "what_it_is": "Official registrations for ZYNGA POKER\u00ae and WPT trademarks.",
+          "why_needed": "Verifies licensor owns the IP being licensed.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "ip",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.006788000000000001,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Franchise agreement",
+      "documents": [
+        "AIRTECHINTERNATIONALGROUPINC_05_08_2000-EX-10.4-FRANCHISE AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Franchise due diligence review of Airsopure International Group, Inc. for potential acquisition or investment.",
+      "items": [
+        {
+          "name": "Audited financial statements",
+          "name_known": true,
+          "what_it_is": "Balance sheet, income statement, cash flow statement for the past three fiscal years.",
+          "why_needed": "To assess franchisor\u2019s financial stability and ability to support franchise network.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Franchise Disclosure Document (FDD)",
+          "name_known": true,
+          "what_it_is": "Pre\u2011sale disclosure document required by the FTC Franchise Rule.",
+          "why_needed": "To verify all material facts, fees, obligations and any hidden liabilities are disclosed.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "regulatory",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Insurance certificates",
+          "name_known": true,
+          "what_it_is": "General liability, property and workers\u2019 compensation policies for franchisor and required franchisee coverage.",
+          "why_needed": "To verify compliance with Section\u202f11 insurance requirements and adequacy of coverage.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.009869,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Endorsement agreement",
+      "documents": [
+        "ADAMSGOLFINC_03_21_2005-EX-10.17-ENDORSEMENT AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Contractual due\u2011diligence review of the Adams Golf\u2013Tom Watson endorsement agreement to assess rights, obligations, and value for a potential transaction.",
+      "items": [
+        {
+          "name": "Trademark registration certificates for Adams Golf product marks",
+          "name_known": true,
+          "what_it_is": "USPTO or international registrations covering the golf club names/logos used in endorsement.",
+          "why_needed": "Confirms Adams Golf owns the IP rights being licensed.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "ip",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Complete unredacted Endorsement Agreement",
+          "name_known": true,
+          "what_it_is": "The full agreement without redactions, showing all terms, dates, and compensation figures.",
+          "why_needed": "Redacted sections prevent verification of key obligations and payments.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "The model runs disagreed on whether this was supplied. Check it.",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Liability insurance certificate",
+          "name_known": true,
+          "what_it_is": "Certificate of general liability or endorsement insurance covering Adams Golf\u2019s use of Watson\u2019s likeness.",
+          "why_needed": "Mitigates risk of claims arising from endorsement activities.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Amendments or side letters",
+          "name_known": true,
+          "what_it_is": "Any subsequent modifications, waivers, or side agreements to the original endorsement contract.",
+          "why_needed": "Ensures the current agreement reflects all agreed\u2011upon changes.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.009407,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Services agreement",
+      "documents": [
+        "ABILITYINC_06_15_2020-EX-4.25-SERVICES AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Review of a services agreement between Provider and Recipients for due diligence purposes (e.g., M&A or vendor contract assessment).",
+      "items": [
+        {
+          "name": "Exhibit A \u2013 Services Schedule",
+          "name_known": true,
+          "what_it_is": "Attachment listing the specific services, deliverables, timelines, and fees under the Agreement.",
+          "why_needed": "To verify scope of services and corresponding obligations shown in the main agreement.",
+          "status": "supplied",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "This names a supplied document: ABILITYINC_06_15_2020-EX-4.25-SERVICES AGREEMENT.txt.",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Amendments or Side Letters",
+          "name_known": true,
+          "what_it_is": "Written modifications to the original Services Agreement executed after the Effective Date.",
+          "why_needed": "To ensure current terms reflect any changes affecting deliverables, pricing, or term.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Invoices and Payment Records",
+          "name_known": true,
+          "what_it_is": "Billing documents and proof of payments exchanged under the Agreement.",
+          "why_needed": "To confirm that fees have been billed correctly and paid per the agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Service Performance Reports",
+          "name_known": true,
+          "what_it_is": "Periodic reports detailing delivery of services, milestones achieved, and any deficiencies.",
+          "why_needed": "To assess Provider\u2019s performance and compliance with service levels.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "other",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Insurance Certificates (e.g., Professional Liability)",
+          "name_known": true,
+          "what_it_is": "Documents evidencing required insurance coverage held by the Provider.",
+          "why_needed": "To verify that risk mitigation requirements in the Agreement are satisfied.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Regulatory Approvals/Licenses",
+          "name_known": true,
+          "what_it_is": "Any governmental or industry approvals needed for the Provider to lawfully deliver the services.",
+          "why_needed": "To confirm legality of service provision and avoid compliance breaches.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "regulatory",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.007932,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "SEC enforcement order",
+      "documents": [
+        "sec-order-latch.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Review of SEC administrative settlement concerning revenue recognition violations (ASC 606) for Latch, Inc.",
+      "items": [
+        {
+          "name": "Offer of Settlement",
+          "name_known": true,
+          "what_it_is": "The respondent's formal settlement offer submitted to the SEC, including proposed penalties and remedial actions.",
+          "why_needed": "To assess the monetary and non\u2011monetary terms agreed upon and verify consistency with the Commission's order.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Restated Financial Statements",
+          "name_known": true,
+          "what_it_is": "Revised financial statements reflecting corrections resulting from the internal investigation and SEC settlement.",
+          "why_needed": "To verify that the restatement properly addresses the ASC 606 violations disclosed in the order.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Internal Investigation Report",
+          "name_known": true,
+          "what_it_is": "Report prepared by Latch (or its counsel) detailing the investigation into revenue recognition practices, including workpapers and conclusions.",
+          "why_needed": "To understand the root cause of the violations and the adequacy of remedial measures undertaken.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"Respondent\u2019s Internal Investigation and Restatement\". Check whether it is what is needed.",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Auditor\u2019s Report on Restated Financials",
+          "name_known": true,
+          "what_it_is": "Independent auditor\u2019s opinion on the revised financial statements.",
+          "why_needed": "To ensure the restatement received proper audit scrutiny and conforms to GAAP.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "SEC Correspondence",
+          "name_known": false,
+          "what_it_is": "Letters, emails, or commentaries exchanged between Latch and the SEC staff regarding the Offer and investigation.",
+          "why_needed": "To understand any negotiations, conditions, or unresolved issues not captured in the final order.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "regulatory",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Board Minutes Approving Settlement",
+          "name_known": true,
+          "what_it_is": "Minutes of Latch's board of directors (or committee) showing approval of the Offer of Settlement and related remedial actions.",
+          "why_needed": "To confirm proper governance oversight and authorization of the settlement agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.010239999999999999,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Annual report (10-K)",
+      "documents": [
+        "UPS_10-K_2020.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Financial due diligence review of United Parcel Service, Inc. using its 2020 Form 10-K.",
+      "items": [
+        {
+          "name": "Proxy Statement (DEF 14A)",
+          "name_known": true,
+          "what_it_is": "Annual proxy statement detailing director compensation, executive pay, governance, and related-party transactions.",
+          "why_needed": "Supplements Item 11 and Item 12 for thorough compensation and related\u2011party analysis.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Form 10-Q (Q1-Q3 2021)",
+          "name_known": true,
+          "what_it_is": "Quarterly reports for the first three quarters of 2021 showing interim financial results and MD&A.",
+          "why_needed": "Updates financial trends and captures material changes after the fiscal year\u2011end.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in UPS_10-K_2020.txt: \"Item 9B. Other Information\". Check whether it is what is needed.",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Recent Form 8-K filings (post\u2011year\u2011end)",
+          "name_known": true,
+          "what_it_is": "Current reports of material events filed after the fiscal year end.",
+          "why_needed": "To capture any significant developments not reflected in the 2020 10\u2011K.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Debt covenant compliance certificates",
+          "name_known": true,
+          "what_it_is": "Reports confirming compliance with financial covenants under the senior notes and credit facilities disclosed in Note 9.",
+          "why_needed": "Note 9 outlines debt and financing arrangements; covenant compliance is critical for credit risk assessment.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.013998,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Earnings release",
+      "documents": [
+        "earnings-release.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Review of Franklin Covey Co.'s Q4 FY2025 earnings release and associated financial disclosures.",
+      "items": [
+        {
+          "name": "Management Discussion & Analysis (MD&A)",
+          "name_known": true,
+          "what_it_is": "Management's narrative discussion of results, liquidity, and risks.",
+          "why_needed": "Provides context for the earnings release and forward-looking statements.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Credit facility agreement",
+          "name_known": true,
+          "what_it_is": "Loan agreement governing the $62.5 million revolving credit facility.",
+          "why_needed": "Confirms terms, covenants, and availability supporting the liquidity claim.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Stock repurchase authorization",
+          "name_known": true,
+          "what_it_is": "Board resolution authorizing the $10 million share repurchase.",
+          "why_needed": "Verifies legality and timing of the reported repurchases.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Notes to the condensed consolidated financial statements",
+          "name_known": true,
+          "what_it_is": "Detailed footnotes explaining accounting policies, breakdowns, contingencies and disaggregated balances.",
+          "why_needed": "Required to understand revenue recognition, debt terms and other adjustments behind the release figures.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in earnings-release.txt: \"Condensed Consolidated Income Statements\". Check whether it is what is needed.",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Tax provision schedule",
+          "name_known": true,
+          "what_it_is": "Detail of current and deferred tax expense components.",
+          "why_needed": "Explains drivers of net income and assesses sustainability.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "tax",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Related-party transactions disclosure",
+          "name_known": true,
+          "what_it_is": "Description of any transactions with affiliates or insiders.",
+          "why_needed": "Ensures no hidden benefits affect reported results.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Earnings conference call transcript",
+          "name_known": true,
+          "what_it_is": "Verbatim record of management's presentation and Q&A.",
+          "why_needed": "Provides additional context not captured in the press release.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in earnings-release.txt: \"Earnings Conference Call\". Check whether it is what is needed.",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.012325,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Small data room: contract, order and release",
+      "documents": [
+        "accuray-distributor-agreement.txt",
+        "sec-order-latch.txt",
+        "earnings-release.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "This appears to be a corporate due diligence file for evaluating potential acquisition targets, comprising material contracts, regulatory enforcement actions, and financial disclosures.",
+      "items": [
+        {
+          "name": "Strategic Alliance Agreement",
+          "name_known": true,
+          "what_it_is": "The underlying alliance governing the parties\u2019 broader relationship between Accuray and Siemens.",
+          "why_needed": "To understand obligations, exclusivity, and termination rights that affect the distributor agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Offer of Settlement submitted by Latch, Inc.",
+          "name_known": true,
+          "what_it_is": "Latch, Inc.'s Offer of Settlement submitted to the SEC resolving the revenue-recognition allegations.",
+          "why_needed": "To determine the financial penalties, remedial commitments, and any ongoing obligations arising from the settlement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Franklin Covey Form 10-K for fiscal year ended August 31, 2025",
+          "name_known": true,
+          "what_it_is": "Franklin Covey's Form 10-K for the fiscal year ended August 31, 2025, containing audited financial statements and notes.",
+          "why_needed": "To validate the earnings release figures, assess financial condition, and identify undisclosed liabilities or accounting issues.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in earnings-release.txt: \"13907 S. Minuteman Drive, Suite 500 Draper , Utah 84020 www.franklincovey.com\". Check whether it is what is needed.",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Latch\u2019s Side Agreements",
+          "name_known": true,
+          "what_it_is": "The specific sales side agreements referenced in the SEC order that altered transaction price or collectability assessments.",
+          "why_needed": "To evaluate the nature of the revenue recognition issues and adequacy of controls.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.01389,
+      "samples": 3,
+      "samples_ok": 3
+    }
+  ]
+}

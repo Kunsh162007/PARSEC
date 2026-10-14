@@ -1,0 +1,863 @@
+{
+  "generated_at": "2026-10-13T14:40:12+00:00",
+  "note": "Model output on real document sets, kept for human review. Not a score.",
+  "sets": [
+    {
+      "name": "Licence agreement",
+      "documents": [
+        "AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content License Agreement.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Commercial due diligence for a joint content license agreement between WPT Enterprises and Zynga.",
+      "items": [
+        {
+          "name": "Board resolutions approving the Agreement",
+          "name_known": true,
+          "what_it_is": "Signed board minutes or written consents authorizing entry into the license.",
+          "why_needed": "Shows internal authority to bind the company, a basic legal requirement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Corporate charter/articles and bylaws",
+          "name_known": true,
+          "what_it_is": "Governing documents of each party.",
+          "why_needed": "To verify authority to enter contracts and any restrictions.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Affiliates and subsidiaries list",
+          "name_known": true,
+          "what_it_is": "Chart showing all affiliates of WPT and Zynga.",
+          "why_needed": "To identify parties bound by the agreement and potential affiliates.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Intellectual Property schedule",
+          "name_known": true,
+          "what_it_is": "List of patents, trademarks, copyrights covered by the license.",
+          "why_needed": "Confirms scope of licensed IP and any exclusions.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "ip",
+          "note": ""
+        },
+        {
+          "name": "Financial impact analysis / revenue projections",
+          "name_known": true,
+          "what_it_is": "Model showing expected revenues, costs, and EBITDA effect from the license.",
+          "why_needed": "Assesses economic rationale and supports valuation.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Amendments or side letters to the Agreement",
+          "name_known": true,
+          "what_it_is": "Any subsequent modifications to the original license.",
+          "why_needed": "Ensures reviewer sees the current effective terms.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Related-party agreements",
+          "name_known": true,
+          "what_it_is": "Contracts between the parties or affiliates outside this license.",
+          "why_needed": "To detect conflicts or overlapping obligations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Insurance policies covering IP infringement",
+          "name_known": true,
+          "what_it_is": "Policies providing coverage for IP liability.",
+          "why_needed": "Mitigates risk of infringement claims arising from licensed content.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Regulatory approvals (e.g., antitrust clearance)",
+          "name_known": true,
+          "what_it_is": "Filings or clearances required for the joint license.",
+          "why_needed": "Confirms the transaction complies with competition law.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "regulatory",
+          "note": ""
+        },
+        {
+          "name": "Audit trail of prior license compliance",
+          "name_known": true,
+          "what_it_is": "Reports showing adherence to previous licensing obligations.",
+          "why_needed": "Indicates track record and reduces risk of breach.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "legal",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.003565
+    },
+    {
+      "name": "Franchise agreement",
+      "documents": [
+        "AIRTECHINTERNATIONALGROUPINC_05_08_2000-EX-10.4-FRANCHISE AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Commercial due diligence of a franchisor (likely acquisition target)",
+      "items": [
+        {
+          "name": "Audited financial statements (3 years)",
+          "name_known": true,
+          "what_it_is": "Audited balance sheet, income statement, cash flow for three fiscal years.",
+          "why_needed": "To evaluate franchisor\u2019s profitability and cash generation ability.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Franchise Disclosure Document (FDD)",
+          "name_known": true,
+          "what_it_is": "Legal disclosure required by FTC containing franchise system details.",
+          "why_needed": "Required to assess franchise offering terms and risks.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Franchisee roster and performance report",
+          "name_known": false,
+          "what_it_is": "Spreadsheet of all franchisees with location, opening date, sales, royalties paid.",
+          "why_needed": "To validate revenue concentration and franchisee satisfaction.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "commercial",
+          "note": ""
+        },
+        {
+          "name": "Royalty fee schedule",
+          "name_known": false,
+          "what_it_is": "Detail of royalty fees received from franchisees by period.",
+          "why_needed": "To verify recurring revenue stream and growth trends.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Marketing fund financial statements",
+          "name_known": false,
+          "what_it_is": "Accounting of advertising/marketing fees collected and spent.",
+          "why_needed": "To ensure proper use of franchisee contributions and compliance.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Territory maps and protected area definitions",
+          "name_known": false,
+          "what_it_is": "Geographic delineation of each franchisee\u2019s protected territory.",
+          "why_needed": "To assess potential cannibalization and expansion capacity.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "commercial",
+          "note": ""
+        },
+        {
+          "name": "Trademark registration certificates",
+          "name_known": true,
+          "what_it_is": "USPTO registrations for AIRSOPURE marks and logos.",
+          "why_needed": "To confirm enforceability of licensed marks used in franchise agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "ip",
+          "note": ""
+        },
+        {
+          "name": "Insurance policies and loss runs",
+          "name_known": true,
+          "what_it_is": "General liability, property, and workers\u2019 comp policies with claim history.",
+          "why_needed": "To verify coverage adequacy for franchisor and franchisee operations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.00395
+    },
+    {
+      "name": "Endorsement agreement",
+      "documents": [
+        "ADAMSGOLFINC_03_21_2005-EX-10.17-ENDORSEMENT AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Commercial due diligence focusing on key endorsement and sponsorship arrangements.",
+      "items": [
+        {
+          "name": "Material contracts",
+          "name_known": true,
+          "what_it_is": "List of all material contracts governing the business's operations.",
+          "why_needed": "To assess obligations, risks, and key relationships such as the Tom Watson endorsement.",
+          "status": "supplied",
+          "evidence": "ENDORSEMENT AGREEMENT",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Audited financial statements (3 years)",
+          "name_known": true,
+          "what_it_is": "Audited balance sheet, income statement, and cash flow statement for the last three fiscal years.",
+          "why_needed": "To evaluate the target's financial performance and sustainability.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Quality of earnings report (QoE)",
+          "name_known": true,
+          "what_it_is": "Report adjusting EBITDA for non\u2011recurring, non\u2011cash, and unusual items to reflect sustainable earnings.",
+          "why_needed": "To verify normalized earnings power for valuation.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Debt schedule / loan agreements",
+          "name_known": true,
+          "what_it_is": "Schedule of all outstanding debt, including terms, covenants, collateral, and maturity dates.",
+          "why_needed": "To understand leverage and covenant compliance status.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Cap table",
+          "name_known": true,
+          "what_it_is": "Capitalization table showing all equity holders, option pools, warrants, and convertible securities.",
+          "why_needed": "To clarify ownership structure and potential dilution effects.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Organizational chart",
+          "name_known": true,
+          "what_it_is": "Diagram of reporting lines and functional structure of the company.",
+          "why_needed": "To assess management depth and organizational efficiency.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "people",
+          "note": ""
+        },
+        {
+          "name": "Employee census",
+          "name_known": true,
+          "what_it_is": "List of employees with titles, departments, locations, and full\u2011time/part\u2011time status.",
+          "why_needed": "To gauge workforce size, composition, and related cost base.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "people",
+          "note": ""
+        },
+        {
+          "name": "IP schedule",
+          "name_known": true,
+          "what_it_is": "Inventory of patents, trademarks, copyrights, domain names, and pending applications.",
+          "why_needed": "To confirm ownership and protectability of core intellectual property.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "ip",
+          "note": ""
+        },
+        {
+          "name": "Top customers list and contracts",
+          "name_known": true,
+          "what_it_is": "Ranking of the largest customers by revenue and copies of their key agreements.",
+          "why_needed": "To evaluate revenue concentration and contractual renewal risk.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "commercial",
+          "note": ""
+        },
+        {
+          "name": "Insurance policies and loss runs",
+          "name_known": true,
+          "what_it_is": "Copies of all insurance policies and historical loss runs for the past three years.",
+          "why_needed": "To assess coverage adequacy and potential liability exposures.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.004335
+    },
+    {
+      "name": "Services agreement",
+      "documents": [
+        "ABILITYINC_06_15_2020-EX-4.25-SERVICES AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Commercial due diligence (material contracts review)",
+      "items": [
+        {
+          "name": "Material contracts",
+          "name_known": true,
+          "what_it_is": "Copy of the services agreement between Provider and Recipients.",
+          "why_needed": "Core document under review; confirms scope, terms, and parties.",
+          "status": "supplied",
+          "evidence": "SERVICES AGREEMENT",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Charter/articles and bylaws",
+          "name_known": true,
+          "what_it_is": "Certificate of incorporation and bylaws of Provider and each Recipient.",
+          "why_needed": "To verify corporate authority to enter into the services agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Board and stockholder minutes and written consents",
+          "name_known": true,
+          "what_it_is": "Minutes or consents approving the services agreement.",
+          "why_needed": "Confirms proper internal approvals for the contract.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Cap table",
+          "name_known": true,
+          "what_it_is": "Current ownership structure of Provider and Recipients.",
+          "why_needed": "Identifies stakeholders affected by any change\u2011of\u2011control provisions.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Related-party agreements",
+          "name_known": true,
+          "what_it_is": "Any other contracts between Provider, TelcoStar, and Ability.",
+          "why_needed": "To assess potential conflicts or aggregated exposure.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Equity plans and award agreements",
+          "name_known": true,
+          "what_it_is": "Stock option, RSU, or other equity compensation plans.",
+          "why_needed": "To evaluate change\u2011in\u2011control payment obligations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Litigation schedule",
+          "name_known": true,
+          "what_it_is": "List of pending or threatened lawsuits involving the parties.",
+          "why_needed": "To determine if litigation could affect contract performance.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Insurance policies and loss runs",
+          "name_known": true,
+          "what_it_is": "General liability, professional liability, and related insurance.",
+          "why_needed": "To confirm coverage for risks arising from the services.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "UCC lien, judgment and litigation searches",
+          "name_known": true,
+          "what_it_is": "Searches for liens, judgments, or UCC filings against the parties.",
+          "why_needed": "To ensure no encumbrances impair ability to perform.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Auditor management letters",
+          "name_known": true,
+          "what_it_is": "Letters from auditors highlighting internal control issues.",
+          "why_needed": "To assess financial reliability of the parties.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "low",
+          "workstream": "financial",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.003566
+    },
+    {
+      "name": "SEC enforcement order",
+      "documents": [
+        "sec-order-latch.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Regulatory/legal due diligence related to the SEC cease\u2011and\u2011desist proceeding against Latch, Inc.",
+      "items": [
+        {
+          "name": "Offer of Settlement",
+          "name_known": true,
+          "what_it_is": "The settlement offer submitted by Latch to the SEC resolving the cease\u2011and\u2011desist proceeding.",
+          "why_needed": "To understand the terms, payments, and any admissions required by the SEC.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Internal investigation report",
+          "name_known": true,
+          "what_it_is": "Report of Latch\u2019s internal investigation into revenue recognition errors.",
+          "why_needed": "To assess the scope and causes of the accounting misstatements.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"Respondent\u2019s Internal Investigation and Restatement\". Check whether it is what is needed."
+        },
+        {
+          "name": "Restated financial statements",
+          "name_known": true,
+          "what_it_is": "Financial statements revised after correcting revenue recognition errors.",
+          "why_needed": "To verify the impact of corrections on financial position and performance.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Revenue recognition policy (ASC 606)",
+          "name_known": true,
+          "what_it_is": "Document describing Latch\u2019s ASC 606 revenue recognition accounting policies.",
+          "why_needed": "To evaluate compliance with accounting standards and identify policy gaps.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"1. These proceedings arise out of revenue recognition errors by Respondent, a\". Check whether it is what is needed."
+        },
+        {
+          "name": "Remedial efforts documentation",
+          "name_known": false,
+          "what_it_is": "Records of Latch\u2019s cooperation and remedial actions taken after the SEC investigation, such as corrective action plans or compliance enhancements.",
+          "why_needed": "To assess the adequacy of steps taken to prevent recurrence.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"Respondent\u2019s Cooperation and Remedial Efforts\". Check whether it is what is needed."
+        }
+      ],
+      "cost_usd": 0.003469
+    },
+    {
+      "name": "Annual report (10-K)",
+      "documents": [
+        "UPS_10-K_2020.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Financial due diligence for a potential acquisition of United Parcel Service, Inc.",
+      "items": [
+        {
+          "name": "Quality of earnings report (QoE)",
+          "name_known": true,
+          "what_it_is": "Adjusts EBITDA for non-recurring items to show sustainable earnings.",
+          "why_needed": "To assess true operating performance for valuation.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "EBITDA bridge / schedule of adjustments",
+          "name_known": true,
+          "what_it_is": "Details adjustments from reported EBITDA to adjusted EBITDA.",
+          "why_needed": "Understand drivers of earnings and normalization.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Monthly trial balance and general ledger detail",
+          "name_known": true,
+          "what_it_is": "Month-end trial balances and GL transaction detail.",
+          "why_needed": "Enable deep dive into account movements and anomalies.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Net working capital analysis / NWC peg",
+          "name_known": true,
+          "what_it_is": "Analysis of working capital components and target peg.",
+          "why_needed": "Determine appropriate NWC adjustment in purchase price.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "AR aging and AP aging",
+          "name_known": true,
+          "what_it_is": "Schedule of receivables and payables by age buckets.",
+          "why_needed": "Assess collectability and payment terms risks.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Inventory valuation and obsolescence analysis",
+          "name_known": true,
+          "what_it_is": "Details inventory cost layers and obsolete/excess provisions.",
+          "why_needed": "Ensure inventory is fairly stated and identify write-down risk.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Budget and projections",
+          "name_known": true,
+          "what_it_is": "Management\u2019s forward-looking financial forecasts.",
+          "why_needed": "Validate growth assumptions and cash flow projections.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Auditor management letters",
+          "name_known": true,
+          "what_it_is": "Letters from auditors highlighting internal control issues.",
+          "why_needed": "Identify control weaknesses affecting financial reliability.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Proof of cash / bank statements",
+          "name_known": true,
+          "what_it_is": "Bank reconciliations and statements confirming cash balances.",
+          "why_needed": "Verify existence and accuracy of reported cash.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Capex history",
+          "name_known": true,
+          "what_it_is": "Historical capital expenditures by project and period.",
+          "why_needed": "Assess maintenance vs growth capex and future funding needs.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.004074
+    },
+    {
+      "name": "Earnings release",
+      "documents": [
+        "earnings-release.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Financial due diligence for a potential acquisition of Franklin Covey Co.",
+      "items": [
+        {
+          "name": "Audited financial statements (3 years)",
+          "name_known": true,
+          "what_it_is": "Annual audited balance sheets, income statements, and cash flow statements for the last three fiscal years.",
+          "why_needed": "To verify historical financial performance and assess valuation basis.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Quality of earnings report (QoE)",
+          "name_known": true,
+          "what_it_is": "Analysis adjusting EBITDA for non-recurring, non-cash, and other items to reflect sustainable earnings.",
+          "why_needed": "To understand the reliability of reported earnings and support purchase price.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "EBITDA bridge / schedule of adjustments",
+          "name_known": true,
+          "what_it_is": "Reconciliation of net income to adjusted EBITDA showing all add\u2011backs and deductions.",
+          "why_needed": "To identify adjustments that affect cash flow and valuation metrics.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "The model said this was supplied but its quote could not be found in the documents."
+        },
+        {
+          "name": "Debt schedule / loan agreements",
+          "name_known": true,
+          "what_it_is": "Detail of all outstanding debt instruments, terms, covenants, and collateral.",
+          "why_needed": "To assess leverage, repayment obligations, and any restrictions on transaction.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Net working capital analysis / NWC peg",
+          "name_known": true,
+          "what_it_is": "Calculation of normalized net working capital (accounts receivable, inventory, accounts payable) used as a closing adjustment.",
+          "why_needed": "To determine appropriate working capital target in the purchase agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Accounts receivable aging and accounts payable aging",
+          "name_known": true,
+          "what_it_is": "Detailed aging schedules showing receivables and payables by time buckets.",
+          "why_needed": "To evaluate collectibility, payment terms, and potential reserves.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in earnings-release.txt: \"Accounts receivable, less allowance for\". Check whether it is what is needed."
+        },
+        {
+          "name": "Budget and projections (Fiscal 2026 guidance)",
+          "name_known": true,
+          "what_it_is": "Management\u2019s forecast of revenue, expenses, and cash flows for the upcoming fiscal year.",
+          "why_needed": "To assess future performance and validate growth assumptions in valuation.",
+          "status": "supplied",
+          "evidence": "Company Announces Guidance for Fiscal 2026",
+          "priority": "medium",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Proof of cash / bank statements",
+          "name_known": true,
+          "what_it_is": "Recent bank statements and reconciliations confirming cash balances.",
+          "why_needed": "To verify liquidity and the existence of reported cash.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "financial",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.002876
+    },
+    {
+      "name": "Small data room: contract, order and release",
+      "documents": [
+        "accuray-distributor-agreement.txt",
+        "sec-order-latch.txt",
+        "earnings-release.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Financial due diligence for a potential acquisition of Accuray Incorporated.",
+      "items": [
+        {
+          "name": "Audited financial statements (3 years)",
+          "name_known": true,
+          "what_it_is": "Consolidated audited balance sheets, income statements, and cash flow statements for the three most recent fiscal years.",
+          "why_needed": "To verify the historical revenue and earnings shown in the earnings release and assess any restatements indicated by the SEC order.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Quality of earnings report (QoE)",
+          "name_known": true,
+          "what_it_is": "An independent analysis adjusting EBITDA for non-recurring, non-operational, and potentially misleading items.",
+          "why_needed": "The SEC order highlights revenue recognition errors; a QoE is needed to evaluate the sustainability and accuracy of reported earnings.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "EBITDA bridge / schedule of adjustments",
+          "name_known": true,
+          "what_it_is": "A detailed reconciliation from reported EBITDA to adjusted EBITDA, listing all add\u2011backs and deductions.",
+          "why_needed": "To understand the adjustments behind the adjusted EBITDA figures disclosed in the earnings release and assess their reasonableness.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Debt schedule / loan agreements",
+          "name_known": true,
+          "what_it_is": "A summary of all outstanding debt instruments, including principal amounts, interest rates, maturity dates, and key covenants, together with the underlying loan agreements.",
+          "why_needed": "To evaluate leverage, interest expense, and any covenant restrictions that could affect post\u2011transaction operations; no debt information appears in the supplied docs.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": ""
+        },
+        {
+          "name": "Material contracts list",
+          "name_known": true,
+          "what_it_is": "A comprehensive schedule of all significant customer, supplier, distribution, and licensing agreements, including key terms and renewal dates.",
+          "why_needed": "The supplied distributor agreement shows one material contract; a full list is required to assess concentration risk and obligations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": ""
+        },
+        {
+          "name": "Accounts receivable aging and accounts payable aging",
+          "name_known": true,
+          "what_it_is": "Detailed reports showing the distribution of receivables and payables by invoice age (e.g., current, 30\u201160\u201190+ days).",
+          "why_needed": "To evaluate working\u2011capital quality and potential collection issues, especially relevant given the revenue recognition concerns in the SEC order.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"Accounts Receivable Branch\". Check whether it is what is needed."
+        },
+        {
+          "name": "Income tax returns (3 closed years)",
+          "name_known": true,
+          "what_it_is": "Federal, state, and foreign corporate income tax returns for the three most recent completed tax years.",
+          "why_needed": "To verify tax provisions, identify any uncertain tax positions, and assess potential liabilities that could affect the transaction.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "tax",
+          "note": ""
+        },
+        {
+          "name": "Proof of cash / bank statements (latest month)",
+          "name_known": true,
+          "what_it_is": "Bank reconciliations and statements confirming the cash balances reported in the balance sheet.",
+          "why_needed": "To validate the liquidity position highlighted in the earnings release (over $90 million liquidity) and ensure cash is not overstated.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "financial",
+          "note": ""
+        }
+      ],
+      "cost_usd": 0.003876
+    }
+  ]
+}

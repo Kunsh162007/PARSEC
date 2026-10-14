@@ -1,0 +1,386 @@
+UNITED STATES OF AMERICA 
+Before the 
+SECURITIES AND EXCHANGE COMMISSION 
+  
+SECURITIES ACT OF 1933 
+Release No. 11450 / October 1, 2026 
+ 
+SECURITIES EXCHANGE ACT OF 1934 
+Release No. 106568 / October 1, 2026 
+ 
+ACCOUNTING AND AUDITING ENFORCEMENT  
+Release No. 4604 / October 1, 2026 
+ 
+ADMINISTRATIVE PROCEEDING 
+File No. 3-22767 
+ 
+ 
+In the Matter of 
+ 
+LATCH, INC., 
+ 
+Respondent. 
+ 
+ 
+ 
+ORDER INSTITUTING CEASE-AND-
+DESIST PROCEEDINGS PURSUANT TO 
+SECTION 8A OF THE SECURITIES ACT 
+OF 1933 AND SECTION 21C OF THE 
+SECURITIES EXCHANGE ACT OF 1934, 
+MAKING FINDINGS, AND IMPOSING A 
+CEASE-AND-DESIST ORDER   
+ 
+I. 
+The Securities and Exchange Commission (“Commission”) deems it appropriate that cease-
+and-desist proceedings be, and hereby are, instituted pursuant to Section 8A of the Securities Act 
+of 1933 (“Securities Act”) and Section 21C of the Securities Exchange Act of 1934 (“Exchange 
+Act”), against Latch, Inc. (“Latch” or “Respondent”). 
+ 
+II. 
+In anticipation of the institution of these proceedings, Respondent has submitted an Offer 
+of Settlement (the “Offer”) which the Commission has determined to accept.  Solely for the 
+purpose of these proceedings and any other proceedings brought by or on behalf of the 
+Commission, or to which the Commission is a party, and without admitting the findings herein, 
+except as to the Commission’s jurisdiction over it and the subject matter of these proceedings, 
+which are admitted, Respondent consents to the entry of this Order Instituting Cease-and-Desist 
+Proceedings Pursuant to Section 8A of the Securities Act of 1933 and Section 21C of the Securities 
+Exchange Act of 1934, Making Findings, and Imposing a Cease-and-Desist Order (“Order”), as set 
+forth below.   
+2 
+III. 
+On the basis of this Order and Respondent’s Offer, the Commission finds1 that:   
+ 
+Summary 
+1. These proceedings arise out of revenue recognition errors by Respondent, a 
+Missouri-based manufacturer of smart access hardware and software products, that spanned from 
+at least January 2019 through March 2022 (the “Relevant Period”).  Respondent became a public 
+company through a June 2021 business combination (the “De-SPAC Transaction”) with a special 
+purpose acquisition company (the “SPAC”) that resulted in Respondent obtaining approximately 
+$450 million in cash proceeds from investors.  Respondent materially misrepresented its 2019 and 
+2020 revenue in financial statements that were included in registration statements and proxy filings 
+filed with the Commission and provided to investors in connection with the De-SPAC Transaction.  
+After Respondent became publicly traded, it continued to misstate its revenue, including in its 2021 
+Form 10-K and interim period reports and associated Forms 8-K.   
+2. Respondent grew rapidly following its first commercial sale in 2016, but its internal 
+accounting control environment did not keep pace.  Respondent had an aggressive sales culture 
+that prioritized meeting internal targets by shipping hardware— often in advance of organic 
+customer demand and through the use of side agreements— meaning agreements not contained in 
+the purchase order or sales order.  Notwithstanding the use of side agreements and its aggressive 
+sales culture that resulted in sales being pulled forward, Respondent failed to devise and maintain a 
+sufficient system of internal accounting controls to detect the agreements or make sure that key 
+details regarding these sales were available to permit preparation of its financial statements in 
+accordance with U.S. generally accepted accounting principles (“GAAP”).  Respondent also failed 
+to devise and maintain a sufficient system of internal accounting controls to:  (1) assess the 
+collectability of its contracts with distributors, resulting in Respondent recognizing revenue for 
+sales through distributors who did not have the ability to pay; and (2) ensure timely collection of 
+sell-through pricing data to incorporate into its revenue recognition transaction price determination 
+certain discounts it provided.  As a result, investors and market participants lacked accurate 
+information to make informed investment decisions. 
+3. Following an internal investigation into these and other issues, Respondent filed an 
+annual report in December 2024 for the year ended December 31, 2022 (the “Restated 10-K”), 
+which disclosed that Respondent had overstated its revenue for the Relevant Period, including by 
+approximately 107% for the year ended December 31, 2019; 39% for the year ended December 31, 
+2020; and 50% for the year ended December 31, 2021 (as well as in interim periods).  
+4. Based on the foregoing and the conduct described below, Respondent violated 
+Sections 17(a)(2) and 17(a)(3) of the Securities Act and Sections 13(a), 13(b)(2)(A), 13(b)(2)(B), 
+and 14(a) of the Exchange Act and Rules 13a-1, 13a-11, 13a-13, and 14a-9 thereunder. 
+ 
+1  The findings herein are made pursuant to Respondent’s Offer of Settlement and are not 
+binding on any other person or entity in this or any other proceeding. 
+3 
+Respondent 
+5. Respondent is a Delaware corporation based in Olivette, Missouri that develops and 
+manufactures smart access hardware and software products for multi-family residential properties.  
+From its founding in 2014 until June 2021, Respondent was privately held.  Respondent announced 
+a merger with the SPAC in January 2021 and became publicly traded on June 7, 2021.  From June 
+2021 to June 2024, Respondent’s common stock and warrants were registered pursuant to Section 
+12(b) of the Exchange Act and, from June 2021 to April 2024, traded on the Nasdaq Global Select 
+Market under the tickers “LTCH” and “LTCHW,” respectively.  Respondent’s common stock and 
+warrants are registered pursuant to Section 12(g) of the Exchange Act and are traded on the OTC 
+Link ATS. 
+Facts 
+Background 
+6. Respondent began selling smart locks in or around 2016, targeting the multi-family 
+residential industry as its primary market and building developers and operators as its customers.  
+Respondent entered into non-binding letters of intent (“LOI”) with those developers that set forth, 
+among other things, the quantity and price for Respondent’s hardware and software as well as a 
+target delivery date for anticipated installation.  In most cases, however, Respondent delivered the 
+locks to a sales agent (referred to as a channel partner) that had the expertise to install and activate 
+them.  During the Relevant Period, most of Respondent’s revenue came from hardware sales made 
+through channel partners. 
+7. On January 24, 2021, Respondent signed a merger agreement with the SPAC.  
+Respondent’s 2019 and 2020 financial statements, which contained its materially overstated 
+revenues, were included in filings made with the Commission, including a Form S-4 filed on 
+March 10, 2021, four amendments filed on March 30, 2021, May 3, 2021, May 10, 2021, and May 
+12, 2021, and a May 13, 2021 prospectus/proxy statement.  The SPAC’s shareholders approved the 
+merger and the transaction closed on June 4, 2021.  The transaction resulted in Respondent 
+obtaining approximately $450 million in cash proceeds. 
+8. Additionally, after it became a publicly traded company in June 2021, Respondent 
+reported materially overstated revenue in its June 25, 2021 Form S-1 registration statement, as well 
+as related July 7, 2021 and March 4, 2022 amendments, and in its current and periodic reports filed 
+with the Commission from the time it became a publicly traded company through the first quarter 
+of 2022. 
+Respondent’s Revenue Recognition Policy and its Application 
+9. Respondent disclosed in public filings that it prepared its financial statements in 
+accordance with GAAP and, more specifically, that it recognized revenue consistent with 
+Accounting Standards Codification Topic 606, Revenue from Contracts with Customers (“ASC 
+606”).  Respondent also disclosed that it recognized hardware revenue when the hardware was 
+shipped to its customers or channel partners, which was when Latch determined that control over 
+the product transferred to the customer, in an amount that reflected the consideration it expected to 
+receive in exchange for those products.   
+4 
+10. Respondent could not, and did not, account for certain of its hardware sales 
+transactions in accordance with ASC 606 and its own accounting policies, in large part because it 
+had not devised and maintained a sufficient system of internal accounting controls to reasonably 
+assure that all relevant sales terms and other pertinent sale-related information were obtained and 
+considered by the appropriate personnel to determine whether, when, and in what amount to 
+recognize revenue. 
+Respondent Failed to Consider or Account for Sales Terms in Side Agreements 
+11. Respondent typically received binding purchase orders from channel partners that 
+contained the terms of the transaction.  Respondent also had policies governing its relationships 
+with channel partners that established certain standard terms and generally required channel 
+partners to submit purchase orders for specific projects.   
+12. Throughout the Relevant Period, Respondent’s sales personnel aggressively sought 
+purchase orders from channel partners, which allowed Respondent to ship product, to meet short-
+term sales targets and hit personal sales quotas for commissions.  Sales personnel often offered 
+nonstandard arrangements to induce channel partners to submit purchase orders for products before 
+the date Respondent’s end customer had indicated it needed the product for installation.  These 
+nonstandard terms were documented, if at all, in side agreements and included, at times, 
+unconditional rights to return products; conditional or extended payment terms; obtaining purchase 
+orders from, and shipping hardware to, channel partners without specified customer projects; and 
+providing free storage.  Because Latch recognized revenue upon shipment to the channel partner, 
+these practices, at times, caused Latch to improperly recognize revenue before control transferred 
+to the customer.  
+13. Despite the systemic nature of these practices, Respondent failed to devise and 
+maintain a sufficient system of internal accounting controls to determine when revenue could be 
+properly recognized.  Respondent did not have sufficient internal accounting controls to identify 
+side agreements and provide reasonable assurance that all relevant sales terms and other pertinent 
+sale-related information were obtained and considered by the appropriate personnel to determine 
+whether, when, and in what amount to recognize revenue.  For example, Respondent’s sales 
+personnel were supposed to enter relevant sales terms into a sales system and could upload notes 
+and documents relating to side agreements.  Those terms then migrated to an accounting system for 
+review and approval by finance and accounting.  However, Respondent had no sufficient 
+mechanism that provided reasonable assurance that sales personnel actually entered side agreement 
+information into the sales system so that it was available to finance and accounting personnel for 
+consideration in accounting determinations and, in practice, they rarely, if ever, did.  As a result, 
+Respondent’s accounting team did not have all relevant information to account for certain sales 
+transactions appropriately. 
+14. Respondent’s sales practices, coupled with its internal accounting control failures, 
+resulted in significant revenue recognition issues.  Many sales transactions were recorded in a 
+manner inconsistent with ASC 606 and Respondent’s own accounting policies.  As a result, in 
+some instances, Respondent recognized revenue that should not have been recognized in any 
+period, while in many other instances Respondent recognized revenue in incorrect periods. 
+5 
+15. For example, on or around December 9, 2020, in the last month of the quarter, 
+Respondent shipped $147,000 of hardware to a channel partner conditioned on it having the right 
+to return the hardware without consequence if the building developer did not move forward with its 
+project—a nonstandard term that was memorialized in a side agreement and not provided to 
+Respondent’s finance and accounting team.  Because of the side agreement, contrary to ASC 606 
+and its own accounting policies, Respondent improperly recognized $147,000 in revenue relating 
+to this transaction in the fourth quarter of 2020.  In or around June 2021, the channel partner 
+returned the hardware. 
+16. In another instance, in March 2021, days before the end of the quarter, Respondent 
+shipped approximately $474,000 of hardware to a channel partner conditioned on it having the 
+right to return the hardware without consequence.  Sales personnel also agreed that the channel 
+partner could pay for the hardware after it received payment from the building developer, the 
+timing of which was uncertain.  These side agreements were not shared with Respondent’s finance 
+and accounting team.  Contrary to ASC 606 and its own accounting policies, Respondent 
+improperly recognized approximately $474,000 in revenue from the transaction in the first quarter 
+of 2021.  In fact, Respondent concluded as part of its restatement process that the revenue 
+associated with this transaction should have been recognized in later periods, including 
+approximately $350,000 in the second quarter of 2023 or later— more than two years after 
+Respondent initially recognized it.   
+Respondent Failed to Assess Collectability 
+17. Respondent’s ASC 606 accounting policies reflected, among other things, that 
+revenue could be recognized if it was probable the company would collect substantially all of the 
+consideration it was owed by the customer for that transaction.  However, Respondent failed to 
+devise and maintain a sufficient system of internal accounting controls to assess collectability.  
+Respondent, therefore, lacked a reasonable basis to determine that it could recognize revenue under 
+ASC 606 and its own accounting policies.   
+18. For example, during the Relevant Period, Respondent recognized as revenue nearly 
+$5.7 million from a single channel partner while collecting only $0.3 million in cash.  The channel 
+partner, as agent for customers, was responsible for payment to Respondent.  Respondent had 
+significant past due accounts receivable for this channel partner during this period but continued to 
+recognize revenue for hardware that was shipped to it without a reasonable basis to conclude that 
+collectability would be assured.  Respondent concluded in its restatement process that, had it 
+devised and maintained a sufficient system of internal controls to assess collectability, it likely 
+would not have extended additional credit to the channel partner and, as a result, determined that it 
+recognized revenue in contravention of both GAAP and its own accounting policies.  
+Respondent Recognized Revenue Based on an Improper Transaction Price 
+19. During the Relevant Period, Respondent offered price discounts— referred to 
+internally as distributor cuts— to channel partners who acted as sales agents.  These discounts were 
+often in excess of 20% of the hardware’s retail price.  Channel partners could pass through all or a 
+portion of the distributor cut to Respondent’s end customers, the building developers or operators.   
+6 
+20. In its ASC 606 accounting policies, Respondent concluded that the channel partners 
+were agents in sales transactions with building developers and operators.  Respondent determined 
+it could recognize as revenue the full transaction price paid by the developer, with the distributor 
+cut recorded as a cost of sales.  Respondent’s ability to determine its transaction price, including 
+estimating any variable consideration, was premised on Respondent having access to the sell-
+through price that the building developer or operator ultimately paid for Respondent’s hardware.  
+Respondent’s accounting policies acknowledged that in instances where it did not, or could not, 
+obtain sell-through pricing data, it should exclude the distributor cuts from the transaction price 
+and recognize revenue at the price paid to Respondent by the channel partner.  
+21. Respondent failed to devise and maintain a system of internal accounting controls 
+sufficient to provide reasonable assurance that it received the necessary sell-through pricing data.  
+From 2019 through August 2021, Respondent’s policies required channel partners to report sell-
+through pricing data in response to a request from Respondent.  However, Respondent rarely, if 
+ever, requested sell-through pricing data from its channel partners.  Starting in August of 2021, 
+Respondent modified its policies to require channel partners to include sell-through pricing data in 
+their purchase orders.  Respondent, however, did nothing to ensure or otherwise enforce its policy 
+that sell-through pricing data be included in channel partners’ purchase orders.  Instead, 
+Respondent improperly relied on the pricing terms established in the non-binding LOIs that 
+Respondent entered into with building developers.  This was improper because channel partners 
+had the ability to modify the price charged to the developers. 
+22. Respondent lacked sufficient sell-through pricing data to support its estimate of the 
+variable consideration in the transaction price in contravention of ASC 606 and its own internal 
+accounting policies.  In its Restated 10-K, Respondent identified that transaction price errors 
+resulted in hardware sales revenue overstatements in the amounts of $3.7 million, $4.1 million, and 
+$4.5 million for the years ended December 31, 2019, 2020, and 2021, respectively.  
+Respondent’s Internal Investigation and Restatement 
+23. In mid-2022, in response to allegations that Respondent had engaged in improper 
+sales practices, the Audit Committee of Respondent’s Board of Directors (“Audit Committee”) 
+initiated an internal investigation into Respondent’s historical revenue recognition practices.  On 
+August 10, 2022, Respondent disclosed its investigation in a Form 12b-25 Notification of Late 
+Filing.  Respondent filed periodic updates about the investigation and, on January 23, 2023, filed a 
+Form 8-K stating that its investigation was substantially complete.  Respondent disclosed that its 
+financial statements for the years 2019 and 2020, its 2021 annual report, and the quarterly reports 
+for each of the second, third, and fourth quarters of 2021 and the first quarter of 2022, were 
+materially misstated, should no longer be relied upon, and would be restated.   
+24. In its January 23, 2023 Form 8-K, Respondent identified three primary causes of its 
+overstated revenue:  (1) a failure to disclose relevant terms negotiated in side agreements with 
+channel partners and a failure to identify, consider, or properly account for such terms, (2) a failure 
+to consider fully the impact of certain terms of sales agreements with channel partners in 
+determining the amount and timing of revenue to be recognized, and (3) a failure to adequately 
+assess collectability.  
+7 
+25. Respondent’s revenue and other financial reporting errors were pervasive.  It took 
+Respondent until December 19, 2024— nearly two and a half years from its initial non-reliance 
+disclosure— to restate its materially misstated financial statements.  As part of the process, among 
+other things, Respondent replaced nearly its entire workforce, including management, and hired 
+more experienced accounting professionals, including additional finance and accounting 
+professionals with CPAs.  Respondent also determined that it needed to reconstruct its books and 
+records for the Relevant Period because it could not reliably determine which transactions were 
+accounted for correctly at the time they were originally recorded.  Respondent restated revenue to 
+the earlier of cash receipt or software contract execution, which required the review of thousands 
+of sales orders, cash transactions, and software contracts to finalize the restatement.  Respondent’s 
+restatement of revenue for the Relevant Period is set forth in the table below. 
+(in thousands) 2019 2020 Q1-21 Q2-21 Q3-21 Q4-21 2021 Q1-22 
+Reported Revenue $14,887 $18,061 $6,629 $9,012 $11,197 $14,522 $41,360 $13,655 
+Adjusted Revenue $7,187 $12,995 $4,974 $6,745 $6,850 $9,044 $27,613 $13,556 
+$ Overstatement $7,700 $5,066 $1,655 $2,267 $4,347 $5,478 $13,747 $99 
+% Overstatement 107% 39% 33% 34% 63% 61% 50% 1% 
+ 
+Violations 
+ 
+26. As a result of the conduct described above, Respondent violated Section 17(a)(2) of 
+the Securities Act, which proscribes, in the offer or sale of a security, obtaining “money or property 
+by means of any untrue statement of a material fact or any omission to state a material fact 
+necessary in order to make the statements made, in light of the circumstances under which they 
+were made, not misleading.”  In addition, as a result of the conduct described above, Respondent 
+violated Section 17(a)(3) of the Securities Act, which proscribes, in the offer or sale of a security, 
+engaging “in any transaction, practice, or course of business which operates or would operate as a 
+fraud or deceit upon the purchaser.” 
+27. As a result of the conduct described above, Respondent also violated Section 13(a) 
+of the Exchange Act and Rules 13a-1, 13a-11, and 13a-13 thereunder, which require every issuer 
+of a security registered pursuant to Section 12 of the Exchange Act to file annual, current, and 
+quarterly reports with the Commission in accordance with such rules and regulations as the 
+Commission may prescribe. 
+28. As a result of the conduct described above, Respondent also violated Section 
+13(b)(2)(A) of the Exchange Act, which requires reporting companies to make and keep books, 
+records, and accounts which, in reasonable detail, accurately and fairly reflect their transactions 
+and dispositions of their assets. 
+29. As a result of the conduct described above, Respondent also violated Section 
+13(b)(2)(B) of the Exchange Act, which requires reporting companies to devise and maintain a 
+system of internal accounting controls sufficient to provide reasonable assurances that transactions 
+are recorded as necessary to permit preparation of financial statements in conformity with GAAP 
+or any other criteria applicable to such statements. 
+8 
+30. Lastly, as a result of the conduct described above, Respondent violated Section 
+14(a) of the Exchange Act and Rule 14a-9 thereunder, which prohibit the use of proxy statements 
+containing materially false or misleading statements or omissions of material fact necessary to 
+make statements not misleading.   
+Respondent’s Cooperation and Remedial Efforts 
+31. In determining to accept the Offer, the Commission considered Respondent’s 
+cooperation with the staff’s investigation and its remedial efforts after discovering the violations at 
+issue. 
+32. After learning of potential misconduct, Respondent retained outside counsel to 
+conduct an internal investigation under the direction and oversight of its Audit Committee.  
+Respondent reported on the findings of the investigation to Commission staff and provided 
+selected documents to illustrate certain findings.  Upon request, Respondent also provided staff 
+with additional documents and with explanations and summaries of specific factual issues.  
+Respondent, including its leadership, also met with the staff to discuss its restatement and related 
+issues.   
+33. Respondent also undertook remedial measures relating to the conduct described in 
+the Offer of Settlement, including (i)  making changes to management, the finance, sales, and 
+accounting teams; (ii) developing training for Respondent personnel; and (iii) implementing new 
+controls relating to Respondent’s accounting, monitoring, risk assessment, and financial reporting 
+functions, including revising its Sarbanes-Oxley compliance program. 
+IV. 
+In view of the foregoing, the Commission deems it appropriate and in the public interest to 
+impose the sanctions agreed to in Respondent Latch’s Offer. 
+Accordingly, it is hereby ORDERED that: 
+A. Pursuant to Section 8A of the Securities Act and Section 21C of the Exchange Act, 
+Respondent Latch cease and desist from committing or causing any violations and any future 
+violations of Sections 17(a)(2) and 17(a)(3) of the Securities Act and Sections 13(a), 13(b)(2)(A), 
+13(b)(2)(B), and 14(a) of the Exchange Act and Rules 13a-1, 13a-11, 13a-13, and 14a-9 thereunder. 
+B. Respondent shall pay a civil penalty of $1,000,000, to the Securities and Exchange 
+Commission for transfer to the general fund of the United States Treasury, subject to Exchange Act 
+Section 21F(g)(3).  If timely payment is not made, additional interest shall accrue pursuant to 31 
+U.S.C. § 3717.  Payment shall be made in four quarterly installments of $250,000, the first of 
+which is due within twenty (20) days of the entry of this Order, and the three remaining 
+installments are due, one per quarter, on or before the last day of the subsequent three quarters.  
+Payments shall be applied first to post order interest, which accrues pursuant to 31 U.S.C. § 3717.  
+Prior to making the final payment set forth herein, Respondent shall contact the staff of the 
+Commission for the amount due.  If Respondent fails to make any payment by the date agreed 
+and/or in the amount agreed according to the schedule set forth above, all outstanding payments 
+under this Order, including post-order interest, minus any payments made, shall become due and 
+9 
+payable immediately at the discretion of the staff of the Commission without further application to 
+the Commission. 
+Payment must be made in one of the following ways:   
+(1) Respondent may transmit payment electronically to the Commission, which 
+will provide detailed ACH transfer/Fedwire instructions upon request;  
+ 
+(2) Respondent may make direct payment from a bank account via Pay.gov 
+through the SEC website at http://www.sec.gov/about/offices/ofm.htm; or  
+ 
+(3) Respondent may pay by certified check, bank cashier’s check, or United 
+States postal money order, made payable to the Securities and Exchange 
+Commission and hand-delivered or mailed to:  
+ 
+Enterprise Services Center 
+Accounts Receivable Branch 
+HQ Bldg., Room 181, AMZ-341 
+6500 South MacArthur Boulevard 
+Oklahoma City, OK 73169 
+ 
+Payments by check or money order must be accompanied by a cover letter identifying 
+Latch, Inc. as a Respondent in these proceedings, and the file number of these proceedings; a copy 
+of the cover letter and check or money order must be sent to Scott A. Thompson, Associate 
+Director, Division of Enforcement, Securities and Exchange Commission, 1617 John F. Kennedy 
+Blvd., Suite 520, Philadelphia, PA 19103-1844. 
+10 
+C. Amounts ordered to be paid as civil money penalties pursuant to this Order shall be 
+treated as penalties paid to the government for all purposes, including all tax purposes.  To 
+preserve the deterrent effect of the civil penalty, Respondent agrees that in any Related Investor 
+Action, it shall not argue that it is entitled to, nor shall it benefit by, offset or reduction of any 
+award of compensatory damages by the amount of any part of Respondent’s payment of a civil 
+penalty in this action (“Penalty Offset”).  If the court in any Related Investor Action grants such a 
+Penalty Offset, Respondent agrees that it shall, within 30 days after entry of a final order granting 
+the Penalty Offset, notify the Commission's counsel in this action and pay the amount of the 
+Penalty Offset to the Securities and Exchange Commission.  Such a payment shall not be deemed 
+an additional civil penalty and shall not be deemed to change the amount of the civil penalty 
+imposed in this proceeding.  For purposes of this paragraph, a “Related Investor Action” means a 
+private damages action brought against Respondent by or on behalf of one or more investors based 
+on substantially the same facts as alleged in the Order instituted by the Commission in this 
+proceeding. 
+By the Commission. 
+ 
+ 
+ 
+Vanessa A. Countryman 
+Secretary 
+ 
+ 

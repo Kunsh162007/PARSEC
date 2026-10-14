@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fine Print: document due diligence checker</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111827'/%3E%3Cpath d='M9 8h14M9 14h14M9 20h9' stroke='%23f59e0b' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <meta name="description" content="Check contracts, accounts, policies and reports for the claims that don't add up, the clauses that carry risk and the gaps worth asking about. Runs in your browser.">
+  <meta name="color-scheme" content="light dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://cdnjs.cloudflare.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://cdnjs.cloudflare.com; worker-src blob: https://cdnjs.cloudflare.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="bar">
+    <a class="wordmark" href="./" aria-label="Fine Print, start again">Fine Print</a>
+    <p class="privacy" id="privacy">Documents are checked in this browser. Nothing is uploaded.</p>
+  </header>
+
+  <main id="main">
+    <!-- Step 1: choose what to check and add documents -->
+    <section id="setup" class="setup" aria-labelledby="setup-title">
+      <div class="intro">
+        <h1 id="setup-title">Find what's wrong with a document before you rely on it.</h1>
+        <p class="lede">Add contracts, accounts, policies, reports or a whole data room. Fine Print marks the claims that don't add up, the clauses that carry risk and the gaps worth asking about.</p>
+      </div>
+
+      <figure class="specimen">
+        <div class="specimen-sheet">
+          <p>The Supplier may <mark class="sev-high">terminate on a change of control</mark> of the Customer. Liability is <mark class="sev-high">unlimited</mark>, and the insurance certificate <mark class="sev-high">is valid until 14 March 2023</mark>.</p>
+        </div>
+        <figcaption>
+          <ul class="specimen-notes">
+            <li class="sev-high"><b>High.</b> The deal itself lets them walk away. List every consent needed.</li>
+            <li class="sev-high"><b>High.</b> Uncapped liability. Ask for the cap in every material contract.</li>
+            <li class="sev-high"><b>High.</b> Expired, yet relied on as current. Ask for the renewed certificate.</li>
+          </ul>
+        </figcaption>
+      </figure>
+
+      <div class="workspace">
+        <section class="lenses" aria-labelledby="lens-title">
+          <h2 id="lens-title">What are you checking?</h2>
+          <p class="hint">Pick every kind of due diligence that applies. Document integrity checks always run.</p>
+          <div class="lens-tools">
+            <button type="button" class="link" id="lens-all">Select all</button>
+            <button type="button" class="link" id="lens-none">Clear</button>
+          </div>
+          <ul class="lens-list" id="lens-list"></ul>
+        </section>
+
+        <section class="docs" aria-labelledby="docs-title">
+          <h2 id="docs-title">Add the documents</h2>
+
+          <div class="drop" id="drop" tabindex="0" role="button" aria-describedby="drop-hint">
+            <strong>Choose files or drop them here</strong>
+            <span id="drop-hint">Text, Markdown, CSV, JSON, HTML, PDF and Word files, up to 15 MB each.</span>
+            <input type="file" id="file-input" multiple accept=".txt,.md,.csv,.tsv,.json,.html,.htm,.xml,.log,.pdf,.docx" hidden>
+          </div>
+
+          <div class="examples" id="examples" hidden>
+            <p class="field-label">Or try real public documents</p>
+            <div class="example-buttons" id="example-buttons"></div>
+            <p class="hint" id="example-source"></p>
+          </div>
+
+          <label class="field-label" for="paste">Or paste text</label>
+          <textarea id="paste" rows="6" spellcheck="false" placeholder="Paste a clause, a table, an email or a whole report"></textarea>
+          <div class="paste-row">
+            <input id="paste-name" type="text" autocomplete="off" placeholder="Name this text (optional)" aria-label="Name for pasted text">
+            <button type="button" class="secondary" id="paste-add">Add pasted text</button>
+          </div>
+
+          <ul class="doc-list" id="doc-list" aria-label="Documents to check"></ul>
+          <p class="status" id="status" role="status" aria-live="polite"></p>
+        </section>
+      </div>
+
+      <div class="ai-opt" id="ai-opt" hidden>
+        <label class="check">
+          <input type="checkbox" id="needs-toggle">
+          <span><strong>Work out what this file still needs</strong>, in analysts' terms, with Nemotron</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="ai-toggle">
+          <span><strong>Add an AI deep read</strong> with Nemotron on Nebius</span>
+        </label>
+        <label class="check check-sub" id="funnel-row">
+          <input type="checkbox" id="funnel-toggle">
+          <span>Also use Nano triage and Ultra rulings. Costs about three times as much, and on our benchmark it has not made the AI read more accurate.</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="web-toggle">
+          <span><strong>Check the companies named</strong> against public sources</span>
+        </label>
+        <div class="code-row" id="ai-code-row" hidden>
+          <label for="ai-code">Access code</label>
+          <input id="ai-code" type="password" autocomplete="off" spellcheck="false">
+        </div>
+        <p class="hint" id="ai-hint"></p>
+      </div>
+
+      <div class="run-bar">
+        <button type="button" class="primary" id="run" disabled>Check documents</button>
+        <p id="run-hint" class="run-hint">Add at least one document to begin.</p>
+      </div>
+    </section>
+
+    <!-- Step 2: results -->
+    <section id="results" class="results" hidden aria-labelledby="verdict">
+      <div class="summary">
+        <div class="summary-main">
+          <h2 id="verdict" class="verdict"></h2>
+          <p id="coverage" class="coverage"></p>
+          <div id="needs-callout" class="needs-callout" hidden></div>
+          <div id="meter" class="meter" hidden></div>
+          <ul class="counts" id="counts" aria-label="Findings by severity"></ul>
+          <div class="signoff">
+            <label for="reviewer">Reviewer</label>
+            <input id="reviewer" type="text" autocomplete="name" spellcheck="false" placeholder="Name of the person confirming the flags">
+            <p id="report-status" class="report-status" role="status" aria-live="polite"></p>
+          </div>
+        </div>
+        <div class="summary-actions">
+          <button type="button" class="secondary" id="back">Change documents</button>
+          <button type="button" class="secondary" id="memo-btn" hidden>Draft memo with Nemotron</button>
+          <button type="button" class="secondary" id="copy">Copy report</button>
+          <button type="button" class="secondary" id="print">Print or save as PDF</button>
+        </div>
+      </div>
+
+      <section id="memo" class="memo" hidden aria-live="polite"></section>
+
+      <div class="tabs" role="tablist" aria-label="Result views">
+        <button type="button" role="tab" id="tab-findings" aria-controls="pane-findings" aria-selected="true" data-view="findings">Findings <span class="n" id="n-findings"></span></button>
+        <button type="button" role="tab" id="tab-followups" aria-controls="pane-followups" aria-selected="false" tabindex="-1" data-view="followups">Follow-up list <span class="n" id="n-followups"></span></button>
+        <button type="button" role="tab" id="tab-connections" aria-controls="pane-connections" aria-selected="false" tabindex="-1" data-view="connections">Connections <span class="n" id="n-connections"></span></button>
+        <button type="button" role="tab" id="tab-workflow" aria-controls="pane-workflow" aria-selected="false" tabindex="-1" data-view="workflow">Workflow <span class="n" id="n-workflow"></span></button>
+        <button type="button" role="tab" id="tab-document" class="tab-document" aria-controls="pane-document" aria-selected="false" tabindex="-1" data-view="document">Document</button>
+      </div>
+
+      <div class="split" id="split" data-view="findings">
+        <div class="pane pane-findings" id="pane-findings" role="tabpanel" aria-labelledby="tab-findings">
+          <div class="filters">
+            <div class="chips" id="severity-chips" role="group" aria-label="Filter by severity"></div>
+            <div class="filter-row">
+              <label for="lens-filter">Show</label>
+              <select id="lens-filter"></select>
+              <label class="check"><input type="checkbox" id="show-dismissed"> Include dismissed</label>
+            </div>
+          </div>
+          <ol class="finding-list" id="finding-list"></ol>
+          <p class="empty" id="finding-empty" hidden></p>
+        </div>
+
+        <div class="pane pane-followups" id="pane-followups" role="tabpanel" aria-labelledby="tab-followups">
+          <div class="followups-head">
+            <p>Send these to the other side. They are ordered by how much they matter and each appears once.</p>
+            <button type="button" class="secondary" id="copy-followups">Copy list</button>
+          </div>
+          <ol class="followup-list" id="followup-list"></ol>
+        </div>
+
+        <div class="pane pane-connections" id="pane-connections" role="tabpanel" aria-labelledby="tab-connections">
+          <div id="connections"></div>
+        </div>
+
+        <div class="pane pane-workflow" id="pane-workflow" role="tabpanel" aria-labelledby="tab-workflow">
+          <div class="followups-head">
+            <p>The request list and Q&amp;A log in the format a deal team tracks them, and what each workstream has to go on.</p>
+            <div class="workflow-actions">
+              <button type="button" class="secondary" id="download-irl">Download request list (CSV)</button>
+              <button type="button" class="secondary" id="download-qa">Download Q&amp;A log (CSV)</button>
+            </div>
+          </div>
+          <div id="workflow"></div>
+        </div>
+
+        <div class="pane pane-document" id="pane-document" role="tabpanel" aria-labelledby="tab-document">
+          <div class="doc-tabs" id="doc-tabs" role="group" aria-label="Documents"></div>
+          <article class="sheet" id="sheet" tabindex="0" aria-label="Document text with findings marked"></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Fine Print screens for patterns worth asking about. It cannot confirm facts, and a clean result does not mean a document is sound. It is not legal, financial or professional advice.</p>
+  </footer>
+
+  <script src="engine.js"></script>
+  <script src="dossier.js"></script>
+  <script src="workflow.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

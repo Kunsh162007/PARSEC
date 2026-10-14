@@ -1,0 +1,163 @@
+{
+  "retrieved_at": "2026-10-13T03:48:13+00:00",
+  "source": "Tavily Search API, live",
+  "summary": {
+    "known_companies_with_matter_found": "5/5",
+    "fictional_companies_with_matter_found": "0/3",
+    "lookup_errors": 0
+  },
+  "caveats": [
+    "A match means public sources mention the company with a dispute-related term. It is not a legal finding.",
+    "Results can concern a different company with a similar name, and search results vary between calls.",
+    "Fictional names test for invented matters. They are not a measure of precision on real, clean companies."
+  ],
+  "groups": [
+    {
+      "group": "known",
+      "entities": [
+        {
+          "entity": "Wirecard AG",
+          "note": "Payments group that collapsed in 2020 after EUR 1.9bn of cash was found not to exist",
+          "results_returned": 8,
+          "relevant_results": 8,
+          "error": "",
+          "matter_found": true,
+          "sources": [
+            {
+              "title": "Wirecard scandal - Wikipedia",
+              "url": "https://en.wikipedia.org/wiki/Wirecard_scandal"
+            },
+            {
+              "title": "WIRECARD AG SECURITIES LITIGATION No. 2:20",
+              "url": "https://www.govinfo.gov/content/pkg/USCOURTS-paed-2_20-cv-03326/pdf/USCOURTS-paed-2_20-cv-03326-0.pdf"
+            },
+            {
+              "title": "Wirecard Scandal: When All Lines of Defense Against Corporate Fraud Fail | Oxford Law Blogs",
+              "url": "https://blogs.law.ox.ac.uk/business-law-blog/blog/2020/11/wirecard-scandal-when-all-lines-defense-against-corporate-fraud-fail"
+            }
+          ]
+        },
+        {
+          "entity": "Boeing Company",
+          "note": "737 MAX investigations, DOJ case, FAA penalties and securities litigation",
+          "results_returned": 8,
+          "relevant_results": 8,
+          "error": "",
+          "matter_found": true,
+          "sources": [
+            {
+              "title": "Boeing to plead guilty to criminal fraud charge over 737 Max crashes",
+              "url": "https://www.bbc.com/news/articles/cjjjj85z0lno"
+            },
+            {
+              "title": "The Boeing Company | Bernstein Litowitz Berger & Grossmann LLP",
+              "url": "http://www.blbglaw.com/cases-investigations/boeing-company"
+            },
+            {
+              "title": "The Boeing Company (BA) - Bronstein, Gewirtz & Grossman, LLC - Securities & Consumer Class Action Lawsuits",
+              "url": "https://bgandg.com/cases/the-boeing-company-ba-class_action_lawsuit"
+            }
+          ]
+        },
+        {
+          "entity": "Theranos Inc",
+          "note": "Blood-testing startup; founder convicted of fraud",
+          "results_returned": 8,
+          "relevant_results": 8,
+          "error": "",
+          "matter_found": true,
+          "sources": [
+            {
+              "title": "U.S. hedge fund files lawsuit accusing Theranos of fraud",
+              "url": "https://ca.finance.yahoo.com/news/u-hedge-fund-files-lawsuit-accusing-theranos-fraud-010916239--sector.html"
+            },
+            {
+              "title": "Theranos, Inc. | Company, Elizabeth Holmes, Scandal, & Legal Fallout | Britannica",
+              "url": "https://www.britannica.com/topic/Theranos-Inc"
+            },
+            {
+              "title": "Theranos Investor Fraud | Hagens Berman",
+              "url": "https://www.hbsslaw.com/cases/theranos"
+            }
+          ]
+        },
+        {
+          "entity": "Volkswagen AG",
+          "note": "Diesel emissions scandal, fines and settlements",
+          "results_returned": 8,
+          "relevant_results": 7,
+          "error": "",
+          "matter_found": true,
+          "sources": [
+            {
+              "title": "Volkswagen AG | Bernstein Litowitz Berger & Grossmann LLP",
+              "url": "http://www.blbglaw.com/cases-investigations/volkswagen-ag"
+            },
+            {
+              "title": "Litigation - Volkswagen Group Annual Report 2021",
+              "url": "https://annualreport2021.volkswagenag.com/notes/other-disclosures/litigation.html"
+            },
+            {
+              "title": "Litigation - Volkswagen Group Annual Report 2024",
+              "url": "https://annualreport2024.volkswagen-group.com/notes/other-disclosures/litigation.html"
+            }
+          ]
+        },
+        {
+          "entity": "Enron Corporation",
+          "note": "Accounting fraud and bankruptcy, 2001",
+          "results_returned": 8,
+          "relevant_results": 4,
+          "error": "",
+          "matter_found": true,
+          "sources": [
+            {
+              "title": "Two Enron Attorneys Are Charged with Fraud",
+              "url": "https://www.cnbc.com/2007/03/28/two-enron-attorneys-are-charged-with-fraud.html"
+            },
+            {
+              "title": "UBS to Pay $115 Million to Settle Enron Case",
+              "url": "https://www.cnbc.com/2007/06/06/ubs-to-pay-115-million-to-settle-enron-case.html"
+            },
+            {
+              "title": "The Enron bankruptcy of 2001",
+              "url": "https://brainmass.com/business/financial-distress-and-bankruptcy/the-enron-bankruptcy-of-2001-195523"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "group": "fictional",
+      "entities": [
+        {
+          "entity": "Harlow Foods plc",
+          "note": "invented for the Fine Print examples",
+          "results_returned": 8,
+          "relevant_results": 0,
+          "error": "",
+          "matter_found": false,
+          "sources": []
+        },
+        {
+          "entity": "Brightwell Components Ltd",
+          "note": "invented for the Fine Print examples",
+          "results_returned": 8,
+          "relevant_results": 0,
+          "error": "",
+          "matter_found": false,
+          "sources": []
+        },
+        {
+          "entity": "Quillfeather Logistics GmbH",
+          "note": "invented for this check",
+          "results_returned": 8,
+          "relevant_results": 0,
+          "error": "",
+          "matter_found": false,
+          "sources": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,155 @@
+{
+  "generated_at": "2026-10-13T11:32:58+00:00",
+  "method": "broad net selects candidate passages; Nemotron Super classifies them; each hit must quote its passage",
+  "split": "dev",
+  "contracts": 25,
+  "seed": 11,
+  "usage": {
+    "passages": 6694,
+    "candidates": 2440,
+    "calls": 133,
+    "failed_calls": 0,
+    "dropped": 8,
+    "tokens": 474119,
+    "cost_usd": 0.3803
+  },
+  "score": {
+    "pooled_recall": {
+      "rules": 0.6,
+      "model": 0.79,
+      "either": 0.85
+    },
+    "labelled_clauses": 100,
+    "model_hits": 209,
+    "model_precision_same_category": 0.502,
+    "model_precision_any_mapped_label": 0.531,
+    "categories": {
+      "Anti-Assignment": {
+        "contracts_with_clause": 21,
+        "rules": 19,
+        "model": 20,
+        "either": 21,
+        "recall_rules": 0.905,
+        "recall_model": 0.952,
+        "recall_either": 1.0
+      },
+      "Change Of Control": {
+        "contracts_with_clause": 9,
+        "rules": 5,
+        "model": 7,
+        "either": 8,
+        "recall_rules": 0.556,
+        "recall_model": 0.778,
+        "recall_either": 0.889
+      },
+      "Exclusivity": {
+        "contracts_with_clause": 6,
+        "rules": 4,
+        "model": 5,
+        "either": 6,
+        "recall_rules": 0.667,
+        "recall_model": 0.833,
+        "recall_either": 1.0
+      },
+      "Ip Ownership Assignment": {
+        "contracts_with_clause": 8,
+        "rules": 5,
+        "model": 7,
+        "either": 7,
+        "recall_rules": 0.625,
+        "recall_model": 0.875,
+        "recall_either": 0.875
+      },
+      "Joint Ip Ownership": {
+        "contracts_with_clause": 4,
+        "rules": 4,
+        "model": 4,
+        "either": 4,
+        "recall_rules": 1.0,
+        "recall_model": 1.0,
+        "recall_either": 1.0
+      },
+      "Liquidated Damages": {
+        "contracts_with_clause": 3,
+        "rules": 3,
+        "model": 3,
+        "either": 3,
+        "recall_rules": 1.0,
+        "recall_model": 1.0,
+        "recall_either": 1.0
+      },
+      "Minimum Commitment": {
+        "contracts_with_clause": 7,
+        "rules": 1,
+        "model": 4,
+        "either": 4,
+        "recall_rules": 0.143,
+        "recall_model": 0.571,
+        "recall_either": 0.571
+      },
+      "Most Favored Nation": {
+        "contracts_with_clause": 1,
+        "rules": 0,
+        "model": 1,
+        "either": 1,
+        "recall_rules": 0.0,
+        "recall_model": 1.0,
+        "recall_either": 1.0
+      },
+      "No-Solicit Of Employees": {
+        "contracts_with_clause": 5,
+        "rules": 5,
+        "model": 5,
+        "either": 5,
+        "recall_rules": 1.0,
+        "recall_model": 1.0,
+        "recall_either": 1.0
+      },
+      "Non-Compete": {
+        "contracts_with_clause": 3,
+        "rules": 0,
+        "model": 2,
+        "either": 2,
+        "recall_rules": 0.0,
+        "recall_model": 0.667,
+        "recall_either": 0.667
+      },
+      "Renewal Term": {
+        "contracts_with_clause": 10,
+        "rules": 5,
+        "model": 8,
+        "either": 9,
+        "recall_rules": 0.5,
+        "recall_model": 0.8,
+        "recall_either": 0.9
+      },
+      "Rofr/Rofo/Rofn": {
+        "contracts_with_clause": 4,
+        "rules": 0,
+        "model": 1,
+        "either": 1,
+        "recall_rules": 0.0,
+        "recall_model": 0.25,
+        "recall_either": 0.25
+      },
+      "Termination For Convenience": {
+        "contracts_with_clause": 13,
+        "rules": 8,
+        "model": 11,
+        "either": 12,
+        "recall_rules": 0.615,
+        "recall_model": 0.846,
+        "recall_either": 0.923
+      },
+      "Uncapped Liability": {
+        "contracts_with_clause": 6,
+        "rules": 1,
+        "model": 1,
+        "either": 2,
+        "recall_rules": 0.167,
+        "recall_model": 0.167,
+        "recall_either": 0.333
+      }
+    }
+  }
+}

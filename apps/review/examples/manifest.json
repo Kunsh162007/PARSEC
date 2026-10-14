@@ -1,0 +1,39 @@
+{
+ "note": "Real public documents, unchanged apart from text extraction. Nothing here was written for this project.",
+ "sets": [
+  {
+   "id": "contract",
+   "label": "A distribution agreement filed with the SEC",
+   "files": [
+    {
+     "name": "accuray-distributor-agreement.txt",
+     "title": "Accuray Inc. distributor agreement (Exhibit 10.31, 2010)",
+     "source": "SEC EDGAR, via the CUAD dataset (The Atticus Project)",
+     "licence": "CC BY 4.0",
+     "url": "https://www.atticusprojectai.org/cuad"
+    }
+   ]
+  },
+  {
+   "id": "order",
+   "label": "An SEC accounting enforcement order",
+   "files": [
+    {
+     "name": "sec-order-latch.txt",
+     "title": "SEC order, Latch, Inc. (2026-10-01, AAER-4604)",
+     "source": "U.S. Securities and Exchange Commission",
+     "licence": "U.S. government work, public domain",
+     "url": "https://www.sec.gov/files/litigation/admin/2026/33-11450.pdf"
+    }
+   ]
+  },
+  {
+   "id": "both",
+   "label": "Both together, as a small data room",
+   "files_from": [
+    "contract",
+    "order"
+   ]
+  }
+ ]
+}

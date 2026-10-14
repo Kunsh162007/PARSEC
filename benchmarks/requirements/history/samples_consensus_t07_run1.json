@@ -1,0 +1,408 @@
+{
+  "generated_at": "2026-10-13T16:16:10+00:00",
+  "note": "Model output on real document sets, kept for human review. Not a score.",
+  "samples": 3,
+  "temperature_override": 0.7,
+  "sets": [
+    {
+      "name": "Licence agreement",
+      "documents": [
+        "AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content License Agreement.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "IP licensing due diligence for evaluating the joint content license between WPT and Zynga as part of assessing Allied Esports Entertainment\u2019s assets.",
+      "items": [
+        {
+          "name": "Joint Content License Agreement",
+          "name_known": true,
+          "what_it_is": "The main contract governing the licensing of Zynga Poker content between WPT and Zynga.",
+          "why_needed": "To understand rights, obligations, and scope of the licensed IP.",
+          "status": "supplied",
+          "evidence": "Exhibit 10.19 JOINT CONTENT LICENSE AGREEMENT This JOINT CONTENT LICENSE AGREEMENT (the \"Agreement\"), dated February 1, 2018 (the \"Effective Date\"), is made by and between WPT Enterprises, Inc., a Delaware corporation, with offices located at 1920 Main Street, Suite 1150, Irvine, CA 92614 (\"WPT\"), and ZYNGA INC., a Delaware corporation with offices located at 699 8th Street, San Francisco CA, 94103 (\"Zynga US\") and ZYNGA GAME IRELAND LIMITED, a limited company organized under the laws of Ireland, resident in Ireland and having its registered office located at The Oval, Building One, Third Floor 160 Shelbourne Road Ballsbridge 4 Co. Dublin Ireland (\"Zynga Ireland,\" and together with Zynga US and their respective Affiliates, \"Zynga\").",
+          "priority": "high",
+          "workstream": "ip",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Amendments or Waivers to the Agreement",
+          "name_known": true,
+          "what_it_is": "any subsequent modifications, extensions, or waivers agreed by parties.",
+          "why_needed": "to assess current enforceability and any changed terms.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Trademark Registrations for ZYNGA POKER",
+          "name_known": true,
+          "what_it_is": "USPTO/IPO registrations covering the licensed mark.",
+          "why_needed": "to validate licensor's ownership of the IP being licensed.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "ip",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.010995000000000001,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Franchise agreement",
+      "documents": [
+        "AIRTECHINTERNATIONALGROUPINC_05_08_2000-EX-10.4-FRANCHISE AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Due diligence review of the Airsopure franchise agreement to assess the viability of acquiring or operating a franchise unit.",
+      "items": [
+        {
+          "name": "Audited Financial Statements",
+          "name_known": true,
+          "what_it_is": "Balance sheet, income statement, cash\u2011flow statement audited by an independent CPA.",
+          "why_needed": "To evaluate the franchisor\u2019s financial health and ability to support franchisees.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Trademark Registration Certificates",
+          "name_known": true,
+          "what_it_is": "Certificates of registration for the AIRSOPURE trademarks and service marks.",
+          "why_needed": "To confirm enforceability of licensed marks used by franchisees.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "ip",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Franchise Disclosure Document (FDD)",
+          "name_known": true,
+          "what_it_is": "The pre\u2011sale disclosure document required by the FTC Franchise Rule containing 23 items about the franchisor.",
+          "why_needed": "To assess franchisor\u2019s obligations, fees, litigation, and financial performance representations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "regulatory",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "List of current franchisees",
+          "name_known": true,
+          "what_it_is": "Disclosure of existing franchise owners with contact information and outlet locations.",
+          "why_needed": "Enable validation of performance, turnover, and satisfaction.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "commercial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Litigation Summary",
+          "name_known": true,
+          "what_it_is": "Summary of pending and threatened lawsuits involving the franchisor.",
+          "why_needed": "To evaluate legal risks and potential liabilities.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Insurance Certificates",
+          "name_known": true,
+          "what_it_is": "Certificates of general liability, workers\u2019 compensation and property insurance.",
+          "why_needed": "To ensure adequate coverage for franchise operations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Operations Manual",
+          "name_known": true,
+          "what_it_is": "Confidential guide detailing standards, procedures, and training for franchise operation.",
+          "why_needed": "Determine operational requirements and compliance burden.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "other",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.011175000000000001,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Endorsement agreement",
+      "documents": [
+        "ADAMSGOLFINC_03_21_2005-EX-10.17-ENDORSEMENT AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Review of the Tom Watson endorsement agreement with Adams Golf Ltd. for contractual completeness and risk assessment.",
+      "items": [
+        {
+          "name": "Audited Financial Statements",
+          "name_known": true,
+          "what_it_is": "Adams Golf Ltd.\u2019s most recent audited balance sheet, income statement, and cash\u2011flow statement.",
+          "why_needed": "To assess the company\u2019s ability to meet compensation and indemnity obligations under the agreement.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.009559,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Services agreement",
+      "documents": [
+        "ABILITYINC_06_15_2020-EX-4.25-SERVICES AGREEMENT.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Contractual due\u2011diligence review of a Services Agreement between Provider and Recipients.",
+      "items": [
+        {
+          "name": "Exhibit A \u2013 Scope of Services",
+          "name_known": true,
+          "what_it_is": "Attachment detailing the specific services, deliverables, and timelines.",
+          "why_needed": "To verify what services are being provided and performance expectations.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Corporate Approvals (Board Resolutions)",
+          "name_known": true,
+          "what_it_is": "Formal resolutions or authorizations from each party\u2019s board approving the Agreement.",
+          "why_needed": "To confirm the Agreement was validly executed and enforceable.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Confidentiality Agreement / Provisions",
+          "name_known": true,
+          "what_it_is": "Separate NDA or confidentiality clauses governing protection of proprietary information.",
+          "why_needed": "To ensure confidential information is adequately safeguarded and obligations are clear.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.006992,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "SEC enforcement order",
+      "documents": [
+        "sec-order-latch.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "SEC administrative proceeding alleging revenue recognition violations by Latch, Inc., settled via an Offer of Settlement and cease\u2011and\u2011desist order.",
+      "items": [
+        {
+          "name": "Offer of Settlement",
+          "name_known": true,
+          "what_it_is": "The respondent's proposed settlement agreement submitted to the SEC.",
+          "why_needed": "To verify the terms admitted and any conditions tied to the cease\u2011and\u2011desist order.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Restated financial statements",
+          "name_known": true,
+          "what_it_is": "Revised financial statements reflecting corrected revenue recognition.",
+          "why_needed": "To confirm the adjustments described in the SEC order.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 3,
+          "of_runs": 3
+        },
+        {
+          "name": "Internal investigation report",
+          "name_known": true,
+          "what_it_is": "Report detailing Latch's internal review of side agreements and collectability assessments.",
+          "why_needed": "To understand root cause and scope of violations.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "A section with a similar heading exists in sec-order-latch.txt: \"Respondent\u2019s Internal Investigation and Restatement\". Check whether it is what is needed.",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.010008,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Annual report (10-K)",
+      "documents": [
+        "UPS_10-K_2020.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Financial due\u2011diligence review of United Parcel Service, Inc. using its FY\u202f2020 Form\u202f10\u2011K.",
+      "items": [
+        {
+          "name": "DEF 14A Proxy Statement",
+          "name_known": true,
+          "what_it_is": "Annual proxy statement covering director elections, executive compensation and related\u2011party transactions.",
+          "why_needed": "Needed to assess governance and compensation details referenced in Items 10\u201113 of the 10\u2011K.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Form 10\u2011Q for Q1\u2011Q3 2020",
+          "name_known": true,
+          "what_it_is": "Quarterly reports providing interim financial statements and MD&A for the first three quarters of 2020.",
+          "why_needed": "Required to evaluate trends and supplement the annual MD&A (Item\u202f7) and selected financial data (Item\u202f6).",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "A section with a similar heading exists in UPS_10-K_2020.txt: \"Item 9B. Other Information\". Check whether it is what is needed.",
+          "agreement": 2,
+          "of_runs": 3
+        },
+        {
+          "name": "Material contracts exhibited as exhibits (e.g., credit agreement, union contracts)",
+          "name_known": true,
+          "what_it_is": "Actual agreements listed in the Exhibit Index (Item\u202f15) such as debt facilities and collective bargaining agreements.",
+          "why_needed": "Needed to confirm terms of debt, financing arrangements and labor obligations referenced in Notes\u202f9 and\u202f6.",
+          "status": "unclear",
+          "evidence": "",
+          "priority": "medium",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.009549,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Earnings release",
+      "documents": [
+        "earnings-release.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Preparing or reviewing an SEC Form 8\u2011K (Item 2.02) that incorporates the Franklin Covey earnings release as Exhibit 99.1.",
+      "items": [
+        {
+          "name": "Management's Discussion and Analysis (MD&A)",
+          "name_known": true,
+          "what_it_is": "Narrative explanation of financial results, liquidity, and known trends from management.",
+          "why_needed": "Provides context for performance and forward-looking risks evident in the release.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "financial",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.009837,
+      "samples": 3,
+      "samples_ok": 3
+    },
+    {
+      "name": "Small data room: contract, order and release",
+      "documents": [
+        "accuray-distributor-agreement.txt",
+        "sec-order-latch.txt",
+        "earnings-release.txt"
+      ],
+      "available": true,
+      "reason": "",
+      "engagement": "Due diligence assessment of a potential business relationship involving multiple counterparties, focusing on contractual obligations, regulatory compliance, and financial performance.",
+      "items": [
+        {
+          "name": "Offer of Settlement",
+          "name_known": true,
+          "what_it_is": "The settlement offer Latch provided to the SEC, including any undertakings or monetary penalties.",
+          "why_needed": "To determine the exact terms and financial impact of the enforcement action.",
+          "status": "missing",
+          "evidence": "",
+          "priority": "high",
+          "workstream": "legal",
+          "note": "",
+          "agreement": 2,
+          "of_runs": 3
+        }
+      ],
+      "cost_usd": 0.010903,
+      "samples": 3,
+      "samples_ok": 3
+    }
+  ]
+}
