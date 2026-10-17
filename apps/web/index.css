@@ -316,3 +316,12 @@ body {
   padding: 2rem;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
 }
+
+/* Three plain steps at the top of the form, for first-time users. */
+.how-steps { list-style: none; counter-reset: how; display: grid; gap: 0.6rem; margin: 0.25rem 0 1rem; }
+.how-steps li { counter-increment: how; display: grid; grid-template-columns: 1.9rem 1fr; align-items: baseline; color: var(--text-muted); }
+.how-steps li::before {
+  content: counter(how); display: inline-grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%;
+  background: var(--accent-cyan); color: var(--bg-dark); font-weight: 800; font-size: 0.8rem;
+}
+.how-steps b { color: var(--text-main); }

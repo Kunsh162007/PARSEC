@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My deals: Fine Print</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111827'/%3E%3Cpath d='M9 8h14M9 14h14M9 20h9' stroke='%23f59e0b' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E">
+  <meta name="description" content="Open a deal folder: every document is checked, problems are marked in the text, and your review is saved in the folder.">
+  <meta name="color-scheme" content="light dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400..600;1,8..60,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/nav.css">
+  <link rel="stylesheet" href="/voice.css">
+  <link rel="stylesheet" href="/home.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <nav class="site-nav" aria-label="Main">
+    <a class="site-brand" href="/">Fine Print</a>
+    <ul class="site-links">
+      <li><a href="/" aria-current="page">My deals</a></li>
+      <li><a href="/review/">Check files</a></li>
+    </ul>
+  </nav>
+
+  <main id="main">
+    <header class="hero">
+      <p class="eyebrow">Due diligence, with the evidence marked</p>
+      <h1>Your <mark>deals</mark></h1>
+      <p class="lede">Each folder in your deals folder is one deal. Open it and every document inside is checked: problems are marked in the text, and your review is saved back into the folder.</p>
+    </header>
+
+    <section class="deals" aria-labelledby="deals-title">
+      <div class="deals-head">
+        <h2 id="deals-title">Deal folders</h2>
+        <p class="root">Deals folder: <code id="deals-root">loading…</code></p>
+      </div>
+      <ul class="deal-grid" id="deal-list" aria-live="polite"></ul>
+      <p class="deals-empty" id="deals-empty" hidden>No deal folders yet. Make a folder for each deal inside the deals folder above, put the documents in it (PDF, Word or text), then reload this page.</p>
+      <p class="deals-error" id="deals-error" hidden></p>
+    </section>
+
+    <section class="how" aria-labelledby="how-title">
+      <h2 id="how-title">How it works</h2>
+      <ol class="steps">
+        <li><h3>Put the documents in a folder</h3><p>One folder per deal, inside your deals folder. Subfolders are fine.</p></li>
+        <li><h3>Open it here</h3><p>Every document is checked. Each problem is marked in the text, with what is wrong and what to ask.</p></li>
+        <li><h3>Remove false marks, then export</h3><p>Not a problem? Remove the mark. Export writes marked copies into the folder, ready to send.</p></li>
+      </ol>
+    </section>
+
+    <section class="talk" aria-labelledby="talk-title">
+      <h2 id="talk-title">Or just ask</h2>
+      <p>Press <b>Ask</b> at the bottom right and speak or type: <q>open Acme</q>, <q>what's wrong with the customer contract</q>, <q>next problem</q>, <q>that's not a problem</q>, <q>export</q>.</p>
+    </section>
+
+    <section class="loose" aria-labelledby="loose-title">
+      <h2 id="loose-title">Just a few files?</h2>
+      <p><a class="cta" href="/review/">Check files without a folder <span class="arrow" aria-hidden="true">&rarr;</span></a></p>
+      <p class="jump-label" id="jump-label">Or check them for one area only:</p>
+      <ul class="areas" aria-labelledby="jump-label">
+        <li><a href="/review/?category=financial"><span>Financial</span></a></li>
+        <li><a href="/review/?category=legal"><span>Legal and contracts</span></a></li>
+        <li><a href="/review/?category=compliance"><span>Compliance and regulatory</span></a></li>
+        <li><a href="/review/?category=tech"><span>Technology and security</span></a></li>
+        <li><a href="/review/?category=people"><span>People and HR</span></a></li>
+        <li><a href="/review/?category=property"><span>Property and environment</span></a></li>
+        <li><a href="/review/?category=tax"><span>Tax</span></a></li>
+        <li><a href="/review/?category=commercial"><span>Customers and market</span></a></li>
+        <li><a href="/review/?category=supply"><span>Suppliers and ESG</span></a></li>
+        <li><a href="/review/?category=integrity"><span>Document integrity only</span></a></li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Fine Print marks points worth asking about. It cannot confirm facts, and a clean result does not mean a document is sound. Not legal, financial or professional advice. <a href="/docs">For developers</a></p>
+  </footer>
+
+  <script src="/review/assistant.js"></script>
+  <script src="/voice.js"></script>
+  <script src="/home.js"></script>
+</body>
+</html>

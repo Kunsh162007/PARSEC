@@ -1,0 +1,68 @@
+/* The assistant: a floating "Ask" button and a chat panel. Self-contained colours, like the navigation. */
+
+.voice-fab, .voice-panel {
+  --v-bg: #14161b; --v-ink: #eceef3; --v-dim: #9aa1ad; --v-mark: #f2c21b; --v-line: #2b303b; --v-you: #1f232c;
+  font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+.voice-fab {
+  position: fixed; right: 18px; bottom: 18px; z-index: 60; display: inline-flex; align-items: center; gap: 8px;
+  min-height: 52px; padding: 0 20px 0 16px; border: 0; border-radius: 999px; cursor: pointer;
+  background: var(--v-bg); color: var(--v-ink); font-weight: 700; font-size: 1rem;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.55);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+.voice-fab:hover { box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.55), 0 0 0 3px rgba(242, 194, 27, 0.6); }
+.voice-fab:active { transform: translateY(1px); }
+.voice-fab[aria-expanded='true'] { display: none; }
+.voice-fab-icon { font-size: 1.15rem; }
+
+.voice-panel {
+  position: fixed; right: 18px; bottom: 18px; z-index: 61; display: grid; grid-template-rows: auto auto 1fr auto;
+  width: min(420px, calc(100vw - 32px)); height: min(560px, calc(100vh - 100px));
+  background: var(--v-bg); color: var(--v-ink); border-radius: 10px; overflow: hidden;
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.7);
+}
+.voice-panel[hidden] { display: none; }
+@media (max-width: 520px) { .voice-panel { right: 16px; left: 16px; width: auto; bottom: 16px; } }
+
+.voice-head { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-bottom: 1px solid var(--v-line); }
+.voice-head strong { font-size: 1.05rem; }
+.voice-aloud { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; font-size: 0.85rem; color: var(--v-dim); cursor: pointer; }
+.voice-aloud input { accent-color: var(--v-mark); }
+.voice-close { background: none; border: 0; color: var(--v-ink); font: inherit; font-weight: 600; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; min-height: 36px; }
+
+.voice-log { list-style: none; margin: 0; padding: 14px; overflow-y: auto; display: grid; gap: 10px; align-content: start; }
+.voice-msg { display: grid; gap: 2px; max-width: 92%; }
+.voice-msg p { margin: 0; padding: 9px 12px; border-radius: 10px; line-height: 1.45; font-size: 0.95rem; overflow-wrap: anywhere; }
+.voice-who { font-size: 0.75rem; color: var(--v-dim); font-weight: 600; }
+.voice-you { justify-self: end; text-align: right; }
+.voice-you p { background: var(--v-you); }
+.voice-assistant p { background: rgba(242, 194, 27, 0.12); border-left: 3px solid var(--v-mark); border-radius: 4px 10px 10px 4px; }
+
+.voice-controls { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--v-line); }
+.voice-mic {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border-radius: 999px; cursor: pointer;
+  background: var(--v-mark); color: #14161b; border: 0; font: inherit; font-weight: 700;
+}
+.voice-mic:disabled { opacity: 0.45; cursor: not-allowed; }
+.voice-mic-dot { width: 10px; height: 10px; border-radius: 50%; background: #14161b; }
+.voice-mic.is-listening .voice-mic-dot { background: #d9263f; animation: voice-pulse 1s ease-in-out infinite; }
+@keyframes voice-pulse { 50% { transform: scale(1.5); opacity: 0.6; } }
+@media (prefers-reduced-motion: reduce) { .voice-mic.is-listening .voice-mic-dot { animation: none; } }
+.voice-form { display: flex; gap: 6px; flex: 1; min-width: 0; }
+.voice-input {
+  flex: 1; min-width: 0; min-height: 44px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--v-line);
+  background: var(--v-you); color: var(--v-ink); font: inherit;
+}
+.voice-send { min-height: 44px; padding: 0 12px; border-radius: 6px; border: 1px solid var(--v-line); background: none; color: var(--v-ink); font: inherit; font-weight: 600; cursor: pointer; }
+.voice-fab:focus-visible, .voice-panel :focus-visible { outline: 3px solid var(--v-mark); outline-offset: 2px; }
+@media print { .voice-fab, .voice-panel { display: none !important; } }
+
+.voice-options { display: grid; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--v-line); }
+.voice-opt { display: inline-flex; align-items: center; gap: 8px; font-size: 0.875rem; color: var(--v-ink); cursor: pointer; }
+.voice-opt input { accent-color: var(--v-mark); }
+.voice-privacy { margin: 2px 0 0; font-size: 0.78rem; line-height: 1.4; color: var(--v-dim); }
+.voice-privacy.is-local { color: #7ee2a8; }
+.voice-fab-live { display: none; width: 8px; height: 8px; border-radius: 50%; background: #7ee2a8; }
+.voice-fab.is-awake .voice-fab-live { display: inline-block; }

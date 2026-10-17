@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "description": "Fine Print document checker: browser rules engine and its tests",
   "scripts": {
-    "test": "node --test apps/review/engine.test.js apps/review/dossier.test.js apps/review/workflow.test.js"
+    "test": "node --test apps/review/engine.test.js apps/review/dossier.test.js apps/review/workflow.test.js apps/review/assistant.test.js apps/review/earnings.test.js apps/review/pdfview.test.js"
   },
   "engines": { "node": ">=20" },
   "license": "Apache-2.0"

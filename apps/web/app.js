@@ -1,4 +1,4 @@
-// PARSEC dashboard. Renders exactly what POST /api/deals/run returns. There is no sample data in this file.
+// PARSEC dashboard. Renders exactly what POST /api/v1/data-room/run returns. There is no sample data in this file.
 (function () {
   'use strict';
 
@@ -29,13 +29,13 @@
   const millions = (n) => `$${(n / 1e6).toFixed(2)}M`;
   const setStatus = (msg, isError) => { const s = $('status'); s.textContent = msg || ''; s.classList.toggle('is-error', Boolean(isError)); };
 
-  // The server may require an access code for its paid endpoints; it says so on /api/review/status.
+  // The server may require an access code for its paid endpoints; it says so on /api/v1/status.
   const CODE_KEY = 'parsec-access-code';
   const accessCode = () => ($('access-code') ? $('access-code').value.trim() : '');
 
   async function loadAccessRequirement() {
     try {
-      const res = await fetch('/api/review/status');
+      const res = await fetch('/api/v1/status');
       if (!res.ok) return;
       const s = await res.json();
       if (!s.auth_required) return;
@@ -324,7 +324,7 @@
   async function sign() {
     if (!state.deal || !state.activeFinding) return;
     try {
-      await api(`/api/deals/${encodeURIComponent(state.deal.deal_id)}/findings/${encodeURIComponent(state.activeFinding.id)}/sign`, { method: 'POST' });
+      await api(`/api/v1/data-room/${encodeURIComponent(state.deal.deal_id)}/findings/${encodeURIComponent(state.activeFinding.id)}/sign`, { method: 'POST' });
       state.activeFinding.signed_by_analyst = true;
       $('modal-status').textContent = 'Marked as reviewed.';
     } catch (err) {
@@ -338,7 +338,7 @@
     $('run').disabled = true;
     setStatus('Analysing...');
     try {
-      const deal = await api('/api/deals/run', {
+      const deal = await api('/api/v1/data-room/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -362,7 +362,7 @@
     if (!name) return;
     setStatus('Searching public sources...');
     try {
-      renderLookup(await api(`/api/companies/lookup?company_name=${encodeURIComponent(name)}`));
+      renderLookup(await api(`/api/v1/companies/lookup?company_name=${encodeURIComponent(name)}`));
       setStatus('');
     } catch (err) {
       setStatus(err.message, true);

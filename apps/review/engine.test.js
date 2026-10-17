@@ -58,6 +58,26 @@ test('conflicting revenue for the same year across documents', () => {
   const f = r.findings.find((x) => x.id.startsWith('int-conflict'));
   assert.ok(f);
   assert.equal(new Set(f.spans.map((s) => s.doc)).size, 2);
+  assert.deepEqual([...FP.documentsOf(f)].sort(), [0, 1]);
+  assert.equal(f.crossDocument, true);
+});
+
+test('a finding inside one document is not marked as cross-document', () => {
+  const r = FP.analyze(
+    [
+      { name: 'a.txt', text: 'Liability is unlimited.' },
+      { name: 'b.txt', text: 'Nothing to see here.' },
+    ],
+    { lenses: ['legal'], today: TODAY }
+  );
+  const f = r.findings.find((x) => x.id === 'leg-unlimited');
+  assert.deepEqual(FP.documentsOf(f), [0]);
+  assert.equal(f.crossDocument, false);
+});
+
+test('documentsOf lists each document once, in the order the spans first reach it', () => {
+  assert.deepEqual(FP.documentsOf({ spans: [{ doc: 2 }, { doc: 0 }, { doc: 2 }] }), [2, 0]);
+  assert.deepEqual(FP.documentsOf({}), []);
 });
 
 test('different years of revenue are not a conflict', () => {

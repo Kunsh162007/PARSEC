@@ -1,0 +1,40 @@
+/* The navigation strip shared by every page (home, Fine Print, PARSEC). Self-contained: it brings its own colours
+   so it reads the same on Fine Print's paper and on PARSEC's dark dashboard. */
+
+.site-nav {
+  --nav-bg: #14161b;
+  --nav-ink: #eceef3;
+  --nav-dim: #9aa1ad;
+  --nav-mark: #f2c21b;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap;
+  padding: 10px 16px; background: var(--nav-bg); color: var(--nav-ink);
+  font-family: 'Bricolage Grotesque', 'Segoe UI', system-ui, -apple-system, sans-serif; font-size: 0.95rem;
+  position: relative; z-index: 50;
+}
+@media (min-width: 720px) { .site-nav { padding: 10px 28px; } }
+
+.site-brand {
+  color: var(--nav-ink); text-decoration: none; font-weight: 800; font-size: 1.1rem; letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.site-brand span { color: var(--nav-dim); font-weight: 600; }
+
+.site-links { display: flex; flex-wrap: wrap; gap: 2px; margin: 0; padding: 0; list-style: none; }
+.site-links a {
+  display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; border-radius: 4px;
+  color: var(--nav-dim); text-decoration: none; font-weight: 600;
+  transition: color 150ms ease, background-color 150ms ease;
+}
+.site-links a:hover { color: var(--nav-ink); background: rgba(255, 255, 255, 0.07); }
+.site-links a[aria-current='page'] {
+  color: var(--nav-ink);
+  background: linear-gradient(transparent 62%, rgba(242, 194, 27, 0.55) 62%, rgba(242, 194, 27, 0.55) 90%, transparent 90%);
+}
+.site-links a:focus-visible, .site-brand:focus-visible { outline: 3px solid var(--nav-mark); outline-offset: 2px; }
+.site-links .site-api { font-family: ui-monospace, 'Cascadia Mono', Consolas, monospace; font-size: 0.85rem; }
+
+@media (max-width: 560px) {
+  .site-links { width: 100%; }
+  .site-links a { padding: 0 10px; }
+}
+@media print { .site-nav { display: none !important; } }

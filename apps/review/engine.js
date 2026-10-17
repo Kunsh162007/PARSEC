@@ -1048,6 +1048,12 @@
     return { level, headline, counts };
   }
 
+  // The documents a finding points into, each once, in the order its spans first reach them. More than one means
+  // the problem is between documents (one says X, another says Y), so it is marked in each of them.
+  function documentsOf(finding) {
+    return Array.from(new Set(((finding && finding.spans) || []).map((s) => s.doc)));
+  }
+
   function analyze(documents, options) {
     const opts = options || {};
     const today = opts.today ? new Date(opts.today) : new Date();
@@ -1079,6 +1085,7 @@
       .map((f) => Object.assign({}, f, {
         lensName: LENS_NAME[f.lens],
         places: Array.from(new Set(f.spans.map((s) => docs[s.doc].name))).join(', '),
+        crossDocument: documentsOf(f).length > 1,
         firstPos: f.spans.length ? f.spans[0].start : Number.MAX_SAFE_INTEGER,
       }))
       .sort((a, b) => RANK[a.severity] - RANK[b.severity] || LENS_ORDER[a.lens] - LENS_ORDER[b.lens] || a.firstPos - b.firstPos);
@@ -1121,5 +1128,5 @@
     });
   }
 
-  return { analyze, verdictFor, sentenceAround, codePointToUtf16, convertServerSpans, LENSES, INTEGRITY, SEVERITIES, LENS_NAME, LENS_ORDER, RANK, wordCount };
+  return { analyze, documentsOf, verdictFor, sentenceAround, codePointToUtf16, convertServerSpans, LENSES, INTEGRITY, SEVERITIES, LENS_NAME, LENS_ORDER, RANK, wordCount };
 });

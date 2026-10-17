@@ -1,0 +1,137 @@
+/* Home: the same marked-up-paper language as Fine Print. Two sheets on the desk, pick the one you need. */
+
+:root {
+  --paper: #f1f2f5;
+  --sheet: #ffffff;
+  --ink: #14161b;
+  --ink-2: #444a56;
+  --ink-3: #5f6672;
+  --rule: #d8dbe2;
+  --rule-strong: #b6bcc7;
+  --focus: #2d6ae0;
+  --mark: rgba(250, 204, 21, 0.5);
+  --mark-line: #d9a900;
+  --mark-2: rgba(59, 123, 234, 0.2);
+  --mark-2-line: #3b7bea;
+  --font-ui: 'Bricolage Grotesque', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --font-doc: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --font-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  --gutter: 16px;
+  --shadow: 0 1px 0 rgba(20, 22, 27, 0.04), 0 18px 40px -22px rgba(20, 22, 27, 0.35);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (min-width: 720px) { :root { --gutter: 28px; } }
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0e1014;
+    --sheet: #171a21;
+    --ink: #eceef3;
+    --ink-2: #b4bac6;
+    --ink-3: #939aa7;
+    --rule: #2b303b;
+    --rule-strong: #434a58;
+    --focus: #7fadff;
+    --mark: rgba(242, 194, 27, 0.3);
+    --mark-line: #f2c21b;
+    --mark-2: rgba(92, 148, 255, 0.26);
+    --mark-2-line: #5c94ff;
+    --shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 18px 40px -20px rgba(0, 0, 0, 0.8);
+  }
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink); font-family: var(--font-ui);
+  font-size: 1rem; line-height: 1.5; -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p, ol, ul { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 3px; }
+
+mark {
+  background: var(--mark); color: inherit; border-bottom: 3px solid var(--mark-line);
+  padding: 0 0.08em; border-radius: 2px;
+}
+mark.blue { background: var(--mark-2); border-bottom-color: var(--mark-2-line); }
+
+.skip {
+  position: absolute; left: var(--gutter); top: -60px; z-index: 60;
+  background: var(--ink); color: var(--paper); padding: 8px 14px; border-radius: 6px;
+}
+.skip:focus { top: 8px; }
+
+main { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
+
+/* ---------- hero ---------- */
+.hero { padding: 48px 0 28px; display: grid; gap: 14px; }
+.eyebrow { font-weight: 700; color: var(--ink-3); font-size: 0.9rem; letter-spacing: 0.06em; text-transform: uppercase; }
+.hero h1 {
+  font-size: clamp(2.3rem, 1.4rem + 4.2vw, 4.6rem); line-height: 1.02; letter-spacing: -0.03em; font-weight: 800;
+  font-variation-settings: 'opsz' 96; max-width: 15ch;
+}
+.hero .lede { color: var(--ink-2); font-size: 1.15rem; max-width: 56ch; }
+
+/* ---------- deal folders ---------- */
+.deals { padding: 8px 0 48px; display: grid; gap: 16px; }
+.deals-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; }
+.deals-head h2, .how h2, .talk h2, .loose h2 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.015em; }
+.root { color: var(--ink-3); font-size: 0.95rem; overflow-wrap: anywhere; }
+.root code { font-family: var(--font-mono); font-size: 0.88rem; color: var(--ink-2); background: var(--sheet); border: 1px solid var(--rule); border-radius: 4px; padding: 1px 6px; }
+
+.deal-grid { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); }
+.deal-card {
+  position: relative; display: grid; gap: 10px; align-content: start; min-height: 150px; padding: 22px 20px 18px;
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: 3px; box-shadow: var(--shadow);
+  color: var(--ink); text-decoration: none; transition: transform 300ms var(--ease), box-shadow 300ms var(--ease);
+}
+.deal-card::before {
+  content: ''; position: absolute; inset: 6px -6px -6px 6px; z-index: -1;
+  background: var(--sheet); border: 1px solid var(--rule); border-radius: 3px; opacity: 0.7;
+}
+.deal-grid li:nth-child(odd) .deal-card { transform: rotate(-0.5deg); }
+.deal-grid li:nth-child(even) .deal-card { transform: rotate(0.5deg); }
+@media (hover: hover) { .deal-grid li .deal-card:hover { transform: rotate(0deg) translateY(-3px); } }
+@media (prefers-reduced-motion: reduce) { .deal-card, .deal-card:hover { transition: none; } }
+.deal-name { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; overflow-wrap: anywhere; }
+.deal-meta { font-family: var(--font-doc); color: var(--ink-2); }
+.deal-state { justify-self: start; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; }
+.deal-state.is-new { background: var(--mark); box-shadow: inset 0 -2px 0 var(--mark-line); }
+.deal-state.is-saved { color: var(--ink-3); border: 1px solid var(--rule-strong); }
+.deal-open { margin-top: auto; font-weight: 700; }
+.deal-card:hover .deal-open span { margin-left: 4px; }
+.deals-empty, .deals-error { padding: 18px 20px; background: var(--sheet); border: 1px dashed var(--rule-strong); border-radius: 6px; max-width: 70ch; color: var(--ink-2); }
+
+.cta {
+  display: inline-flex; align-items: center; gap: 10px; min-height: 48px; padding: 0 20px;
+  background: var(--ink); color: var(--paper); text-decoration: none; font-weight: 700; border-radius: 6px;
+  transition: gap 200ms var(--ease), background-color 150ms ease;
+}
+.cta:hover { gap: 16px; background: var(--ink-2); }
+.cta:active { transform: translateY(1px); }
+.cta .arrow { font-family: var(--font-mono); }
+
+/* ---------- how it works, talk, loose files ---------- */
+.how, .talk, .loose { padding: 36px 0; border-top: 1px solid var(--rule); display: grid; gap: 18px; }
+.steps { display: grid; gap: 20px; counter-reset: step; }
+@media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 32px; } }
+.steps li { counter-increment: step; display: grid; gap: 6px; }
+.steps li::before { content: counter(step); font-weight: 800; font-size: 2.6rem; line-height: 1; font-variation-settings: 'opsz' 96; }
+.steps h3 { font-size: 1.1rem; font-weight: 700; }
+.steps p, .talk p { color: var(--ink-2); max-width: 60ch; }
+.talk q { font-family: var(--font-doc); font-style: italic; color: var(--ink); }
+
+.jump-label { font-weight: 700; font-size: 0.95rem; }
+.areas { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0 18px; counter-reset: area; }
+.areas a {
+  display: grid; grid-template-columns: 2.2em 1fr; align-items: baseline; min-height: 40px; padding: 8px 2px;
+  border-bottom: 1px dotted var(--rule-strong); text-decoration: none; font-weight: 600; counter-increment: area;
+}
+.areas a::before { content: counter(area, decimal-leading-zero); font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-3); }
+.areas a:hover span { background: var(--mark); box-shadow: 0 2px 0 var(--mark-line); }
+
+.foot { border-top: 1px solid var(--rule); padding: 20px var(--gutter) 96px; color: var(--ink-3); font-size: 0.9rem; }
+.foot p { max-width: 1180px; margin: 0 auto; }
+.foot a { color: var(--ink-2); }

@@ -6,12 +6,23 @@
   <title>PARSEC: M&amp;A due diligence analysis</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111827'/%3E%3Cpath d='M8 22l6-6 4 4 6-8' stroke='%2338bdf8' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
   <meta name="description" content="Upload a data room and see adjusted EBITDA, disallowed add-backs and customer concentration, each tied to a verbatim source span.">
+  <link rel="stylesheet" href="/nav.css">
   <link rel="stylesheet" href="index.css">
   <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
 
-  <nav class="navbar">
+  <nav class="site-nav" aria-label="Main">
+    <a class="site-brand" href="/">Fine Print <span>&amp; PARSEC</span></a>
+    <ul class="site-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/review/">Check documents</a></li>
+      <li><a href="/parsec/" aria-current="page">Analyse a data room</a></li>
+      <li><a class="site-api" href="/docs">API</a></li>
+    </ul>
+  </nav>
+
+  <nav class="navbar" aria-label="PARSEC">
     <div class="brand"><span>PARSEC</span><span class="brand-badge">M&amp;A diligence</span></div>
     <div class="nav-meters" id="meters" aria-label="Model usage for this run"></div>
   </nav>
@@ -19,7 +30,12 @@
   <main class="container">
     <section class="panel" aria-labelledby="input-title">
       <div class="panel-title"><span id="input-title">Analyse a data room</span></div>
-      <p class="muted">Add the CIM, management accounts and customer revenue table. Nothing is analysed until you add documents; there is no built-in sample.</p>
+      <ol class="how-steps">
+        <li><span><b>Name the company</b> and pick the closest sector.</span></li>
+        <li><span><b>Add its documents:</b> an earnings release or CIM, plus a ledger or customer table if you have them.</span></li>
+        <li><span><b>Press Run analysis.</b> PARSEC reads the Adjusted EBITDA reconciliation, checks it adds up and questions each add-back.</span></li>
+      </ol>
+      <p class="muted">Nothing is analysed until you add documents; there is no built-in sample. Real earnings releases to try are in <code>data/ebitda/</code>.</p>
       <div class="form-grid">
         <label>Company <input id="company" type="text" autocomplete="off" placeholder="Target company name"></label>
         <label>Enterprise multiple <input id="multiple" type="number" min="1" max="50" step="0.1" value="10"></label>

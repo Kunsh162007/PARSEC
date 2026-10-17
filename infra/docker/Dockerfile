@@ -4,6 +4,11 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# Node runs the same rules engine as the browser for /api/v1/diligence/* (packages/review/rules_runner.js).
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends nodejs \
+ && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 

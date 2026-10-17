@@ -31,15 +31,79 @@ python scripts/check_env.py --live                          # confirms each key 
 uvicorn apps.api.main:app --port 8000
 ```
 
-Then open <http://127.0.0.1:8000/review/> (Fine Print) or <http://127.0.0.1:8000/parsec/> (PARSEC). On Windows use
+Then open <http://127.0.0.1:8000/>. The home page sends you to Fine Print (`/review/`, "Check documents") or PARSEC
+(`/parsec/`, "Analyse a data room"), and its area links open Fine Print with one category chosen
+(`/review/?category=legal`). On Windows use
 `127.0.0.1` rather than `localhost` if the page refuses to connect. "Or try real public documents" loads an SEC-filed
 contract (CUAD, CC BY 4.0) and an SEC enforcement order (public domain) in one click. `DEMO.md` is a two-minute walkthrough.
 Fine Print also works without the server: open `apps/review/index.html` in a browser. The rules run locally; the
 example documents and all optional reads appear only when the page is served by the API.
 
 Docker: `docker build -f infra/docker/Dockerfile -t parsec . && docker run --env-file .env -p 8000:8000 parsec`
-(tested: a 264 MB image that runs as a non-root user, reports healthy, contains no `.env` or `data/`, and answers live
-model calls with the keys passed by `--env-file`).
+(tested before Node was added: a 264 MB image that runs as a non-root user, reports healthy, contains no `.env` or
+`data/`, and answers live model calls with the keys passed by `--env-file`). The image now also installs Node for the
+server-side rules; that build has not been re-run yet, so its size is not known.
+
+### Deal folders, saved reviews, marked exports and the assistant
+
+Put one folder per deal in the deals folder (`DEALS_DIR`, default `~/Deals`; subfolders are fine). The home page lists
+them; opening one reads every document, checks it (with the earnings check when a document mentions EBITDA) and
+saves the review into `<deal>/.fineprint/review.json` as you work, so reopening it shows it as you left it. Selecting
+a mark says what is wrong; **Not a problem** removes it, and it stays removed even when the documents change and are
+checked again. **Export marked documents** writes a highlighted, numbered copy of each document plus `summary.html`
+into `<deal>/_marked/`; they open in any browser and print to PDF.
+
+The **Ask** button (bottom right) takes speech (Chrome and Edge) or typing: "open Acme", "what's wrong with the
+customer contract", "next problem", "that's not a problem", "bring it back", "show tax problems", "export". Those
+are understood instantly in the browser (`apps/review/assistant.js`). Anything else, including real questions such
+as "which problem hurts the price most?", goes to Nemotron Super (`POST /api/v1/assistant/interpret`), which may
+only choose a listed action, a folder or document that exists, or an answer that cites the problems found; anything
+else is refused. Speech is transcribed by the browser's own service (Google or Microsoft); document text is not
+sent to it.
+
+**PDFs, scans and voice.** PDFs are shown as their original pages with the marks drawn on the words (or as text, with
+"Text only"). Scanned PDFs are read with OCR in the browser: run `python scripts/fetch_ocr.py` once to install the
+OCR engine (Tesseract, about 11 MB, served by this server so scans never leave the machine); without it a scan is
+reported as unreadable. "Hey Parsec" listening uses the browser's on-device speech recognition where it exists (newer
+Edge, possibly Chrome); otherwise Parsec asks before using the browser's online speech service. Commands the AI
+interprets never remove, confirm or export on their own: say them in plain words. The server only answers to
+`127.0.0.1`, `localhost` and `[::1]` (set `ALLOWED_HOSTS` to add names), which stops other websites reaching the deal
+folders through DNS rebinding. `python scripts/make_pdf_testpack.py --deals` builds the Orion Analytics test pack.
+
+### One API, one parent endpoint
+
+Everything is a child of `GET /api/v1`, which lists every endpoint, its group and whether it can spend money.
+
+| Endpoint | What it does | Paid |
+|---|---|---|
+| `GET /api/v1/diligence/categories` | The 10 categories, each with its own path | no |
+| `POST /api/v1/diligence/{category}` | One category: `financial`, `legal`, `compliance`, `tech`, `people`, `property`, `tax`, `commercial`, `supply` or `integrity`. Runs the rules; `"ai": true` adds the Nemotron read for that category only (plus the clause pass for `legal`), `"web": true` the Tavily check | only with `ai` or `web` |
+| `POST /api/v1/diligence` | Several categories in one call (`"categories": ["legal","tax"]`; empty means all) | only with `ai` or `web` |
+| `POST /api/v1/diligence/requirements`, `/memo`, `/deep` | What the file still needs, the cited memo, the cross-category AI read | yes |
+| `POST /api/v1/data-room/run`, `GET /api/v1/data-room/{deal_id}`, `POST .../findings/{id}/sign` | PARSEC | run: yes |
+| `GET /api/v1/companies/lookup` | Public-source check on a company | yes |
+| `GET /api/v1/benchmarks/cuad`, `/web-evidence`, `/parsec` | Saved benchmark results | no |
+| `GET /api/v1/status`, `/health` | What this server can offer | no |
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/v1/diligence/legal -H "Content-Type: application/json" \
+  -d '{"documents":[{"name":"c.txt","text":"Liability is unlimited."}], "as_of": "2026-01-01"}'
+```
+
+A category response has `findings` (that category, rules, AI and web together), `integrity` (the always-on document
+checks), `other_categories` (points the paid AI read raised in other areas, kept apart rather than thrown away),
+`verdict`, `ai` (whether the read ran, why not, its cost), `web` and `stats`. Each finding names the `documents` it is
+in; `cross_document: true` means the documents disagree (for example revenue stated as $10.0m in one and $9.1m in
+another), and the passage is marked in each. With `"web": true` the public-source check asks each category its own
+question: litigation for `legal`, tax disputes for `tax`, breaches and outages for `tech`, regulator action for
+`compliance`, and so on (`packages/review/web.py`, `CATEGORY_TOPICS`; at most 9 searches per check, and any
+company and category pair left out is named in `web.reason`). Search hits are matched on keywords, so a source can be
+loosely related (an article about a data breach that mentions the tax season counts for `tax`); every web finding
+says to confirm its sources. Every span carries `start`, `end` and
+`text`, in Unicode code points into the document after line endings are normalised to `\n`. The server runs the same
+`apps/review/engine.js` as the browser, through Node (`packages/review/rules_runner.js`), so the two cannot disagree;
+without Node on the server the rules endpoints answer 503 and say so. The older `/api/review/*`, `/api/deals/*`,
+`/api/companies/lookup` and `/api/arena/*` paths still answer and are marked deprecated in `/docs`.
 
 ### Keys
 
@@ -47,7 +111,7 @@ model calls with the keys passed by `--env-file`).
 |---|---|---|
 | `NEBIUS_API_KEY` | Fine Print AI read, clause pass, "what this file still needs" and memo; PARSEC reconciliation reading and committee questions | <https://studio.nebius.com> |
 | `TAVILY_API_KEY` | Public-source check on named companies (Fine Print and PARSEC) | <https://app.tavily.com> |
-| `REVIEW_API_TOKEN` | Optional access code for the paid Fine Print endpoints (`/api/review/deep`, `/requirements`, `/memo`) | any string you choose |
+| `REVIEW_API_TOKEN` | Optional access code (header `X-Review-Token`) for the paid endpoints: `/api/v1/diligence/*` with `ai` or `web`, `requirements`, `memo`, `deep`, the data room and company lookup | any string you choose |
 
 `REVIEW_RATE_PER_MINUTE` (default 6) and `REVIEW_DAILY_BUDGET_USD` (default 2.0) tune the guard on those endpoints;
 see `.env.example` and `SECURITY.md`.
@@ -61,8 +125,8 @@ company's reconciliation needs the Nebius key; without it the result lists that 
 ## Tests
 
 ```bash
-python -m pytest -q         # 263 Python tests: gateway, AI read, clause pass, requirements, memo, pipeline, bridge, extractor, guard, web check, scoring
-npm test                    # 113 tests: rules engine, connections layer, workflow deliverables
+python -m pytest -q         # 299 Python tests: v1 API, per-category web check, server-side rules, gateway, AI read, clause pass, requirements, memo, pipeline, bridge, extractor, guard, web check, scoring
+npm test                    # 115 tests: rules engine (including cross-document findings), connections layer, workflow deliverables
 ```
 
 Most tests use small hand-written strings as inputs; the integration tests use FinanceBench and FinQA samples in
@@ -377,7 +441,8 @@ noise without a larger sample. Results are in `benchmarks/cuad/history/07_*` and
 ## Repository layout
 
 ```
-apps/api/            FastAPI app: PARSEC routes, Fine Print AI/web/requirements/memo endpoints, results endpoints, static mounts
+apps/api/            FastAPI app: the /api/v1 parent endpoint and its children, older paths, static mounts
+apps/home/           home page and the navigation shared by every page
 apps/review/         Fine Print (browser): engine.js rules, dossier.js connections, workflow.js deliverables, UI, tests, examples/
 apps/web/            PARSEC dashboard
 packages/
@@ -385,7 +450,7 @@ packages/
   compute/           Decimal arithmetic: EBITDA bridge, concentration, footing
   evidence/          extraction, forensics (Benford, proof of cash), data-room tracker
   gateway/           Nebius client: routing, retries, fallback model, metering. Raises when unavailable
-  review/            AI read, clause pass, requirements, memo, web check, access guard
+  review/            AI read, clause pass, requirements, memo, web check, access guard, server-side rules (rules.py)
   schemas/           Pydantic models
   tavily/            Tavily client for PARSEC (live only)
   workflow/          the PARSEC pipeline and the reconciliation reader (bridge.py)
@@ -401,7 +466,7 @@ tests/               unit tests and integration tests on FinanceBench and FinQA 
 backtest/            FinanceBench and FinQA data used by the integration tests
 ```
 
-`GET /api/arena/benchmark`, `/api/arena/web-evidence` and `/api/arena/parsec` serve `benchmarks/cuad/results.json`,
+`GET /api/v1/benchmarks/cuad`, `/web-evidence` and `/parsec` (also at the older `/api/arena/*`) serve `benchmarks/cuad/results.json`,
 `benchmarks/review/web_live.json` and `benchmarks/ebitda/results_test.json`. Each returns `{"status": "not_run"}` with
 the command to produce it if the file does not exist.
 

@@ -5,6 +5,9 @@
   const FP = window.FinePrint;
   const DS = window.FinePrintDossier;
   const WF = window.FinePrintWorkflow;
+  // The page's state and actions, shared with deals.js (folders, saving, export) and the assistant. Filled in below.
+  const APP = (window.FinePrintApp = window.FinePrintApp || {});
+  const PV = window.FinePrintPdfView || null;   // loaded before this file: draws PDFs as their original pages
   const $ = (id) => document.getElementById(id);
 
   const MAX_BYTES = 15 * 1024 * 1024;
@@ -121,6 +124,21 @@
     );
   }
 
+  // Links from the home page open with one area chosen: ?category=legal (several: ?category=legal,tax).
+  // "integrity" alone means the always-on document checks only.
+  function applyCategoryFromUrl() {
+    let asked;
+    try {
+      asked = new URLSearchParams(window.location.search).getAll('category').join(',').split(',').map((s) => s.trim()).filter(Boolean);
+    } catch (err) {
+      return;
+    }
+    if (!asked.length) return;
+    const known = new Set(FP.LENSES.map((l) => l.id));
+    const chosen = asked.filter((id) => known.has(id));
+    if (chosen.length || asked.includes('integrity')) state.lenses = new Set(chosen);
+  }
+
   function renderDocs() {
     $('doc-list').replaceChildren(...state.docs.map((d) => h('li', { class: 'doc-item' },
       h('div', null,
@@ -182,13 +200,15 @@
   }
 
   function addDocument(name, text) {
+    const layout = pdfLayouts.get(text) || null;   // only a PDF has one; offsets hold only if cleaning changed nothing
+    pdfLayouts.delete(text);                       // taken first, so a refused document does not keep its PDF in memory
     const clean = String(text).replace(/\r\n?/g, '\n').replace(/\u0000/g, '');
     if (!clean.trim()) throw new Error(`${name} has no readable text.`);
     if (clean.length > MAX_CHARS) {
       throw new Error(`${name} is very large (${clean.length.toLocaleString()} characters). Split it into parts under ${MAX_CHARS.toLocaleString()} characters.`);
     }
     if (state.docs.length >= MAX_DOCS) throw new Error(`You can check up to ${MAX_DOCS} documents at a time.`);
-    state.docs = [...state.docs, { id: ++state.seq, name, text: clean, words: FP.wordCount(clean) }];
+    state.docs = [...state.docs, { id: ++state.seq, name, text: clean, words: FP.wordCount(clean), layout: clean === text ? layout : null }];
     renderDocs();
     updateRunState();
   }
@@ -233,27 +253,138 @@
     return scriptCache[url];
   }
 
-  async function readPdf(file) {
+  async function loadPdfjs() {
     await loadScript(PDFJS_URL);
-    const lib = window.pdfjsLib;
-    lib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
-    const pdf = await lib.getDocument({ data: await file.arrayBuffer() }).promise;
+    window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+    return window.pdfjsLib;
+  }
+
+  // PDF text, keyed to where each piece sits on its page, so the marks can be drawn on the original pages.
+  // addDocument picks the layout up by the text it belongs to.
+  const pdfLayouts = new Map();
+
+  // OCR for scanned pages: Tesseract in the browser, served by this server (python scripts/fetch_ocr.py installs it),
+  // so a scan is read on this machine and never sent anywhere.
+  const OCR = { script: 'vendor/tesseract/tesseract.min.js', worker: 'vendor/tesseract/worker.min.js',
+    core: 'vendor/tesseract/core', lang: 'vendor/tesseract/lang' };
+  const OCR_SCALE = 2.5;      // about 180 dpi for an A4 page: enough for Tesseract, quick enough in a browser
+  const OCR_MAX_PAGES = 40;   // a long scanned filing would take minutes; past this the rest is reported unread
+  let ocrEngine = null;
+  const fromHere = (path) => new URL(path, document.baseURI).href;
+
+  function ocr() {
+    if (!ocrEngine) {
+      ocrEngine = (async () => {
+        await loadScript(fromHere(OCR.script)).catch(() => {
+          throw new Error('OCR is not installed on this server (run: python scripts/fetch_ocr.py)');
+        });
+        return window.Tesseract.createWorker('eng', 1, {
+          workerPath: fromHere(OCR.worker), corePath: fromHere(OCR.core), langPath: fromHere(OCR.lang),
+          gzip: true, workerBlobURL: false,
+        });
+      })().catch((err) => { ocrEngine = null; throw err; });
+    }
+    return ocrEngine;
+  }
+
+  // Reads one scanned page: draws it, recognises the words, and records where each word sits, as for a text PDF.
+  async function ocrPage(page, base) {
+    const viewport = page.getViewport({ scale: OCR_SCALE });
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
+    const { data } = await (await ocr()).recognize(canvas);
+    const [x0, , , y1] = page.view;
+    let out = '';
+    const items = [];
+    for (const line of data.lines || []) {
+      const words = (line.words || []).filter((w) => w.text.trim());
+      if (!words.length) continue;
+      if (out) out += '\n';
+      words.forEach((w, i) => {
+        if (i) out += ' ';
+        const start = out.length;
+        out += w.text;
+        const b = w.bbox;
+        items.push({
+          start: base + start, end: base + out.length, font: 'sans-serif',
+          x: x0 + b.x0 / OCR_SCALE, y: y1 - b.y1 / OCR_SCALE, w: (b.x1 - b.x0) / OCR_SCALE, h: (b.y1 - b.y0) / OCR_SCALE,
+        });
+      });
+    }
+    return { text: out, items };
+  }
+
+  async function readPdf(file) {
+    const lib = await loadPdfjs();
+    const buffer = await file.arrayBuffer();
+    const layout = { bytes: buffer.slice(0), pages: [] };   // pdf.js takes over the buffer it is given
+    const pdf = await lib.getDocument({ data: buffer }).promise;
     const pages = [];
+    let base = 0;
+    let empty = 0;
+    let ocrUsed = 0;
+    let ocrError = null;
     for (let p = 1; p <= pdf.numPages; p += 1) {
-      const content = await (await pdf.getPage(p)).getTextContent();
+      const page = await pdf.getPage(p);
+      const content = await page.getTextContent();
+      if (!content.items.some((it) => it.str.trim()) && !ocrError && ocrUsed < OCR_MAX_PAGES) {
+        // A page with no text layer is a picture of a page: read it with OCR.
+        setStatus(`${file.name} is scanned: reading page ${p} of ${pdf.numPages} with OCR…`);
+        if (APP.onProgress) APP.onProgress(`${file.name} is scanned: reading page ${p} of ${pdf.numPages} with OCR…`);
+        try {
+          const read = await ocrPage(page, base);
+          if (read.text.trim()) {
+            ocrUsed += 1;
+            layout.pages.push({ view: page.view, rotate: page.rotate || 0, items: read.items, ocr: true });
+            pages.push(read.text);
+            base += read.text.length + 2;
+            continue;
+          }
+        } catch (err) {
+          ocrError = err;
+        }
+      }
       let out = '';
       let lastY = null;
+      const items = [];
       for (const item of content.items) {
-        const y = item.transform ? item.transform[5] : null;
+        const t = item.transform || [1, 0, 0, 1, 0, 0];
+        const y = item.transform ? t[5] : null;
         if (lastY !== null && y !== null && Math.abs(y - lastY) > 2) out += '\n';
         else if (out && !out.endsWith(' ') && !out.endsWith('\n')) out += ' ';
+        const start = out.length;
         out += item.str;
+        const font = (content.styles && content.styles[item.fontName] && content.styles[item.fontName].fontFamily) || 'sans-serif';
+        if (item.str.trim()) items.push({ start, end: out.length, x: t[4], y: t[5], w: item.width || 0, h: Math.max(item.height || 0, Math.abs(t[3]) || 0), font });
         lastY = y;
       }
-      pages.push(out.trim());
+      const lead = out.length - out.trimStart().length;
+      const pageText = out.trim();
+      if (!pageText) empty += 1;
+      layout.pages.push({
+        view: page.view, rotate: page.rotate || 0,
+        items: items.filter((it) => it.end - lead > 0).map((it) => Object.assign({}, it, {
+          start: base + Math.max(0, it.start - lead), end: base + Math.min(pageText.length, it.end - lead),
+        })),
+      });
+      pages.push(pageText);
+      base += pageText.length + 2;
     }
     const text = pages.join('\n\n');
-    if (!text.trim()) throw new Error(`${file.name} has no selectable text. It may be a scan. Run it through OCR first.`);
+    if (!text.trim()) {
+      throw new Error(`${file.name} is a scanned image and could not be read${ocrError ? `: ${ocrError.message}` : ''}. Ask for a text PDF.`);
+    }
+    pdf.destroy();
+    if (ocrUsed && ocrEngine) {   // the OCR engine holds ~100 MB: let it go once this document is read
+      ocrEngine.then((w) => w.terminate()).catch(() => {});
+      ocrEngine = null;
+    }
+    layout.scannedPages = empty;
+    layout.ocrPages = ocrUsed;
+    if (ocrUsed) state.ocrRead = [...(state.ocrRead || []), file.name];
+    pdfLayouts.set(text, layout);
     return text;
   }
 
@@ -326,69 +457,21 @@
     return [...byAsk.values()];
   }
 
+  // What the optional reads added, in plain words. How they work is not the reader's concern; what they missed is.
   function aiCoverage() {
     const s = state.aiSummary;
-    if (!s) return 'Rule-based checks only.';
-    if (s.failed) return `The optional reads did not run: ${s.failed} These are rule-based results only.`;
+    if (!s) return '';
+    if (s.failed) return `The AI checks did not run (${s.failed}), so these are the standard checks only.`;
     const sentences = [];
-    if (s.ai) {
-      const parts = [`The AI read added ${plural(s.ai.added, 'finding', 'findings')}`];
-      if (s.ai.overlapped) parts.push(`${s.ai.overlapped} overlapped ${s.ai.overlapped === 1 ? 'a point' : 'points'} the rules had already flagged`);
-      if (s.ai.dropped) parts.push(`${s.ai.dropped} ${s.ai.dropped === 1 ? 'was' : 'were'} discarded because ${s.ai.dropped === 1 ? 'its' : 'their'} quote was not in the document`);
-      const adj = s.ai.adjudication;
-      if (adj && adj.rejected) parts.push(`Ultra rejected ${adj.rejected}`);
-      sentences.push(`${parts.join(', ')}.`);
-    }
-    if (s.aiError) sentences.push(`The AI read did not run: ${s.aiError}`);
+    if (s.ai) sentences.push(`The AI read found ${plural(s.ai.added, 'more point', 'more points')}.`);
+    if (s.aiError) sentences.push('The AI read could not run this time.');
     if (s.web) {
-      if (!s.web.available) sentences.push(`The web check did not run: ${s.web.reason}`);
-      else if (!s.web.checked.length) sentences.push('The web check found no company names to look up.');
-      else {
-        const seen = s.web.lookups.length
-          ? s.web.lookups.map((l) => (l.error ? `${l.entity} (lookup failed)` : `${l.entity} (${l.relevant} of ${l.results} results relevant)`)).join(', ')
-          : s.web.checked.join(', ');
-        sentences.push(`The web check looked up ${seen} and found ${plural(s.web.added, 'matter', 'matters')} to confirm.`);
-        if (s.web.reason) sentences.push(s.web.reason);
-      }
+      if (!s.web.available) sentences.push('The online check could not run this time.');
+      else if (!s.web.checked.length) sentences.push('No company names were found to look up online.');
+      else sentences.push(`The online check looked up ${s.web.checked.join(', ')} and found ${plural(s.web.added, 'matter', 'matters')} to confirm.`);
     }
-    if (s.ai && s.ai.clauses) {
-      const c = s.ai.clauses;
-      sentences.push(`The clause check read ${plural(c.candidates, 'candidate passage', 'candidate passages')} picked from all ${c.passages.toLocaleString()} passages of every document${c.failed_calls ? `; ${plural(c.failed_calls, 'batch', 'batches')} could not be read` : ''}.`);
-    }
-    if (s.ai && s.ai.truncated) sentences.push(s.ai.clauses ? 'The general AI read covered only the first part of long documents.' : 'Only the first part of long documents was read.');
-    if (s.ai && s.ai.failedChunks) {
-      sentences.push(`${plural(s.ai.failedChunks, 'part', 'parts')} of the documents could not be read by the model, so the AI read is incomplete.`);
-    }
+    if (s.ai && (s.ai.truncated || s.ai.failedChunks)) sentences.push('Parts of long documents were not read by AI.');
     return sentences.join(' ');
-  }
-
-  function renderMeter() {
-    const box = $('meter');
-    const ai = state.aiSummary && state.aiSummary.ai;
-    if (!ai || !ai.tiers) { box.hidden = true; box.replaceChildren(); return; }
-    const label = { nano: 'Nano', super: 'Super', ultra: 'Ultra' };
-    const role = { nano: 'triage', super: 'review', ultra: 'rulings' };
-    const cells = Object.keys(label).map((tier) => {
-      const m = ai.tiers[tier];
-      return h('li', null,
-        h('span', { class: 'meter-tier', text: `${label[tier]} ${role[tier]}` }),
-        h('span', { class: 'meter-figure', text: m && m.calls ? `${m.tokens.toLocaleString()} tokens, $${m.cost_usd.toFixed(4)}` : 'not used' }));
-    });
-    const notes = [];
-    if (ai.triage && ai.triage.skipped) notes.push(`Nano skipped ${plural(ai.triage.skipped, 'part', 'parts')} of the documents as having nothing to flag.`);
-    if (ai.adjudication && ai.adjudication.checked) {
-      notes.push(`Ultra ruled on ${plural(ai.adjudication.checked, 'serious finding', 'serious findings')}: ${ai.adjudication.rejected} rejected, ${ai.adjudication.downgraded} downgraded.`);
-    }
-    const clauseCost = ai.clauses ? ai.clauses.cost_usd || 0 : 0;
-    if (ai.clauses) {
-      cells.push(h('li', null,
-        h('span', { class: 'meter-tier', text: 'Super clause check' }),
-        h('span', { class: 'meter-figure', text: `${plural(ai.clauses.calls, 'call', 'calls')}, $${clauseCost.toFixed(4)}` })));
-    }
-    box.replaceChildren(
-      h('ul', { class: 'meter-tiers', 'aria-label': 'Model usage by tier' }, cells),
-      h('p', { class: 'meter-total', text: `Total $${(ai.cost + clauseCost).toFixed(4)}. ${notes.join(' ')}`.trim() }));
-    box.hidden = false;
   }
 
   // The one thing a reviewer must not miss: what is still needed before this file can be relied on.
@@ -423,17 +506,19 @@
     v.textContent = cannotClear ? clearance.headline : verdict.headline;
     v.dataset.level = cannotClear ? 'low' : verdict.level;
     const dismissed = state.dismissed.size;
-    $('coverage').textContent = `Checked ${plural(stats.documents, 'document', 'documents')} (${plural(stats.words, 'word', 'words')}) against ${plural(stats.checks, 'check', 'checks')} in ${plural(stats.lenses, 'area', 'areas')}.`
-      + `${dismissed ? ` ${plural(dismissed, 'finding is', 'findings are')} dismissed.` : ''}`
+    $('coverage').textContent = `Checked ${plural(stats.documents, 'document', 'documents')} (${plural(stats.words, 'word', 'words')}) in ${plural(stats.lenses, 'area', 'areas')}.`
+      + `${dismissed ? ` You removed ${plural(dismissed, 'mark', 'marks')} as not a problem.` : ''}`
       + ` ${aiCoverage()}`
-      + ' This is screening: it points at what to ask and does not prove anything.';
+      + ' These are points worth asking about, not proof of a problem.';
     renderNeeds(clearance);
     $('counts').replaceChildren(...FP.SEVERITIES.map((sev) => h('li', { class: `sev-${sev}` },
       h('span', { class: 'swatch', 'aria-hidden': 'true' }),
       h('span', { text: `${verdict.counts[sev]} ${SEV_LABEL[sev].toLowerCase()}` }))));
     $('n-findings').textContent = `(${active.length})`;
     $('n-followups').textContent = `(${followups().length})`;
-    renderMeter();
+    const earnings = $('earnings');
+    earnings.hidden = !(state.earnings && state.earnings.line);
+    earnings.textContent = state.earnings ? state.earnings.line : '';
     renderStatus();
   }
 
@@ -532,6 +617,7 @@
     state.treatments = next;
     renderFindings();
     applySelection();
+    notifyChange();
     const select = document.getElementById(`tr-${safeId(id)}`);
     if (select) select.focus(); // arrow keys fire change on each step, so focus stays on the select
   }
@@ -541,6 +627,24 @@
     next.set(id, { key: WF.TREATMENT_OTHER, text });
     state.treatments = next;
     refreshReviewerLine(id);
+    notifyChange();
+  }
+
+  function docName(i) {
+    const d = state.analyzed && state.analyzed[i];
+    return d ? d.name : `document ${i + 1}`;
+  }
+
+  // Where the problem is: one document, or between documents (then it is marked in each of them).
+  function whereTag(f) {
+    const docs = FP.documentsOf(f);
+    if (docs.length > 1) {
+      return h('span', {
+        class: 'where-tag is-cross', title: 'The documents disagree. The passage is marked in each of them.',
+        text: `Across documents: ${docs.map(docName).join(' ↔ ')}`,
+      });
+    }
+    return docs.length ? h('span', { class: 'where-tag', text: `Only in ${docName(docs[0])}` }) : null;
   }
 
   function findingNode(f) {
@@ -557,14 +661,14 @@
         h('span', { class: 'lens-tag', text: f.lensName }),
         f.source === 'ai' ? h('span', { class: 'ai-tag', title: 'Found by the AI deep read. The quote was verified in your document.', text: 'AI read' }) : null,
         f.source === 'web' ? h('span', { class: 'ai-tag', title: 'Found by searching public sources. Confirm each source before relying on it.', text: 'Web' }) : null,
-        multiDoc && f.places ? h('span', { class: 'places', text: `in ${f.places}` }) : null,
+        multiDoc ? whereTag(f) : null,
         dismissed ? h('span', { class: 'places', text: 'Dismissed' }) : null,
         confirmed && !dismissed ? h('span', { class: 'confirmed-tag', text: 'Confirmed' }) : null),
       h('h3', { text: f.title }),
       quoteNode(f.quote),
       f.detail ? h('p', { class: 'detail', text: f.detail }) : null,
       treatmentNode(f),
-      f.adjudicated ? h('p', { class: 'detail', text: `Senior review (Ultra): ${f.adjudicationNote || 'confirmed.'}` }) : null,
+      f.adjudicated ? h('p', { class: 'detail', text: `Second AI review: ${f.adjudicationNote || 'confirmed.'}` }) : null,
       sourcesNode(f),
       f.count > 1 ? h('p', { class: 'repeat', text: `Appears ${f.count} times.` }) : null,
       !hasSpans ? h('p', { class: 'repeat', text: 'Applies to the document as a whole.' }) : null,
@@ -576,7 +680,11 @@
         h('p', null, h('b', { text: 'Why it matters. ' }), f.why),
         h('p', null, h('b', { text: 'Ask. ' }), f.ask)),
       h('div', { class: 'finding-actions' },
-        hasSpans ? h('button', { type: 'button', class: 'link', 'data-act': 'show', text: 'Show in document' }) : null,
+        ...(FP.documentsOf(f).length > 1
+          ? FP.documentsOf(f).map((i) => h('button', {
+            type: 'button', class: 'link', 'data-act': 'show-doc', 'data-doc': String(i), text: `Show in ${docName(i)}`,
+          }))
+          : [hasSpans ? h('button', { type: 'button', class: 'link', 'data-act': 'show', text: 'Show in document' }) : null]),
         dismissed ? null : h('button', {
           type: 'button', class: 'link', 'data-act': 'confirm', 'aria-pressed': String(confirmed),
           text: confirmed ? 'Unconfirm' : 'Confirm',
@@ -660,7 +768,7 @@
     const req = d.requirements;
     sections.push(connSection(
       req && req.engagement ? `What this file still needs (read as: ${req.engagement})` : 'What this file still needs',
-      'Worked out by a reasoning model from what you supplied, not from a fixed list. Check it against your own judgement.',
+      'Worked out by AI from what you supplied. Check it against your own judgement.',
       d.gaps.filter((g) => g.type === 'required-by-reasoning').map((g) => connItem(
         `${g.item}${g.priority === 'high' ? ' (high priority)' : ''}`,
         [g.whatItIs ? `Not a standard name, so described: ${g.whatItIs}` : '', g.why, g.blocks].filter(Boolean).join(' '),
@@ -789,6 +897,7 @@
   function setRequestStatus(key, patch) {
     const current = state.requestStatus.get(key) || {};
     state.requestStatus = new Map(state.requestStatus).set(key, Object.assign({}, current, patch));
+    notifyChange();
   }
 
   function onRequestStatusChange(select) {
@@ -840,6 +949,12 @@
     renderStatus();
     renderFindings();
     applySelection();
+    notifyChange();
+  }
+
+  // Tells deals.js the reviewer changed something worth saving (a removed mark, a confirmation, a decision).
+  function notifyChange() {
+    if (APP.onChange) APP.onChange();
   }
 
   /* ---------------------------------------------------------------- */
@@ -848,10 +963,54 @@
 
   function renderDocTabs() {
     const docs = state.analyzed;
-    $('doc-tabs').replaceChildren(...(docs.length > 1 ? docs.map((d, i) => h('button', {
-      type: 'button', class: 'doc-tab', title: d.name, 'aria-pressed': String(i === state.activeDoc), text: d.name,
-      onclick: () => { state.activeDoc = i; renderDocTabs(); renderSheet(); },
-    })) : []));
+    const found = activeFindings();
+    $('doc-tabs').replaceChildren(...(docs.length > 1 ? docs.map((d, i) => {
+      const here = found.filter((f) => FP.documentsOf(f).includes(i));
+      const cross = here.filter((f) => f.crossDocument || FP.documentsOf(f).length > 1).length;
+      return h('button', {
+        type: 'button', class: 'doc-tab', 'aria-pressed': String(i === state.activeDoc),
+        title: `${d.name}: ${plural(here.length, 'finding', 'findings')}${cross ? `, ${cross} shared with another document` : ''}`,
+        onclick: () => { state.activeDoc = i; renderDocTabs(); renderSheet(); },
+      }, d.name.split('/').pop(), h('span', { class: 'n', text: ` ${here.length}` }), cross ? h('span', { class: 'cross-dot', 'aria-hidden': 'true', text: '↔' }) : null);
+    }) : []));
+  }
+
+  const isCross = (f) => FP.documentsOf(f).length > 1;
+
+  function markTitle(f) {
+    const others = FP.documentsOf(f).filter((i) => i !== state.activeDoc);
+    const jump = others.length ? ` Select to open the matching passage in ${others.map(docName).join(', ')}.` : ' Select to see what is wrong.';
+    return `${SEV_LABEL[f.severity]}: ${f.title}.${f.detail ? ` ${f.detail}` : ''}${jump}`;
+  }
+
+  // The note above the document: what is wrong with the selected passage, and the way to the other document.
+  function renderNote() {
+    const box = $('mark-note');
+    const f = state.noteId && state.result ? state.result.findings.find((x) => x.id === state.noteId) : null;
+    if (!f) { box.hidden = true; box.replaceChildren(); return; }
+    const docs = FP.documentsOf(f);
+    const others = docs.filter((i) => i !== state.activeDoc);
+    box.className = `mark-note sev-${f.severity}${docs.length > 1 ? ' is-cross' : ''}`;
+    // replaceChildren would print a null as the word "null": the empty slots are filtered out first.
+    box.replaceChildren(...[
+      h('div', { class: 'note-head' },
+        h('span', { class: 'sev-tag', text: SEV_LABEL[f.severity] }),
+        whereTag(f),
+        h('button', { type: 'button', class: 'link note-close', text: 'Close', onclick: () => { state.noteId = null; renderNote(); } })),
+      h('p', { class: 'note-title' }, h('b', { text: "What's wrong: " }), f.title),
+      f.detail ? h('p', { class: 'note-detail', text: f.detail }) : null,
+      docs.length > 1 ? h('p', { class: 'note-detail', text: `You are reading ${docName(state.activeDoc)}. This problem is also marked in ${others.map(docName).join(' and ')}: read the two passages together.` }) : null,
+      h('p', null, h('b', { text: 'Why it matters. ' }), f.why),
+      h('p', null, h('b', { text: 'Ask. ' }), f.ask),
+      h('div', { class: 'note-actions' },
+        ...others.map((i) => h('button', { type: 'button', class: 'primary note-jump', text: `Open ${docName(i)} →`, onclick: () => showInDocument(f.id, i) })),
+        h('button', {
+          type: 'button', class: 'secondary note-dismiss', title: 'A false alarm: remove this mark. You can bring it back from the findings list.',
+          text: 'Not a problem: remove mark', onclick: () => toggleDismiss(f.id),
+        }),
+        h('button', { type: 'button', class: 'secondary', text: 'See it in the findings list', onclick: () => { setView('findings'); const item = $(`f-${f.id}`); if (item) item.scrollIntoView({ block: 'center' }); } })),
+    ].filter(Boolean));
+    box.hidden = false;
   }
 
   function renderSheet() {
@@ -862,6 +1021,21 @@
     activeFindings().forEach((f) => f.spans.forEach((s) => {
       if (s.doc === state.activeDoc) spans.push({ start: s.start, end: s.end, f });
     }));
+    // A PDF is shown as its original pages with the marks drawn over the words; "Text only" shows the text.
+    const layout = state.layouts && state.layouts[state.activeDoc];
+    const pages = Boolean(layout && PV && PV.supports(layout) && state.docMode !== 'text');
+    $('view-switch').hidden = !(layout && PV && PV.supports(layout));
+    $('view-pages').setAttribute('aria-pressed', String(pages));
+    $('view-text').setAttribute('aria-pressed', String(!pages));
+    sheet.style.setProperty('--doc-zoom', String(state.zoom || 1));
+    if (pages) {
+      PV.render(sheet, {
+        layout, spans, text: doc.text, zoom: state.zoom || 1, loadPdfjs, title: markTitle,
+        isCross, isActive: (f) => state.selected === f.id,
+      });
+      renderNote();
+      return;
+    }
     const cuts = new Set([0, doc.text.length]);
     spans.forEach((s) => { cuts.add(s.start); cuts.add(s.end); });
     const points = [...cuts].sort((a, b) => a - b);
@@ -875,12 +1049,73 @@
       if (!cover.length) { nodes.push(text); continue; }
       const top = cover.reduce((x, y) => (rank[x.f.severity] <= rank[y.f.severity] ? x : y));
       const ids = [...new Set(cover.map((s) => s.f.id))];
+      const cross = cover.some((s) => isCross(s.f));
       nodes.push(h('mark', {
-        class: `sev-${top.f.severity}${state.selected && ids.includes(state.selected) ? ' is-active' : ''}`,
-        'data-ids': ids.join(' '), 'data-a': a, 'data-b': b, tabindex: '0', title: top.f.title, text,
+        class: `sev-${top.f.severity}${cross ? ' is-cross' : ''}${state.selected && ids.includes(state.selected) ? ' is-active' : ''}`,
+        'data-ids': ids.join(' '), 'data-a': a, 'data-b': b, tabindex: '0', title: markTitle(top.f), text,
       }));
     }
-    sheet.replaceChildren(...nodes);
+    sheet.replaceChildren(h('div', { class: 'page-text' }, ...nodes));
+    renderNote();
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* reading comfort: zoom, full window                                */
+  /* ---------------------------------------------------------------- */
+
+  const ZOOM_KEY = 'fineprint-zoom';
+
+  function setZoom(direction) {
+    state.zoom = Math.min(2, Math.max(0.7, Math.round(((state.zoom || 1) + 0.15 * direction) * 100) / 100));
+    try { localStorage.setItem(ZOOM_KEY, String(state.zoom)); } catch (err) { /* not remembered */ }
+    if (state.result) renderSheet();
+    return `Text size ${Math.round(state.zoom * 100)}%.`;
+  }
+
+  function setFocus(on) {
+    if (on && !state.result) return 'Open a deal or check some documents first.';
+    document.body.classList.toggle('focus-mode', on);
+    if (on) {
+      setView('document');
+      // The browser allows true full screen only straight after a click or key press. A spoken command is
+      // neither, so if it refuses, the next click or key press (anywhere) finishes the job.
+      if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(armFullscreen);
+      }
+    } else {
+      disarmFullscreen();
+      if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    }
+    renderSheet();
+    applySelection();
+    return on ? `Full screen: ${docName(state.activeDoc)}. Say "exit full screen" or press Esc to come back.` : 'Back to the normal view.';
+  }
+
+  function goFullscreen(e) {
+    if (e.type === 'keydown' && e.key === 'Escape') { disarmFullscreen(); return; }
+    disarmFullscreen();
+    if (document.body.classList.contains('focus-mode') && !document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch(() => {});
+    }
+  }
+
+  function armFullscreen() {
+    $('fs-hint').hidden = false;
+    window.addEventListener('pointerdown', goFullscreen, true);
+    window.addEventListener('keydown', goFullscreen, true);
+  }
+
+  function disarmFullscreen() {
+    $('fs-hint').hidden = true;
+    window.removeEventListener('pointerdown', goFullscreen, true);
+    window.removeEventListener('keydown', goFullscreen, true);
+  }
+
+  // What "scroll down" moves: the full-window document, the document pane, or the page.
+  function scrollTarget() {
+    if (document.body.classList.contains('focus-mode')) return $('pane-document');
+    const sheet = $('sheet');
+    return sheet.offsetParent && sheet.scrollHeight > sheet.clientHeight + 4 ? sheet : null;
   }
 
   function markFor(id, span) {
@@ -929,7 +1164,7 @@
     const m = state.memo;
     if (!m) { box.hidden = true; box.replaceChildren(); return; }
     if (m.loading) {
-      box.replaceChildren(h('p', { text: 'Nemotron is drafting the memo from the verified findings…' }));
+      box.replaceChildren(h('p', { text: 'Drafting the memo from the findings…' }));
       box.hidden = false;
       return;
     }
@@ -952,7 +1187,7 @@
       ...m.sections.map((sec) => h('div', { class: 'memo-section' },
         h('h4', { text: sec.heading }),
         h('ul', null, ...sec.points.map((p) => h('li', null, `${p.text} `, ...p.cites.map(cite)))))),
-      h('p', { class: 'memo-note', text: `Drafted by ${String(m.model || '').replace(/^nvidia\//i, '')} for $${(m.cost_usd || 0).toFixed(4)}. Each point cites the findings it rests on (F) or the items still needed (N).${removed ? ` ${plural(removed, 'point was', 'points were')} removed because ${removed === 1 ? 'it' : 'they'} cited nothing real or used a number not in the evidence.` : ''}` }),
+      h('p', { class: 'memo-note', text: `Each point cites the findings it rests on (F) or the items still needed (N).${removed ? ` ${plural(removed, 'point was', 'points were')} removed because ${removed === 1 ? 'it' : 'they'} cited nothing real or used a number not in the evidence.` : ''}` }),
     ]);
     box.hidden = false;
   }
@@ -969,7 +1204,7 @@
     if (code) headers['X-Review-Token'] = code;
     let memo;
     try {
-      const res = await fetch('/api/review/memo', { method: 'POST', headers, body: JSON.stringify(body) });
+      const res = await fetch('/api/v1/diligence/memo', { method: 'POST', headers, body: JSON.stringify(body) });
       const out = await res.json().catch(() => ({}));
       memo = res.ok ? out : { available: false, reason: typeof out.detail === 'string' ? out.detail : `the server answered ${res.status}.` };
     } catch (err) {
@@ -982,13 +1217,16 @@
     renderMemo();
   }
 
-  function showInDocument(id) {
+  // Opens the document at the finding's passage: in document `docIndex` when given, else the next span in turn.
+  function showInDocument(id, docIndex) {
     const f = state.result.findings.find((x) => x.id === id);
     if (!f || !f.spans.length) return;
-    const idx = id in state.cursor ? (state.cursor[id] + 1) % f.spans.length : 0;
+    let idx = f.spans.findIndex((s) => s.doc === docIndex);
+    if (idx === -1) idx = id in state.cursor ? (state.cursor[id] + 1) % f.spans.length : 0;
     state.cursor[id] = idx;
     const span = f.spans[idx];
     state.selected = id;
+    state.noteId = id;
     if (span.doc !== state.activeDoc) {
       state.activeDoc = span.doc;
       renderDocTabs();
@@ -1005,11 +1243,19 @@
     });
   }
 
+  // Selecting a mark says what is wrong there. If the problem is between documents, it opens the other document
+  // at the matching passage; selecting that mark brings you back.
   function selectFromMark(mark) {
     const ids = mark.dataset.ids.split(' ');
     const at = ids.indexOf(state.selected);
     const id = ids[(at + 1) % ids.length];
+    const f = state.result.findings.find((x) => x.id === id);
+    const elsewhere = f ? f.spans.find((s) => s.doc !== state.activeDoc) : null;
+    if (elsewhere) { showInDocument(id, elsewhere.doc); return; }
     state.selected = id;
+    state.noteId = id;
+    renderNote();
+    if (narrow.matches) { applySelection(); return; }   // on a phone, stay on the document with the note open
     if (!visibleFindings().some((f) => f.id === id)) {
       state.severity = 'all';
       state.lens = 'all';
@@ -1026,10 +1272,19 @@
   /* views, actions                                                    */
   /* ---------------------------------------------------------------- */
 
+  const TAB_HELP = {
+    findings: 'Each point quotes the document. Open one to see why it matters and what to ask; confirm the ones that matter and dismiss the rest.',
+    followups: 'One question per issue, most important first. Copy the list and send it to the other side.',
+    connections: 'How the documents relate: shared parties, near-duplicates, and files referred to that you were not given.',
+    workflow: 'The request list and Q&A log a deal team tracks, with what each workstream has to go on. Download them as CSV.',
+    document: 'The document text with every finding highlighted. Select a highlight to see what is wrong; marks with ↔ disagree with another document and open it at the matching passage.',
+  };
+
   function setView(view) {
     const next = !narrow.matches && view === 'document' ? 'findings' : view;
     state.view = next;
     $('split').dataset.view = next;
+    $('tab-help').textContent = TAB_HELP[next] || '';
     document.querySelectorAll('.tabs [role="tab"]').forEach((t) => {
       const on = t.dataset.view === next;
       t.setAttribute('aria-selected', String(on));
@@ -1041,6 +1296,8 @@
     if (state.dismissed.has(id)) state.dismissed.delete(id);
     else state.dismissed.add(id);
     if (state.selected === id && state.dismissed.has(id)) state.selected = null;
+    if (state.noteId === id && state.dismissed.has(id)) state.noteId = null;
+    notifyChange();
     renderSummary();
     renderFilters();
     renderFindings();
@@ -1138,7 +1395,7 @@
         if (f.places) lines.push(`- Where: ${f.places}`);
         if (f.source === 'ai') lines.push('- Source: AI deep read (quote verified in the document)');
         if (f.source === 'web') lines.push('- Source: public web sources (confirm before relying on them)');
-        if (f.adjudicated) lines.push(`- Senior review (Ultra): ${f.adjudicationNote || 'confirmed'}`);
+        if (f.adjudicated) lines.push(`- Second AI review: ${f.adjudicationNote || 'confirmed'}`);
         (f.sources || []).filter((s) => /^https?:\/\//i.test(s.url || '')).forEach((s) => lines.push(`- Link: ${s.title || s.url} ${s.url}`));
         if (f.quote) lines.push(`- Evidence: "${f.quote.text.replace(/\s+/g, ' ')}"`);
         if (f.detail) lines.push(`- Detail: ${f.detail}`);
@@ -1203,7 +1460,7 @@
   async function setupAi() {
     let s;
     try {
-      const res = await fetch('/api/review/status', { headers: { Accept: 'application/json' } });
+      const res = await fetch('/api/v1/status', { headers: { Accept: 'application/json' } });
       if (!res.ok) return;
       s = await res.json();
     } catch (err) {
@@ -1221,17 +1478,17 @@
     $('needs-toggle').checked = state.ai.live;
     $('ai-toggle').disabled = !state.ai.live;
     $('web-toggle').disabled = !state.ai.web;
-    $('funnel-row').hidden = !state.ai.live;
+    $('funnel-row').hidden = true;   // measured to add cost without accuracy; kept off the page
 
     const hints = [];
     hints.push(state.ai.live
-      ? 'Working out what the file needs sends the opening and headings of each document to the model; it is what stops an empty result reading as an all-clear. The AI read checks candidate clauses across the whole document. Every AI finding quotes your document and is discarded if the quote is not really there.'
-      : 'The AI options are unavailable: the server has no Nebius API key.');
+      ? 'Every AI point quotes your document; any that cannot be found in it is thrown away.'
+      : 'The AI checks are not available on this server.');
     hints.push(state.ai.web
-      ? 'The web check searches public sources for the companies named in your documents.'
-      : 'The web check is unavailable: the server has no Tavily API key.');
+      ? 'The online check searches public news about the companies named in your documents.'
+      : 'The online check is not available on this server.');
     if (state.ai.live || state.ai.web) {
-      hints.push('Each ticked option sends document text to this server, and the Nemotron options send it on to Nebius. With every option unticked nothing leaves your browser.');
+      hints.push('Ticked options send document text to this server for checking. With all of them unticked, nothing leaves your browser.');
     }
     $('ai-hint').textContent = hints.join(' ');
 
@@ -1268,7 +1525,7 @@
       headers['X-Review-Token'] = code;
       storeCode(code);
     }
-    const res = await fetch('/api/review/deep', {
+    const res = await fetch('/api/v1/diligence/deep', {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -1297,7 +1554,7 @@
     if (code) headers['X-Review-Token'] = code;
     const sent = docs.slice(0, 12).map((d) => ({ name: d.name, text: d.text.slice(0, 200000) }));
     try {
-      const res = await fetch('/api/review/requirements', { method: 'POST', headers, body: JSON.stringify({ documents: sent }) });
+      const res = await fetch('/api/v1/diligence/requirements', { method: 'POST', headers, body: JSON.stringify({ documents: sent }) });
       if (!res.ok) {
         let reason = `The server answered ${res.status}.`;
         try { const body = await res.json(); if (typeof body.detail === 'string') reason = body.detail; } catch (err) { /* keep */ }
@@ -1372,15 +1629,17 @@
     };
   }
 
+  // Runs the check; the returned promise settles when the results are on screen (deals.js waits on it).
   function run() {
-    if ($('paste').value.trim() && !addPasted()) return;
-    if (!state.docs.length) return;
+    if ($('paste').value.trim() && !addPasted()) return Promise.resolve();
+    if (!state.docs.length) return Promise.resolve();
     const button = $('run');
     button.disabled = true;
     button.textContent = 'Checking…';
-    setTimeout(async () => {
+    return new Promise((resolve) => setTimeout(async () => {
       try {
         state.analyzed = state.docs.map((d) => ({ name: d.name, text: d.text }));
+        state.layouts = state.docs.map((d) => d.layout || null);   // kept apart: never sent to the server or saved
         state.result = FP.analyze(state.analyzed, { lenses: [...state.lenses] });
         state.aiSummary = null;
         state.requirements = null;
@@ -1391,7 +1650,7 @@
           state.requirements = await fetchRequirements(state.analyzed);
         }
         if (reads.ai || reads.web) {
-          button.textContent = reads.ai ? 'Reading with Nemotron…' : 'Checking public sources…';
+          button.textContent = reads.ai ? 'Reading with AI…' : 'Checking online…';
           try {
             const payload = await deepRead(state.analyzed, reads);
             const merged = mergeOptionalReads(state.result, payload, state.analyzed, reads);
@@ -1414,15 +1673,19 @@
         $('show-dismissed').checked = false;
         state.activeDoc = 0;
         state.selected = null;
+        state.noteId = null;
         state.cursor = {};
+        state.earnings = null;
+        if (APP.onChecked) await APP.onChecked(button);   // earnings figures, removed marks carried over, saving
         showResults();
       } catch (err) {
         setStatus(`The check failed: ${err.message}`, true);
       } finally {
         button.textContent = 'Check documents';
         updateRunState();
+        resolve();
       }
-    }, 30);
+    }, 30));
   }
 
   /* ---------------------------------------------------------------- */
@@ -1436,6 +1699,7 @@
     reviewer.addEventListener('input', (e) => {
       state.reviewer = e.target.value;
       storeReviewer(state.reviewer.trim());
+      notifyChange();
       if (state.result) renderStatus();
     });
     if (!WF) {
@@ -1463,10 +1727,11 @@
       $('status').textContent = 'The review engine failed to load. Reload the page.';
       return;
     }
+    applyCategoryFromUrl();
     renderLenses();
     renderDocs();
     updateRunState();
-    setupAi();
+    APP.ready = setupAi();
 
     $('lens-all').addEventListener('click', () => { FP.LENSES.forEach((l) => state.lenses.add(l.id)); renderLenses(); updateRunState(); });
     $('lens-none').addEventListener('click', () => { state.lenses.clear(); renderLenses(); updateRunState(); });
@@ -1508,6 +1773,7 @@
       if (btn && btn.dataset.act === 'dismiss') { toggleDismiss(id); return; }
       if (btn && btn.dataset.act === 'confirm') { toggleConfirm(id); return; }
       if (btn && btn.dataset.act === 'show') { showInDocument(id); return; }
+      if (btn && btn.dataset.act === 'show-doc') { showInDocument(id, Number(btn.dataset.doc)); return; }
       if (e.target.closest('summary')) return;
       state.selected = id;
       applySelection();
@@ -1532,7 +1798,42 @@
       setView(next.dataset.view);
     });
     narrow.addEventListener('change', () => setView(state.view));
+
+    try { state.zoom = Number(localStorage.getItem(ZOOM_KEY)) || 1; } catch (err) { state.zoom = 1; }
+    $('view-pages').addEventListener('click', () => { state.docMode = 'pages'; renderSheet(); applySelection(); });
+    $('view-text').addEventListener('click', () => { state.docMode = 'text'; renderSheet(); applySelection(); });
+    $('focus-exit').addEventListener('click', () => setFocus(false));
+    // Leaving the browser's own full screen (its Esc) also leaves the full-window document view.
+    let wasFullscreen = false;
+    document.addEventListener('fullscreenchange', () => {
+      if (document.fullscreenElement) wasFullscreen = true;
+      else if (wasFullscreen && document.body.classList.contains('focus-mode')) { wasFullscreen = false; setFocus(false); }
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.body.classList.contains('focus-mode')) setFocus(false);
+    });
   }
+
+  Object.assign(APP, {
+    setZoom, setFocus, scrollTarget,
+    aiAllowed: () => { const r = optionalReadsRequested(); return Boolean(r.ai || r.web || r.needs); },
+    state, readFile, addDocument, setStatus, run, showResults, showInDocument, toggleDismiss, toggleConfirm,
+    setView, toFinding, activeFindings, docName, plural, renderNote, renderSummary,
+    sevLabel: (s) => SEV_LABEL[s],
+    showArea(id) {
+      state.lens = id;
+      state.severity = 'all';
+      renderFilters();
+      renderFindings();
+      setView('findings');
+    },
+    authHeaders(extra) {
+      const headers = Object.assign({ Accept: 'application/json' }, extra || {});
+      const code = state.ai.authRequired ? $('ai-code').value.trim() || storedCode() : '';
+      if (code) headers['X-Review-Token'] = code;
+      return headers;
+    },
+  });
 
   init();
 })();

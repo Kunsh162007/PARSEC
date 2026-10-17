@@ -138,6 +138,15 @@ routing:
     temperature: 0.0
     token_budget_pct: 0.05
 
+  # The assistant's fallback for wording its phrase matcher does not know: one call per request. Super, because
+  # in a live trial Nano answered "which problem hurts the price most?" by repeating the question.
+  assistant_command_json:
+    model: "nvidia/nemotron-3-super-120b-a12b"
+    fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+    max_tokens: 800
+    temperature: 0.0
+    token_budget_pct: 0.02
+
   # Tier 1: High speed, low cost screening, classification, triage, prompt injection defense
   classification:
     model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
