@@ -161,6 +161,7 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
 }
 .new-deal-row .cta-secondary:hover { border-color: var(--ink); }
 .new-deal .new-deal-limits { font-size: 0.9rem; color: var(--ink-3); }
+.new-deal .new-deal-practice a { font-weight: 700; color: var(--ink); }
 .new-deal .new-deal-status { font-weight: 600; color: var(--ink); }
 .new-deal-status:empty { display: none; }
 .new-deal .new-deal-warn { font-size: 0.9rem; padding: 8px 12px; border-left: 4px solid var(--mark-line); background: var(--sheet); }

@@ -339,7 +339,7 @@ Without keys, the rules, connections, folders, export and OCR still work, and ev
 Nothing is ever simulated.
 
 **Docker:** `docker build -f infra/docker/Dockerfile -t fineprint . && docker run --env-file .env -p 8000:8000 fineprint`
-(the image includes Node for the rules runner, the OCR engine and the Orion Analytics practice deal; mount a folder and
+(the image includes Node for the rules runner, the OCR engine and the downloadable practice deal; mount a folder and
 set `DEALS_DIR` to use your own deal folders).
 
 ## Deploy for free
@@ -353,9 +353,10 @@ parallel rules runs to two (`RULES_CONCURRENCY`) to keep the worst case well ins
 
 1. Click the button (or *New → Blueprint* in Render and pick this repository).
 2. Enter `NEBIUS_API_KEY` (and optionally `TAVILY_API_KEY` and an access code, `REVIEW_API_TOKEN`).
-3. Open the `onrender.com` address once the build finishes. The **Orion Analytics** practice deal is already there,
-   and visitors can add their own: *Check your own documents as a deal* uploads a folder or files from their computer
-   into a new deal, and *Export* downloads the marked copies as a zip.
+3. Open the `onrender.com` address once the build finishes. The deal list starts empty: *Check your own documents as
+   a deal* uploads a folder or files from the visitor's computer into a new deal, and *Export* downloads the marked
+   copies as a zip. Visitors without documents to hand use *Download the practice deal* (the 14 Orion Analytics PDFs,
+   one of them scanned), unzip it and add its folder.
 
 On the free plan the service sleeps after 15 minutes without visits and takes about a minute to wake, and its disk is
 wiped whenever it restarts, including after sleeping. Without `REVIEW_API_TOKEN`, anyone with the address can use the
@@ -494,7 +495,7 @@ config/         models.yaml (every Nemotron route and price), thresholds, sector
 benchmarks/     CUAD, SEC earnings releases, requirements samples, fraud-case documents: runners and results
 scripts/        check_env.py, fetch_ocr.py, make_pdf_testpack.py
 docs/images/    the screenshots in this README
-demo/deals/     Orion Analytics, the practice deal the hosted copy starts with
+demo/deals/     Orion Analytics, the practice deal offered as a download (/api/v1/practice-deal.zip)
 render.yaml     free deployment on Render
 tests/          unit and integration tests
 ```

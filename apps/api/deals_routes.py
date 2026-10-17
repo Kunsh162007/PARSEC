@@ -168,9 +168,18 @@ def export_deal(deal: str, req: ExportRequest, x_review_token: Optional[str] = H
     return {"written": written, "folder": str(folder)}
 
 
+def get_practice_deal(x_review_token: Optional[str] = Header(default=None)):
+    """A made-up company's documents (14 PDFs, one scanned) to download, unzip and add as a deal."""
+    _guard(x_review_token)
+    data = _call(workspace.practice_deal_zip)
+    return Response(content=data, media_type="application/zip",
+                    headers={"Content-Disposition": 'attachment; filename="Orion Analytics - practice deal.zip"'})
+
+
 # (method, path under /api/v1, handler, summary)
 ROUTES = [
     ("GET", "/deals", list_deals, "List the deal folders"),
+    ("GET", "/practice-deal.zip", get_practice_deal, "Download the practice deal's documents"),
     ("GET", "/deals/{deal}/files", list_deal_files, "List a deal's documents"),
     ("GET", "/deals/{deal}/files/{path:path}", get_deal_file, "Fetch one document"),
     ("PUT", "/deals/{deal}/files/{path:path}", put_deal_file, "Add a document (creates the deal)"),

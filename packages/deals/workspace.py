@@ -35,6 +35,7 @@ MAX_DOCUMENT_BYTES = 15 * 1024 * 1024
 MAX_REVIEW_BYTES = 5 * 1024 * 1024
 MAX_UPLOADS_PER_DEAL = 50
 REVIEW_PATH = f"{REVIEW_DIR}/review.json"
+PRACTICE_DEAL = Path(__file__).resolve().parents[2] / "demo" / "deals" / "Orion Analytics"
 OWNER_PATH = f"{REVIEW_DIR}/owner"
 VISITOR_KEY = re.compile(r"[A-Za-z0-9_-]{12,128}")
 OWN_REVIEW = re.compile(r"\.fineprint/reviews/[0-9a-f]{64}\.json")
@@ -295,14 +296,32 @@ def restore_saved(root: Path) -> int:
     saved = store.active()
     if saved is None:
         return 0
+    rows = list(saved.rows())
+    # Documents first; a review is put back only into a deal that still exists, so the reviews of a deal that has
+    # been taken away do not bring back an empty folder.
+    rows.sort(key=lambda row: row[1].startswith(f"{REVIEW_DIR}/") and row[1] != OWNER_PATH)
     restored = 0
-    for name, relative, data in saved.rows():
+    for name, relative, data in rows:
         try:
             target = _restore_target(root, name, relative)
         except UnsafePath:
             logger.warning("Skipped a saved file that is not a document in a deal: %r / %r", name, relative)
             continue
-        if not target.exists():
-            _write_atomic(target, data)
-            restored += 1
+        is_review = relative != OWNER_PATH and relative.startswith(f"{REVIEW_DIR}/")
+        if target.exists() or (is_review and not (root / name).is_dir()):
+            continue
+        _write_atomic(target, data)
+        restored += 1
     return restored
+
+
+def practice_deal_zip() -> bytes:
+    """The practice deal's documents as one zip holding its folder, ready to add as a deal."""
+    files = sorted(p for p in PRACTICE_DEAL.rglob("*") if p.is_file() and not _skipped(p.name))
+    if not files:
+        raise FileNotFoundError("The practice deal is not included in this copy.")
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        for path in files:
+            archive.write(path, f"{PRACTICE_DEAL.name}/{path.relative_to(PRACTICE_DEAL).as_posix()}")
+    return buffer.getvalue()

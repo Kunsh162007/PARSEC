@@ -23,7 +23,8 @@ COPY demo ./demo
 # The OCR engine for scanned PDFs, served by this server (pinned, SHA-512 checked).
 RUN python scripts/fetch_ocr.py
 
-# Deal folders live in DEALS_DIR; the practice deal is copied in at start-up so a fresh host is not empty.
+# Deal folders live in DEALS_DIR and start empty: visitors add their own, or download the practice deal
+# (/api/v1/practice-deal.zip, served from ./demo) and add that.
 ENV DEALS_DIR=/tmp/deals PORT=8000
 RUN useradd --create-home --uid 1000 app && chown -R app /app
 USER app
@@ -32,4 +33,4 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD python -c "import os,urllib.request,sys; sys.exit(0 if urllib.request.urlopen(f'http://127.0.0.1:{os.environ.get(\"PORT\",\"8000\")}/health', timeout=4).status == 200 else 1)"
 
-CMD ["sh", "-c", "mkdir -p \"$DEALS_DIR\" && cp -rn /app/demo/deals/. \"$DEALS_DIR\"/ && exec uvicorn apps.api.main:app --host 0.0.0.0 --port \"$PORT\""]
+CMD ["sh", "-c", "mkdir -p \"$DEALS_DIR\" && exec uvicorn apps.api.main:app --host 0.0.0.0 --port \"$PORT\""]

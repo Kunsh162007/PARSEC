@@ -81,3 +81,12 @@ def test_the_marked_copies_download_as_one_zip(client):
 def test_no_zip_before_an_export(client):
     put(client, "Demo", "a.pdf")
     assert client.get("/api/v1/deals/Demo/export.zip").status_code == 404
+
+
+def test_the_practice_deal_downloads_as_a_folder_ready_to_add(client):
+    res = client.get("/api/v1/practice-deal.zip")
+    assert res.status_code == 200 and res.headers["content-type"] == "application/zip"
+    names = zipfile.ZipFile(io.BytesIO(res.content)).namelist()
+    assert all(n.startswith("Orion Analytics/") for n in names)
+    assert sum(n.endswith(".pdf") for n in names) == 14
+    assert not any("/_" in n for n in names)

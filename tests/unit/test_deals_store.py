@@ -92,3 +92,14 @@ def test_without_a_database_nothing_is_mirrored(tmp_path, monkeypatch):
     monkeypatch.setattr(store, "_cached", None)
     assert store.active() is None
     assert workspace.restore_saved(tmp_path) == 0
+
+
+def test_reviews_of_a_deal_that_is_gone_do_not_bring_back_an_empty_folder(db, tmp_path, monkeypatch):
+    monkeypatch.setenv("DEALS_DIR", str(tmp_path / "disk"))
+    db.put("Retired Demo", f".fineprint/reviews/{'a' * 64}.json", b'{"dismissed": []}')
+    db.put("Kept", "a.txt", b"Liability is unlimited.")
+    db.put("Kept", f".fineprint/reviews/{'b' * 64}.json", b'{"dismissed": []}')
+
+    assert workspace.restore_saved(workspace.deals_root()) == 2
+
+    assert [d["name"] for d in workspace.list_deals(workspace.deals_root())] == ["Kept"]

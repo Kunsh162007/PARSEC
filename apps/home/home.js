@@ -211,6 +211,7 @@
       $('deals-root').textContent = body.root;
       $('deal-list').replaceChildren(...body.deals.map(card));
       $('deals-empty').hidden = body.deals.length > 0;
+      if (body.uploads) $('deals-empty').textContent = 'No deals yet. Add your own documents below, or download the practice deal and add its folder.';
       $('deals-error').hidden = true;
       $('new-deal').hidden = !body.uploads;
     } catch (err) {
