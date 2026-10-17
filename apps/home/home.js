@@ -30,6 +30,9 @@
   function saveCode(code) {
     try { sessionStorage.setItem(CODE_KEY, code); } catch (err) { /* private mode: asked again next visit */ }
   }
+  function forgetCode() {
+    try { sessionStorage.removeItem(CODE_KEY); } catch (err) { /* nothing was kept */ }
+  }
   function adoptCodeFromLink() {
     const url = new URL(window.location.href);
     const code = (url.searchParams.get('code') || '').trim().slice(0, 200);
@@ -195,7 +198,12 @@
   async function loadDeals() {
     try {
       const res = await fetch('/api/v1/deals', { headers: headers() });
-      if (res.status === 401) { askForCode(Boolean(savedCode())); return; }
+      if (res.status === 401) {
+        const rejected = Boolean(savedCode());
+        forgetCode();   // a code from an earlier visit is not sent again, so the box starts empty
+        askForCode(rejected);
+        return;
+      }
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(typeof body.detail === 'string' ? body.detail : `the server answered ${res.status}`);
       state.deals = body.deals;
