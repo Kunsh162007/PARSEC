@@ -134,7 +134,7 @@ def marked_html(documents: List[Dict[str, str]], index: int, findings: List[Dict
     here = _numbered(findings, index)
     notes = "".join(_note(n, f, documents, index) for n, f in enumerate(here, start=1))
     body = (f'<header><h1>{escape(doc["name"])}</h1><p class="meta">{len(here)} problem'
-            f'{"" if len(here) == 1 else "s"} marked. <a href="summary.html">All documents</a></p></header>{LEGEND}'
+            f'{"" if len(here) == 1 else "s"} marked. <a href="summary.html">All documents</a></p>{LEGEND}</header>'
             f'<main><div class="sheet">{_marked_text(doc["text"], here, index)}</div>'
             f'<h2>Problems in this document</h2><ol class="notes">{notes or "<li>None marked.</li>"}</ol></main>')
     return _page(f"{doc['name']} (marked)", body)

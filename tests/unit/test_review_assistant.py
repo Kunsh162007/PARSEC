@@ -75,6 +75,13 @@ def test_a_question_is_answered_only_with_real_citations():
     assert out["action"] == "unknown"   # an answer that rests on no finding is not shown
 
 
+def test_internal_problem_numbers_are_taken_out_of_the_answer():
+    out, _ = ask({"action": "answer", "cites": [1, 2],
+                  "answer": "Problems 1 and 2 cost the most; the legal fees (problem 1) alone are $9m."})
+    assert "1" not in out["answer"].replace("$9m", "")
+    assert out["answer"].startswith("These problems cost the most")
+
+
 def test_cites_that_are_not_a_list_are_refused_not_a_crash():
     out, _ = ask({"action": "answer", "answer": "x", "cites": "1"})
     assert out["action"] == "unknown"

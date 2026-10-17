@@ -15,3 +15,7 @@ data/
 
 # OCR engine for scanned PDFs, installed by python scripts/fetch_ocr.py (about 11 MB)
 apps/review/vendor/
+
+# Notes kept locally, not published: only the README is part of the repository
+*.md
+!/README.md

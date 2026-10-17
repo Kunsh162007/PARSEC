@@ -12,3 +12,4 @@ node_modules/
 .pytest_cache/
 *.egg-info/
 .serena/
+apps/review/vendor/

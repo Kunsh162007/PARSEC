@@ -14,7 +14,9 @@ from typing import Any, Dict, List, Optional
 
 RUNNER = Path(__file__).with_name("rules_runner.js")
 NODE_TIMEOUT_S = 30
-MAX_CONCURRENT_RUNS = 4   # Node processes at once, so a burst of free calls cannot take every worker thread
+# Node processes at once, so a burst of free calls cannot take every worker thread. Each needs about 95 MB at the
+# largest request the API accepts; set RULES_CONCURRENCY=2 on a 512 MB host.
+MAX_CONCURRENT_RUNS = max(1, int(os.getenv("RULES_CONCURRENCY", "4") or 4))
 _runs = asyncio.Semaphore(MAX_CONCURRENT_RUNS)
 _FINDING_FIELDS = ("id", "lens", "severity", "title", "why", "ask", "detail", "count", "context")
 
