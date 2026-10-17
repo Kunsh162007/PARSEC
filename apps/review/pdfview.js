@@ -80,9 +80,8 @@
       drawn.set(layout, entry);
     }
     const cache = entry.pages;
-    const key = index;
-    let canvas = cache.get(key);
-    if (canvas) { cache.delete(key); cache.set(key, canvas); }   // most recently used last
+    let canvas = cache.get(index);
+    if (canvas) { cache.delete(index); cache.set(index, canvas); }   // most recently used last
     if (!canvas) {
       const pdf = await documentFor(layout, loadPdfjs);
       const page = await pdf.getPage(index + 1);
@@ -93,14 +92,15 @@
       canvas.height = Math.floor(viewport.height);
       canvas.setAttribute('aria-hidden', 'true');
       await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-      cache.set(key, canvas);
+      cache.set(index, canvas);
       while (cache.size > KEEP_PAGES) cache.delete(cache.keys().next().value);
     }
     holder.replaceChildren(canvas);
   }
 
   // Draws every page of `layout` into `sheet`, with a <mark> per box (the page's click and selection code works on
-  // these exactly as on marks in text). opts: spans [{start, end, f}], zoom, loadPdfjs, title(f), isCross(f), isActive(f)
+  // these exactly as on marks in text). opts: layout, text, spans [{start, end, f}], zoom, loadPdfjs, title(f),
+  // isCross(f), isActive(f)
   function render(sheet, opts) {
     const { layout } = opts;
     const available = Math.max(280, (sheet.clientWidth || MAX_PAGE_WIDTH) - 28);

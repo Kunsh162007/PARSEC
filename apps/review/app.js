@@ -372,14 +372,14 @@
       pages.push(pageText);
       base += pageText.length + 2;
     }
-    const text = pages.join('\n\n');
-    if (!text.trim()) {
-      throw new Error(`${file.name} is a scanned image and could not be read${ocrError ? `: ${ocrError.message}` : ''}. Ask for a text PDF.`);
-    }
     pdf.destroy();
     if (ocrUsed && ocrEngine) {   // the OCR engine holds ~100 MB: let it go once this document is read
       ocrEngine.then((w) => w.terminate()).catch(() => {});
       ocrEngine = null;
+    }
+    const text = pages.join('\n\n');
+    if (!text.trim()) {
+      throw new Error(`${file.name} is a scanned image and could not be read${ocrError ? `: ${ocrError.message}` : ''}. Ask for a text PDF.`);
     }
     layout.scannedPages = empty;
     layout.ocrPages = ocrUsed;
@@ -557,7 +557,6 @@
       s.snippet ? h('span', { class: 'snippet', text: s.snippet }) : null)));
   }
 
-  // A screening suggestion from the Paul Hastings framework (see workflow.js), never presented as advice.
   const isSerious = (f) => f.severity === 'critical' || f.severity === 'high';
   const safeId = (id) => String(id).replace(/[^\w-]/g, '_');
 
@@ -751,7 +750,7 @@
       unrelated.map((c) => connItem(c.title, names(c.documents), true))));
 
     sections.push(connSection('Parties that appear in more than one document', null,
-      d.entities.filter((e) => e.documents.length > 1).map((e) => connItem(e.name, `${names(e.documents)}`))));
+      d.entities.filter((e) => e.documents.length > 1).map((e) => connItem(e.name, names(e.documents)))));
     sections.push(connSection('Same amount in different documents',
       'Check these describe the same thing and tie out.',
       d.shared_figures.map((f) => connItem(f.amount, names(f.documents)))));
@@ -1199,12 +1198,9 @@
     state.memoRefs = refs;
     state.memo = { loading: true };
     renderMemo();
-    const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
-    const code = state.ai.authRequired ? $('ai-code').value.trim() : '';
-    if (code) headers['X-Review-Token'] = code;
     let memo;
     try {
-      const res = await fetch('/api/v1/diligence/memo', { method: 'POST', headers, body: JSON.stringify(body) });
+      const res = await fetch('/api/v1/diligence/memo', { method: 'POST', headers: authHeaders(JSON_HEADERS), body: JSON.stringify(body) });
       const out = await res.json().catch(() => ({}));
       memo = res.ok ? out : { available: false, reason: typeof out.detail === 'string' ? out.detail : `the server answered ${res.status}.` };
     } catch (err) {
@@ -1466,6 +1462,16 @@
     try { sessionStorage.setItem(CODE_KEY, value); } catch (err) { /* private mode: the code just isn't remembered */ }
   }
 
+  const JSON_HEADERS = { 'Content-Type': 'application/json' };
+
+  // Request headers carrying the access code, when the server asks for one.
+  function authHeaders(extra) {
+    const headers = Object.assign({ Accept: 'application/json' }, extra || {});
+    const code = state.ai.authRequired ? $('ai-code').value.trim() || storedCode() : '';
+    if (code) headers['X-Review-Token'] = code;
+    return headers;
+  }
+
   async function setupAi() {
     let s;
     try {
@@ -1510,10 +1516,8 @@
       const on = $('needs-toggle').checked || $('ai-toggle').checked || $('web-toggle').checked;
       $('privacy').textContent = on ? PRIVACY_AI : PRIVACY_LOCAL;
     };
-    $('needs-toggle').addEventListener('change', refreshPrivacy);
+    ['needs-toggle', 'ai-toggle', 'web-toggle'].forEach((id) => $(id).addEventListener('change', refreshPrivacy));
     refreshPrivacy();
-    $('ai-toggle').addEventListener('change', refreshPrivacy);
-    $('web-toggle').addEventListener('change', refreshPrivacy);
   }
 
   function optionalReadsRequested() {
@@ -1528,15 +1532,11 @@
 
   async function deepRead(docs, reads) {
     const sent = docs.slice(0, AI_MAX_DOCS).map((d) => ({ name: d.name, text: d.text.slice(0, AI_MAX_CHARS) }));
-    const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
     const code = state.ai.authRequired ? $('ai-code').value.trim() : '';
-    if (code) {
-      headers['X-Review-Token'] = code;
-      storeCode(code);
-    }
+    if (code) storeCode(code);
     const res = await fetch('/api/v1/diligence/deep', {
       method: 'POST',
-      headers,
+      headers: authHeaders(JSON_HEADERS),
       body: JSON.stringify({
         documents: sent, lenses: [...state.lenses], ai: reads.ai, web: reads.web,
         triage: reads.funnel, adjudicate: reads.funnel,
@@ -1558,12 +1558,9 @@
 
   // What the file still needs, worked out by a reasoning model on the server. Never a fixed list.
   async function fetchRequirements(docs) {
-    const headers = { 'Content-Type': 'application/json', Accept: 'application/json' };
-    const code = state.ai.authRequired ? $('ai-code').value.trim() : '';
-    if (code) headers['X-Review-Token'] = code;
-    const sent = docs.slice(0, 12).map((d) => ({ name: d.name, text: d.text.slice(0, 200000) }));
+    const sent = docs.slice(0, 12).map((d) => ({ name: d.name, text: d.text.slice(0, AI_MAX_CHARS) }));
     try {
-      const res = await fetch('/api/v1/diligence/requirements', { method: 'POST', headers, body: JSON.stringify({ documents: sent }) });
+      const res = await fetch('/api/v1/diligence/requirements', { method: 'POST', headers: authHeaders(JSON_HEADERS), body: JSON.stringify({ documents: sent }) });
       if (!res.ok) {
         let reason = `The server answered ${res.status}.`;
         try { const body = await res.json(); if (typeof body.detail === 'string') reason = body.detail; } catch (err) { /* keep */ }
@@ -1827,8 +1824,8 @@
   Object.assign(APP, {
     setZoom, setFocus, scrollTarget,
     aiAllowed: () => { const r = optionalReadsRequested(); return Boolean(r.ai || r.web || r.needs); },
-    state, readFile, addDocument, setStatus, run, showResults, showInDocument, toggleDismiss, toggleConfirm,
-    setView, toFinding, activeFindings, docName, plural, renderNote, renderSummary,
+    state, readFile, addDocument, run, showResults, showInDocument, toggleDismiss, toggleConfirm,
+    setView, toFinding, activeFindings, plural,
     sevLabel: (s) => SEV_LABEL[s],
     showArea(id) {
       state.lens = id;
@@ -1837,12 +1834,7 @@
       renderFindings();
       setView('findings');
     },
-    authHeaders(extra) {
-      const headers = Object.assign({ Accept: 'application/json' }, extra || {});
-      const code = state.ai.authRequired ? $('ai-code').value.trim() || storedCode() : '';
-      if (code) headers['X-Review-Token'] = code;
-      return headers;
-    },
+    authHeaders,
   });
 
   init();

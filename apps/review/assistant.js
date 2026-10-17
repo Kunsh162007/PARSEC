@@ -113,7 +113,6 @@
   }
 
   function match(text, ctx) {
-
     const screen = screenCommand(text);
     if (screen) return screen;
     if (has(text, /^(stop|cancel|quiet|be quiet|stop talking|shut up)\b/)) return { action: 'stop' };

@@ -156,7 +156,7 @@ async def main(args: argparse.Namespace) -> int:
 
     print(f"scoring rules on {len(chosen)} contracts ...", flush=True)
     found = run_rules(chosen)
-    rows = [score_contract({k: v for k, v in c["labels"].items()}, found.get(n, [])) for n, c in enumerate(chosen)]
+    rows = [score_contract(c["labels"], found.get(n, [])) for n, c in enumerate(chosen)]
     out: Dict[str, Any] = {
         "status": "ok",
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),

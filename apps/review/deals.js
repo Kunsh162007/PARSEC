@@ -20,7 +20,7 @@
   const HELP = 'You can say: "open" and a folder name; "what\'s wrong with" and a document; "next problem"; '
     + '"not a problem" to remove a mark; "bring it back"; "show tax problems"; "summary"; "export"; or "list my folders".';
 
-  const deal = { name: '', names: [], saveTimer: 0, pending: null, restoring: false, loading: false, dismissedKeys: [], list: null, cursor: -1, undo: [] };
+  const deal = { name: '', names: [], root: '', checked: false, saveTimer: 0, pending: null, restoring: false, loading: false, dismissedKeys: [], list: null, cursor: -1, undo: [] };
 
   /* ---------------------------------------------------------------- */
   /* server                                                            */
@@ -252,7 +252,7 @@
   // The marked copies of the last export, downloaded to the visitor's computer as one zip.
   async function downloadZip() {
     const res = await fetch(`/api/v1/deals/${enc(deal.name)}/export.zip`, { headers: APP.authHeaders() });
-    if (!res.ok) return;
+    if (!res.ok) throw new Error(`the marked copies could not be downloaded (${res.status})`);
     const link = document.createElement('a');
     link.href = URL.createObjectURL(await res.blob());
     link.download = `${deal.name} - marked documents.zip`;
@@ -299,7 +299,7 @@
     const verdict = FP.verdictFor(active);
     deal.list = active;
     deal.cursor = -1;
-    if (!active.length) return `${verdict.headline}`;
+    if (!active.length) return verdict.headline;
     const top = active.slice(0, 3).map((f, i) => `${i + 1}. ${f.title}`).join(' ');
     const counts = FP.SEVERITIES.filter((s) => verdict.counts[s]).map((s) => `${verdict.counts[s]} ${s}`).join(', ');
     const earnings = S.earnings && S.earnings.line ? ` ${S.earnings.line}` : '';
@@ -451,7 +451,7 @@
 
   async function init() {
     $('deal-export').addEventListener('click', exportMarked);
-    $('deal-download').addEventListener('click', downloadZip);
+    $('deal-download').addEventListener('click', () => downloadZip().catch((err) => status(err.message)));
     $('deal-recheck').addEventListener('click', () => openDeal(deal.name, { recheck: true }).catch((err) => status(err.message)));
     await loadDealNames().catch(() => {});
     const VIEW_NAMES = { findings: 'the findings', document: 'the document', followups: 'the questions to send',

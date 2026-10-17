@@ -55,8 +55,8 @@ async def main(live: bool) -> int:
                 status += f" -> FAILED: {exc}"
                 ok = False
         print(status)
-    optional = [v for v in ("REVIEW_API_TOKEN",) if os.getenv(v)]
-    print("\nOptional: REVIEW_API_TOKEN is", "set (access code required)" if optional else "not set (endpoint is open)")
+    token_set = bool(os.getenv("REVIEW_API_TOKEN"))
+    print("\nOptional: REVIEW_API_TOKEN is", "set (access code required)" if token_set else "not set (endpoint is open)")
     return 0 if ok else 1
 
 

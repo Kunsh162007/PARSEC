@@ -74,18 +74,3 @@ class AuditEvent(BaseModel):
     def compute_hash(self) -> str:
         raw = f"{self.event_id}:{self.timestamp}:{self.stage}:{self.action}:{self.prev_event_hash}"
         return hashlib.sha256(raw.encode()).hexdigest()
-
-class DealWorkspace(BaseModel):
-    deal_id: str
-    company_name: str
-    sector: str
-    target_ebitda_claimed: float
-    deal_multiple: float
-    kill_criteria: List[KillCriterion] = Field(default_factory=list)
-    documents: List[DataRoomDocument] = Field(default_factory=list)
-    findings: List[Finding] = Field(default_factory=list)
-    token_usage_nano: int = 0
-    token_usage_super: int = 0
-    token_usage_ultra: int = 0
-    tavily_api_calls: int = 0
-    estimated_cost_usd: float = 0.0

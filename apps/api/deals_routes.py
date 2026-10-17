@@ -63,8 +63,8 @@ async def put_deal_file(deal: str, path: str, request: Request, x_review_token: 
     _guard(x_review_token)
     if not workspace.uploads_enabled():
         raise HTTPException(status_code=403, detail="Adding documents is switched off on this server.")
-    declared = int(request.headers.get("content-length") or 0)
-    if declared > workspace.MAX_DOCUMENT_BYTES:
+    declared = request.headers.get("content-length", "")
+    if declared.isdigit() and int(declared) > workspace.MAX_DOCUMENT_BYTES:
         raise HTTPException(status_code=413, detail="Each document may be at most 15 MB.")
     data = await request.body()
     try:

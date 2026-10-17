@@ -624,7 +624,7 @@
         if ((today - latest.date) / DAY > STALE_DAYS) {
           stale.push({ span: { doc: doc.index, start: latest.start, end: latest.end }, date: latest.date });
         }
-      } else if (!dates.length && wordCount(doc.text) > 150) {
+      } else if (wordCount(doc.text) > 150) {
         undated.push(doc.name);
       }
     }

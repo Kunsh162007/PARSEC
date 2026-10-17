@@ -113,7 +113,7 @@ def _marked_text(text: str, here: List[Dict[str, Any]], index: int) -> str:
 
 
 def _note(n: int, f: Dict[str, Any], documents: List[Dict[str, str]], index: int) -> str:
-    severity = f.get("severity") if f.get("severity") in SEVERITIES else "medium"
+    severity = _sev(f)
     others = [i for i in _docs_of(f) if i != index and 0 <= i < len(documents)]
     where = ""
     if others:

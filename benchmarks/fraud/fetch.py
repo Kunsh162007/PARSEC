@@ -18,6 +18,7 @@ import argparse
 import hashlib
 import html
 import json
+import os
 import re
 import sys
 import time
@@ -31,7 +32,8 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA = ROOT / "data" / "fraud"
 BASE = "https://www.sec.gov"
 INDEX_URL = BASE + "/enforcement-litigation/accounting-auditing-enforcement-releases"
-USER_AGENT = "FinePrintResearch/1.0 (contact: kunsh16906@gmail.com)"
+# The SEC asks automated clients to name a contact address in the User-Agent.
+USER_AGENT = f"FinePrintResearch/1.0 (contact: {os.getenv('SEC_CONTACT_EMAIL', 'research@example.com')})"
 DELAY_SECONDS = 0.25  # SEC fair-access policy allows at most 10 requests per second
 ISSUER_WORDS = re.compile(
     r"\b(Inc|Corp|Corporation|Co|Company|Ltd|Limited|LLC|L\.P|LP|Holdings|Group|plc|N\.V|S\.A|AG|Technologies|"

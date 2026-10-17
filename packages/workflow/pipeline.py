@@ -288,9 +288,9 @@ class DiligencePipeline:
         # Stage 3: quality of earnings
         bridge = None
         addbacks: List[AddBackItem] = []
-        base, _base_span = (Decimal("0.00"), "")
+        base = Decimal("0.00")
         if cim_text:
-            base, _base_span = DocumentExtractionWorker.extract_base_ebitda(cim_text)
+            base, _ = DocumentExtractionWorker.extract_base_ebitda(cim_text)
         reconciliation: Optional[Dict[str, Any]] = None
         if base == Decimal("0.00"):
             reconciliation = await self._read_reconciliation(documents, cim_name, unavailable)

@@ -119,7 +119,7 @@
       }
     }
     if (failed.length === items.length) { status.textContent = `Nothing could be added. ${failed[0]}`; return; }
-    status.textContent = `Added ${items.length - failed.length} documents${skipped.length ? `; skipped ${skipped.length} that cannot be checked` : ''}. Opening "${name}"...`;
+    status.textContent = `Added ${plural(items.length - failed.length, 'document', 'documents')}${skipped.length ? `; skipped ${skipped.length} that cannot be checked` : ''}. Opening "${name}"...`;
     window.location.href = dealUrl(name);
   }
 
@@ -141,6 +141,7 @@
       $('deals-root').textContent = body.root;
       $('deal-list').replaceChildren(...body.deals.map(card));
       $('deals-empty').hidden = body.deals.length > 0;
+      $('deals-error').hidden = true;
       $('new-deal').hidden = !body.uploads;
     } catch (err) {
       $('deals-root').textContent = 'not available';
@@ -176,9 +177,11 @@
     const names = state.deals.map((d) => d.name);
     switch (c.action) {
       case 'stop': return '';
-      case 'list-deals':
+      case 'list-deals': {
         await loadDeals();
-        return names.length ? `You have ${plural(names.length, 'deal folder', 'deal folders')}: ${names.join(', ')}.` : `There are no deal folders yet. Make one folder per deal in ${state.root}.`;
+        const listed = state.deals.map((d) => d.name);
+        return listed.length ? `You have ${plural(listed.length, 'deal folder', 'deal folders')}: ${listed.join(', ')}.` : `There are no deal folders yet. Make one folder per deal in ${state.root}.`;
+      }
       case 'open-deal':
         window.location.href = dealUrl(c.deal);
         return `Opening ${c.deal}…`;

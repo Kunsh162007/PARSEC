@@ -72,6 +72,12 @@ def test_a_review_is_saved_inside_the_deal_and_read_back(root):
     assert next(d for d in workspace.list_deals(base) if d["name"] == "Acme")["reviewed_at"]
 
 
+def test_a_damaged_saved_review_is_treated_as_no_review(root):
+    (root / "Acme" / ".fineprint").mkdir(parents=True, exist_ok=True)
+    (root / "Acme" / ".fineprint" / "review.json").write_text("{not json", encoding="utf-8")
+    assert workspace.load_review(workspace.deals_root(), "Acme") is None
+
+
 def test_review_file_is_valid_json(root):
     workspace.save_review(workspace.deals_root(), "Beta", {"a": 1})
     assert json.loads((root / "Beta" / ".fineprint" / "review.json").read_text(encoding="utf-8")) == {"a": 1}

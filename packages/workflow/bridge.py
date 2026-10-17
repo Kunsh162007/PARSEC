@@ -62,7 +62,7 @@ def _to_decimal(value: Any) -> Optional[Decimal]:
         return None
 
 
-_DASHES = {"—", "–", "-", "— ", "−"}
+_DASHES = {"—", "–", "-", "−"}
 _PERIOD_WORDS = re.compile(
     r"\b(?:years?|ended|ending|quarters?|months|weeks|fiscal|fy|periods?|as\s+of|q[1-4]|h[12]|"
     r"january|february|march|april|may|june|july|august|september|october|november|december)\b", re.IGNORECASE)

@@ -170,8 +170,6 @@ class LLMGateway:
                     break
                 except GatewayUnavailable as exc:
                     errors.append(str(exc))
-                except httpx.HTTPError as exc:
-                    errors.append(f"{candidate}: {type(exc).__name__}")
         if content is None:
             raise GatewayUnavailable("; ".join(errors) or "no model answered")
 
@@ -189,7 +187,7 @@ class LLMGateway:
         self.total_cost_usd += cost
 
         parsed_json = None
-        if response_schema or "json" in task or "adjudication" in task or "inversion" in task:
+        if response_schema or "json" in task or "adjudication" in task:
             clean = content.strip()
             if clean.startswith("```json"):
                 clean = clean[7:]

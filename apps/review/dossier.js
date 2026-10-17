@@ -35,7 +35,7 @@
   const ENTITY_STOP = new Set(['the', 'this', 'that', 'such', 'each', 'any', 'and', 'or', 'of', 'by', 'between', 'with', 'for', 'to', 'in', 'on', 'a', 'an']);
   // Placeholders that name a role, not a party (regulators anonymise parties this way).
   const GENERIC_ENTITIES = new Set(['public company', 'the company', 'company', 'issuer company', 'parent company', 'holding company', 'target company', 'a company', 'our company']);
-  const REFERENCE_RE =/\b(Schedule|Exhibit|Annex(?:ure)?|Appendix|Attachment|Addendum|Amendment No\.?)\s+([A-Z]?\d+(?:\.\d+)?[A-Za-z]?|[A-Z])\b/g;
+  const REFERENCE_RE = /\b(Schedule|Exhibit|Annex(?:ure)?|Appendix|Attachment|Addendum|Amendment No\.?)\s+([A-Z]?\d+(?:\.\d+)?[A-Za-z]?|[A-Z])\b/g;
   const NAMED_DOC_RE = /\b(side letter|disclosure schedules?|management letter|board minutes|data room index|cap table|master services agreement|audit(?:ed)? (?:report|accounts)|compliance certificate|bank confirmation|term sheet)\b/gi;
   const MONEY_RE = /([$€£])\s?(\d[\d,]*(?:\.\d+)?)\s?(million|billion|thousand|bn|mm|[mMbBkK])?\b/g;
   const DATE_RE = /\b(?:(\d{4})-(\d{2})-(\d{2})|(\d{1,2})\s+(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{4})|(January|February|March|April|May|June|July|August|September|October|November|December)\s+(\d{1,2}),?\s+(\d{4}))\b/g;

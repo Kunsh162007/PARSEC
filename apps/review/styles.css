@@ -82,10 +82,6 @@ button, input, select, textarea { font: inherit; color: inherit; }
   border-bottom: 1px solid var(--rule);
   background: var(--paper);
 }
-.wordmark {
-  font-weight: 800; font-size: 1.35rem; letter-spacing: -0.02em; color: var(--ink); text-decoration: none;
-  font-variation-settings: 'opsz' 48;
-}
 .privacy { font-size: 0.875rem; color: var(--ink-3); text-align: right; }
 @media (max-width: 560px) { .privacy { display: none; } }
 
@@ -200,16 +196,6 @@ input[type='text'], select {
 .status { margin-top: 12px; font-size: 0.9375rem; min-height: 1.4em; }
 .status.is-error { color: var(--crit-text); }
 
-.samples { margin-top: 14px; border-top: 1px solid var(--rule); padding-top: 12px; }
-.samples summary { cursor: pointer; font-weight: 600; min-height: 32px; }
-.samples ul { margin-top: 10px; display: grid; gap: 6px; }
-.sample-btn {
-  width: 100%; text-align: left; padding: 10px 12px; background: var(--paper);
-  border: 1px solid var(--rule); border-radius: var(--radius); display: grid;
-}
-.sample-btn:hover { border-color: var(--ink-3); }
-.sample-btn small { color: var(--ink-3); font-size: 0.85rem; }
-
 /* ---------- numbered steps ---------- */
 .step h2 { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .step-n {
@@ -304,13 +290,6 @@ input[type='text'], select {
 .code-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 6px 0; }
 .code-row label { font-weight: 600; }
 .code-row input { min-height: 44px; padding: 8px 12px; background: var(--paper); border: 1px solid var(--rule-strong); border-radius: var(--radius); min-width: 0; flex: 0 1 240px; }
-
-.meter { margin-top: 12px; max-width: 70ch; }
-.meter-tiers { display: flex; flex-wrap: wrap; gap: 6px 22px; }
-.meter-tiers li { display: grid; font-size: 0.875rem; }
-.meter-tier { font-weight: 700; }
-.meter-figure { color: var(--ink-3); }
-.meter-total { margin-top: 6px; font-size: 0.875rem; color: var(--ink-3); }
 
 .sources { margin-top: 8px; display: grid; gap: 6px; }
 .sources li { display: grid; font-size: 0.9rem; }

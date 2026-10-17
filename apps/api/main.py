@@ -130,6 +130,7 @@ async def _security_headers(request: Request, call_next):
         response.headers.setdefault("Cache-Control", "no-cache")
     return response
 
+
 # Host names this server answers to. A page on another site that points its own domain at 127.0.0.1 (DNS
 # rebinding) still sends its own name, so it is refused before it can read a deal folder. Add names with
 # ALLOWED_HOSTS=a,b; "testserver" is the name the test client uses.
@@ -336,6 +337,7 @@ async def _ai_read(
         out["findings"] = [*out.get("findings", []), *clause_out["findings"]]
     return out, unavailable
 
+
 # In-memory storage for deals, bounded so repeated runs cannot exhaust memory; the oldest deal is evicted first.
 MAX_STORED_DEALS = 100
 MAX_DEAL_DOCUMENTS = 10
@@ -370,6 +372,7 @@ class DealRunRequest(BaseModel):
                 raise ValueError(f"Each document may hold at most {MAX_DOCUMENT_CHARS:,} characters.")
         return value
 
+
 @app.get("/health")
 def health_check():
     """Liveness plus what is actually configured, read from the environment and config, not asserted."""
@@ -385,6 +388,7 @@ def health_check():
             "ultra": gateway.route_task(TASK_ADJUDICATE)["model"],
         },
     }
+
 
 @app.post("/api/deals/run")
 async def run_acquisition_deal(
@@ -409,6 +413,7 @@ async def run_acquisition_deal(
     _store_deal(result)
     return result
 
+
 @app.get("/api/companies/lookup")
 async def lookup_company(
     request: Request,
@@ -428,12 +433,14 @@ async def lookup_company(
         "sources": result.sources,
     }
 
+
 @app.get("/api/deals/{deal_id}")
 def get_deal(deal_id: str, request: Request, x_review_token: Optional[str] = Header(default=None)):
     _check_access(request, x_review_token)
     if deal_id not in deals_store:
         raise HTTPException(status_code=404, detail="Deal not found")
     return deals_store[deal_id]
+
 
 @app.post("/api/deals/{deal_id}/findings/{finding_id}/sign")
 def sign_finding(deal_id: str, finding_id: str, request: Request, x_review_token: Optional[str] = Header(default=None)):
@@ -446,6 +453,7 @@ def sign_finding(deal_id: str, finding_id: str, request: Request, x_review_token
             f["signed_by_analyst"] = True
             return {"status": "signed", "finding": f}
     raise HTTPException(status_code=404, detail="Finding not found")
+
 
 BENCHMARKS_DIR = Path(__file__).resolve().parents[2] / "benchmarks"
 

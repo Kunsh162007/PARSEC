@@ -80,7 +80,6 @@ class DocumentExtractionWorker:
             if has_word(["severance", "restructuring", "separation", "realignment"]):
                 note_match = re.search(r"(?:Note \d+|Executive|Workforce):[^\n]+", accounts_text)
                 evidence_span = note_match.group(0) if note_match else ""
-                is_recurring = False
 
             # Check legal / environmental / regulatory counsel
             elif has_word(["legal", "litigation", "compliance", "regulatory", "epa"]):

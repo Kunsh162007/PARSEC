@@ -57,7 +57,6 @@ _WORDS = {
     "seventeen": 17, "eighteen": 18, "nineteen": 19, "twenty": 20, "thirty": 30, "forty": 40, "fifty": 50,
     "sixty": 60, "seventy": 70, "eighty": 80, "ninety": 90, "hundred": 100,
 }
-_WORD_RE = re.compile(r"\b(" + "|".join(_WORDS) + r")\b", re.IGNORECASE)
 
 # A magnitude written right after a figure: "3 million", "40%", "12 percent". "3 million" and "3 billion" share the
 # digit 3, so the digit alone proves nothing: the rule is that a figure's magnitude in the memo must also follow that

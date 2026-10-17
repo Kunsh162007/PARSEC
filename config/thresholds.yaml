@@ -1,31 +1,5 @@
-# Materiality and adjudication thresholds
+# Customer-concentration thresholds read by packages/workflow/pipeline.py (fractions of revenue)
 
 materiality:
-  # Minimum dollar value or EBITDA percentage to qualify for Tier 3 Ultra adjudication
-  minimum_ebitda_impact_usd: 50000.00
-  minimum_ebitda_impact_pct: 0.015 # 1.5% of total EBITDA
-  
-  # Concentration thresholds
   customer_concentration_warning_pct: 0.20 # >20% triggers price adjuster
   customer_concentration_critical_pct: 0.35 # >35% triggers deal-breaker
-  top_3_customer_concentration_pct: 0.50
-
-  # Net Working Capital peg tolerance
-  nwc_peg_variance_pct: 0.05
-
-  # Cash conversion tolerance
-  cash_conversion_minimum_pct: 0.70
-
-severity_tiers:
-  deal_breaker:
-    description: "Invalidates core investment thesis or breaches mandatory kill criteria"
-    requires_partner_signoff: true
-  price_adjuster:
-    description: "Direct dollar-for-dollar reduction on enterprise value via multiple"
-    requires_vp_signoff: true
-  manageable:
-    description: "Operational/compliance risk that can be addressed in 100-day plan or escrow"
-    requires_associate_signoff: false
-  minor:
-    description: "Trivial variance or documentation gap below materiality threshold"
-    requires_associate_signoff: false

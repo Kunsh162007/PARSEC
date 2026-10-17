@@ -19,6 +19,7 @@ MARKED_DIR = "_marked"
 MAX_DOCUMENTS = 200
 MAX_DOCUMENT_BYTES = 15 * 1024 * 1024
 MAX_REVIEW_BYTES = 5 * 1024 * 1024
+MAX_UPLOADS_PER_DEAL = 50
 
 
 class UnsafePath(ValueError):
@@ -29,6 +30,10 @@ class DealNotFound(LookupError):
     """No deal folder by that name."""
 
 
+class TooLarge(ValueError):
+    """An upload over the size or count limit."""
+
+
 def deals_root() -> Path:
     """The parent folder of all deals, created on first use."""
     root = Path(os.getenv("DEALS_DIR") or Path.home() / "Deals").expanduser().resolve()
@@ -37,14 +42,7 @@ def deals_root() -> Path:
 
 
 def _skipped(part: str) -> bool:
-    return part.startswith(".") or part.startswith("_")
-
-
-MAX_UPLOADS_PER_DEAL = 50
-
-
-class TooLarge(ValueError):
-    """An upload over the size or count limit."""
+    return part.startswith((".", "_"))
 
 
 def uploads_enabled() -> bool:
@@ -130,7 +128,10 @@ def load_review(root: Path, name: str) -> Optional[Dict[str, Any]]:
     path = _review_file(root, name)
     if not path.is_file():
         return None
-    return json.loads(path.read_text(encoding="utf-8"))
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except ValueError:
+        return None  # a damaged save is treated as no save; the next autosave replaces it
 
 
 def write_inside(folder: Path, relative: str, content: str) -> Path:

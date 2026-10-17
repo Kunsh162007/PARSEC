@@ -1,8 +1,6 @@
-import math
-from decimal import Decimal, ROUND_HALF_UP
-from typing import List, Dict, Any, Tuple
+from decimal import Decimal
+from typing import List, Dict, Any
 from pydantic import BaseModel
-from packages.compute.lib import to_decimal
 
 class BenfordAnalysisResult(BaseModel):
     is_anomaly_detected: bool
@@ -79,7 +77,6 @@ class ForensicAccountingEngine:
             if abs(observed_dist[d] - cls.BENFORD_PROBABILITIES[d]) / cls.BENFORD_PROBABILITIES[d] > 0.8:
                 divergent.append(d)
 
-        # 8 degrees of freedom at 95% confidence level critical value is 15.51
         is_anomaly = chi_square > 15.51
 
         return BenfordAnalysisResult(
@@ -121,7 +118,6 @@ class ForensicAccountingEngine:
                 )
 
         # 2. Operating Cash vs Actual Bank Account Movement
-        expected_operating_cash = cfo
         variance = abs(cfo - net_bank_change)
         
         if cfo > 0 and net_bank_change < 0:

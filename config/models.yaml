@@ -7,56 +7,18 @@ providers:
     api_key_env: "NEBIUS_API_KEY"
 
 routing:
-  # Tier 3: Deep reasoning, long context, executive adjudication, adversarial generation
-  thesis_inversion:
-    model: "nvidia/Nemotron-3-Ultra-550b-a55b"
-    fallback_model: "nvidia/nemotron-3-super-120b-a12b"
-    max_tokens: 4096
-    temperature: 0.1
-    token_budget_pct: 0.05
-
+  # Tier 3: Deep reasoning, executive adjudication, memo and committee simulation
   adjudication:
     model: "nvidia/Nemotron-3-Ultra-550b-a55b"
     fallback_model: "nvidia/nemotron-3-super-120b-a12b"
     max_tokens: 2048
     temperature: 0.0
-    token_budget_pct: 0.05
 
   ic_simulator:
     model: "nvidia/Nemotron-3-Ultra-550b-a55b"
     fallback_model: "nvidia/nemotron-3-super-120b-a12b"
     max_tokens: 3000
     temperature: 0.4
-    token_budget_pct: 0.05
-
-  adversarial_seller:
-    model: "nvidia/Nemotron-3-Ultra-550b-a55b"
-    fallback_model: "nvidia/nemotron-3-super-120b-a12b"
-    max_tokens: 4096
-    temperature: 0.3
-    token_budget_pct: 0.10
-
-  memo_generator:
-    model: "nvidia/Nemotron-3-Ultra-550b-a55b"
-    fallback_model: "nvidia/nemotron-3-super-120b-a12b"
-    max_tokens: 4096
-    temperature: 0.1
-    token_budget_pct: 0.05
-
-  # Tier 2: Extraction, structured parsing, consistency analysis
-  claim_extraction:
-    model: "nvidia/nemotron-3-super-120b-a12b"
-    fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
-    max_tokens: 2048
-    temperature: 0.0
-    token_budget_pct: 0.35
-
-  consistency_worker:
-    model: "nvidia/nemotron-3-super-120b-a12b"
-    fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
-    max_tokens: 2048
-    temperature: 0.0
-    token_budget_pct: 0.20
 
   # Fine Print deep read: any kind of due diligence document, quotes verified server-side
   document_review_json:
@@ -64,7 +26,6 @@ routing:
     fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     max_tokens: 6000
     temperature: 0.0
-    token_budget_pct: 0.35
 
   # Fine Print funnel: Nano decides which parts are worth reading, Ultra only rules on the serious findings
   document_triage_json:
@@ -72,14 +33,12 @@ routing:
     fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     max_tokens: 200
     temperature: 0.0
-    token_budget_pct: 0.10
 
   document_adjudication_json:
     model: "nvidia/Nemotron-3-Ultra-550b-a55b"
     fallback_model: "nvidia/nemotron-3-super-120b-a12b"
     max_tokens: 800
     temperature: 0.0
-    token_budget_pct: 0.05
 
   # Works out what a file still needs, from the names, openings and headings of what was supplied.
   document_requirements_json:
@@ -87,7 +46,6 @@ routing:
     fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     max_tokens: 3500
     temperature: 0.0
-    token_budget_pct: 0.05
 
   # Classifies candidate passages picked by a broad net; every hit must quote its passage.
   clause_verification_json:
@@ -95,7 +53,6 @@ routing:
     fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     max_tokens: 8000
     temperature: 0.0
-    token_budget_pct: 0.10
 
   # Same classification, sampled for self-consistency voting (USE_VOTING in packages/review/clauses.py).
   # Votes need diverse samples; 0.7 is the temperature Wang et al. 2022 (arXiv 2203.11171) used for GPT-3 and PaLM.
@@ -104,7 +61,6 @@ routing:
     fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     max_tokens: 8000
     temperature: 0.7
-    token_budget_pct: 0.10
 
   # Optional second opinion on clause tags.
   clause_confirmation_json:
@@ -112,7 +68,6 @@ routing:
     fallback_model: "nvidia/nemotron-3-super-120b-a12b"
     max_tokens: 4000
     temperature: 0.0
-    token_budget_pct: 0.05
 
   # Optional cheap yes/no grounding gate on each verified clause tag.
   clause_gate_json:
@@ -120,7 +75,6 @@ routing:
     fallback_model: "nvidia/nemotron-3-super-120b-a12b"
     max_tokens: 4000
     temperature: 0.0
-    token_budget_pct: 0.02
 
   # One call that turns verified findings and open requests into a short memo; every point must cite its evidence.
   findings_memo_json:
@@ -128,7 +82,6 @@ routing:
     fallback_model: "nvidia/nemotron-3-super-120b-a12b"
     max_tokens: 6000
     temperature: 0.1
-    token_budget_pct: 0.05
 
   # Reads an Adjusted EBITDA reconciliation table; code then checks every row and the arithmetic.
   ebitda_bridge_json:
@@ -136,7 +89,6 @@ routing:
     fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     max_tokens: 6000
     temperature: 0.0
-    token_budget_pct: 0.05
 
   # The assistant's fallback for wording its phrase matcher does not know: one call per request. Super, because
   # in a live trial Nano answered "which problem hurts the price most?" by repeating the question.
@@ -145,29 +97,13 @@ routing:
     fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     max_tokens: 800
     temperature: 0.0
-    token_budget_pct: 0.02
 
-  # Tier 1: High speed, low cost screening, classification, triage, prompt injection defense
+  # Tier 1: High speed, low cost screening and classification
   classification:
     model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
     max_tokens: 512
     temperature: 0.0
-    token_budget_pct: 0.25
-
-  prompt_injection_guard:
-    model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
-    fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
-    max_tokens: 256
-    temperature: 0.0
-    token_budget_pct: 0.05
-
-  tavily_classifier:
-    model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
-    fallback_model: "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
-    max_tokens: 512
-    temperature: 0.0
-    token_budget_pct: 0.05
 
 pricing_per_million_tokens:
   "nvidia/Nemotron-3-Ultra-550b-a55b":

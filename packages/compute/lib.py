@@ -1,6 +1,6 @@
 from decimal import Decimal, ROUND_HALF_UP
 from typing import List, Dict, Any, Optional
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 def to_decimal(val: Any) -> Decimal:
     """Helper to safely convert float/int/str to Decimal with 2 decimal places."""

@@ -1,6 +1,7 @@
 import hashlib
+import re
 import time
-from typing import List, Dict, Any, Tuple
+from typing import List, Dict, Tuple
 from packages.schemas.models import DataRoomDocument, Finding, SeverityLevel, EvidenceSpan
 
 class DataRoomTracker:
@@ -14,7 +15,6 @@ class DataRoomTracker:
     def __init__(self, expected_schema: List[str]):
         self.expected_schema = expected_schema
         self.documents: Dict[str, List[DataRoomDocument]] = {} # filename -> list of versions
-        self.audit_log: List[Dict[str, Any]] = []
 
     def ingest_document(self, filename: str, content: str, file_type: str = "text") -> Tuple[DataRoomDocument, List[Finding]]:
         content_hash = hashlib.sha256(content.encode()).hexdigest()
@@ -34,7 +34,6 @@ class DataRoomTracker:
                 quiet_reupload = True
                 
                 # Check for numeric differences
-                import re
                 old_numbers = set(re.findall(r"\$?\d+(?:,\d+)*(?:\.\d+)?", latest.content))
                 new_numbers = set(re.findall(r"\$?\d+(?:,\d+)*(?:\.\d+)?", content))
                 diff_numbers = new_numbers.symmetric_difference(old_numbers)
