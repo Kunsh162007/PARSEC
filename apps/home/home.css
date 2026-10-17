@@ -1,5 +1,7 @@
 /* Home: the same marked-up-paper language as Fine Print. Two sheets on the desk, pick the one you need. */
 
+[hidden] { display: none !important; }
+
 :root {
   --paper: #f1f2f5;
   --sheet: #ffffff;
@@ -156,3 +158,8 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
 .foot { border-top: 1px solid var(--rule); padding: 20px var(--gutter) 96px; color: var(--ink-3); font-size: 0.9rem; }
 .foot p { max-width: 1180px; margin: 0 auto; }
 .foot a { color: var(--ink-2); }
+
+/* the access code box, when the demo needs one */
+.deals-error .code-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.deals-error .code-input { flex: 1 1 220px; min-height: 48px; padding: 0 14px; border-radius: 6px; font: inherit; border: 1px solid var(--rule-strong); background: var(--paper); color: var(--ink); }
+.deals-error .cta { border: 0; cursor: pointer; font: inherit; }

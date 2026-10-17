@@ -360,6 +360,11 @@ On the free plan the service sleeps after 15 minutes without visits and takes ab
 reset on each deploy: saved reviews and exports on the hosted copy are temporary. Without `REVIEW_API_TOKEN`, anyone
 with the address can use the AI features until `REVIEW_DAILY_BUDGET_USD` ($2 a day by default) is spent.
 
+**Sharing it with an access code.** If you set `REVIEW_API_TOKEN`, send people a link that carries it:
+`https://<your-app>.onrender.com/?code=<your code>`. The page keeps the code for that browser tab and removes it from
+the address bar, so nothing has to be typed. Anyone who opens the plain address is asked for the code once, in the
+page itself.
+
 ## Using it
 
 1. **Make a deal.** On *My deals*, use *Check your own documents as a deal* to choose a folder (subfolders are kept) or

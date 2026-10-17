@@ -1453,6 +1453,15 @@
   function storedCode() {
     try { return sessionStorage.getItem(CODE_KEY) || ''; } catch (err) { return ''; }
   }
+  // A shared link like /?code=XYZ carries the access code: it is kept for this tab and taken out of the address bar.
+  function adoptCodeFromLink() {
+    const url = new URL(window.location.href);
+    const code = (url.searchParams.get('code') || '').trim().slice(0, 200);
+    if (!code) return;
+    storeCode(code);
+    url.searchParams.delete('code');
+    history.replaceState(null, '', url.pathname + url.search + url.hash);
+  }
   function storeCode(value) {
     try { sessionStorage.setItem(CODE_KEY, value); } catch (err) { /* private mode: the code just isn't remembered */ }
   }
@@ -1727,6 +1736,7 @@
       $('status').textContent = 'The review engine failed to load. Reload the page.';
       return;
     }
+    adoptCodeFromLink();
     applyCategoryFromUrl();
     renderLenses();
     renderDocs();

@@ -21,13 +21,51 @@
   }
 
   const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
-  // The access code, when this server needs one, as typed on the Check files page (kept for this browser tab).
+  // The access code, when this server needs one, kept for this browser tab. A shared link like /?code=XYZ sets it
+  // and is then taken out of the address bar, so a visitor never has to type it.
+  const CODE_KEY = 'fineprint-access-code';
+  function savedCode() {
+    try { return sessionStorage.getItem(CODE_KEY) || ''; } catch (err) { return ''; }
+  }
+  function saveCode(code) {
+    try { sessionStorage.setItem(CODE_KEY, code); } catch (err) { /* private mode: asked again next visit */ }
+  }
+  function adoptCodeFromLink() {
+    const url = new URL(window.location.href);
+    const code = (url.searchParams.get('code') || '').trim().slice(0, 200);
+    if (!code) return;
+    saveCode(code);
+    url.searchParams.delete('code');
+    history.replaceState(null, '', url.pathname + url.search + url.hash);
+  }
+
   function headers(extra) {
     const out = Object.assign({ Accept: 'application/json' }, extra || {});
-    let code = '';
-    try { code = sessionStorage.getItem('fineprint-access-code') || ''; } catch (err) { /* not available */ }
+    const code = savedCode();
     if (code) out['X-Review-Token'] = code;
     return out;
+  }
+
+  // Shown in place of an error when the server needs an access code this tab does not have yet.
+  function askForCode(wrong) {
+    const box = $('deals-error');
+    const input = el('input', { type: 'password', class: 'code-input', autocomplete: 'off', 'aria-label': 'Access code' });
+    const use = el('button', { type: 'button', class: 'cta', text: 'Open the demo' });
+    const go = () => {
+      const code = input.value.trim().slice(0, 200);
+      if (!code) return;
+      saveCode(code);
+      box.hidden = true;
+      loadDeals();
+    };
+    use.addEventListener('click', go);
+    input.addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+    $('deals-root').textContent = 'needs an access code';
+    box.replaceChildren(
+      el('p', { text: wrong ? 'That access code was not accepted. Check it and try again.' : 'This demo needs an access code. Enter the one you were given, or open the link you were sent.' }),
+      el('div', { class: 'code-row' }, input, use));
+    box.hidden = false;
+    input.focus();
   }
   const dealUrl = (name, ask) => `/review/?deal=${enc(name)}${ask ? `&ask=${enc(ask)}` : ''}`;
 
@@ -95,7 +133,7 @@
   async function loadDeals() {
     try {
       const res = await fetch('/api/v1/deals', { headers: headers() });
-      if (res.status === 401) throw new Error('this server needs an access code. Enter it once on the Check files page, then come back');
+      if (res.status === 401) { askForCode(Boolean(savedCode())); return; }
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(typeof body.detail === 'string' ? body.detail : `the server answered ${res.status}`);
       state.deals = body.deals;
@@ -158,6 +196,7 @@
     }
   }
 
+  adoptCodeFromLink();
   wireNewDeal();
   loadDeals();
   loadStatus();
