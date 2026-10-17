@@ -3,11 +3,18 @@
 Everything stays inside that parent. A deal name is a single folder name; a document path is relative to its deal
 and is resolved and checked to still be inside it, so "..", absolute paths and links out are refused. The saved
 review lives in <deal>/.fineprint/review.json and marked copies in <deal>/_marked/; neither counts as a document.
+
+A deal added through the page belongs to the browser that added it: <deal>/.fineprint/owner holds a digest of that
+browser's visitor key, and only that browser lists, opens, adds to or removes it. Folders without that file (the
+practice deal, folders on this computer) are shared: everyone sees them and nobody can change them from the page.
 """
+import hashlib
 import io
 import json
 import logging
 import os
+import re
+import shutil
 import tempfile
 import zipfile
 from datetime import datetime, timezone
@@ -26,6 +33,8 @@ MAX_DOCUMENT_BYTES = 15 * 1024 * 1024
 MAX_REVIEW_BYTES = 5 * 1024 * 1024
 MAX_UPLOADS_PER_DEAL = 50
 REVIEW_PATH = f"{REVIEW_DIR}/review.json"
+OWNER_PATH = f"{REVIEW_DIR}/owner"
+VISITOR_KEY = re.compile(r"[A-Za-z0-9_-]{16,128}")
 
 
 class UnsafePath(ValueError):
@@ -38,6 +47,10 @@ class DealNotFound(LookupError):
 
 class TooLarge(ValueError):
     """An upload over the size or count limit."""
+
+
+class NotYours(PermissionError):
+    """A shared deal, or one another visitor added: it cannot be changed from the page."""
 
 
 def deals_root() -> Path:
@@ -82,6 +95,25 @@ def deal_dir(root: Path, name: str) -> Path:
     return path
 
 
+def owner_id(key: Optional[str]) -> Optional[str]:
+    """The stored form of a visitor key (its SHA-256 digest), or None when the key is missing or malformed."""
+    if not key or not VISITOR_KEY.fullmatch(key):
+        return None
+    return hashlib.sha256(key.encode("ascii")).hexdigest()
+
+
+def _owner_of(folder: Path) -> Optional[str]:
+    marker = folder / OWNER_PATH
+    return marker.read_text(encoding="utf-8").strip() if marker.is_file() else None
+
+
+def require_visible(root: Path, name: str, owner: Optional[str]) -> None:
+    """Refuse, as if it did not exist, a deal another visitor added."""
+    found = _owner_of(deal_dir(root, name))
+    if found is not None and found != owner:
+        raise DealNotFound(f"There is no deal folder called '{name}'.")
+
+
 def _review_file(root: Path, name: str) -> Path:
     return deal_dir(root, name) / REVIEW_DIR / "review.json"
 
@@ -97,13 +129,17 @@ def _documents(folder: Path) -> List[Path]:
     return sorted(found, key=lambda p: p.relative_to(folder).as_posix())[:MAX_DOCUMENTS]
 
 
-def list_deals(root: Path) -> List[Dict[str, Any]]:
-    """Every deal folder, with how many documents it holds and when its review was last saved."""
+def list_deals(root: Path, owner: Optional[str] = None) -> List[Dict[str, Any]]:
+    """The shared deals and this visitor's own, with how many documents each holds and when it was last reviewed."""
     deals = []
     for path in sorted(p for p in root.iterdir() if p.is_dir() and not _skipped(p.name)):
+        found = _owner_of(path)
+        if found is not None and found != owner:
+            continue
         review = path / REVIEW_DIR / "review.json"
         saved = datetime.fromtimestamp(review.stat().st_mtime, timezone.utc).isoformat() if review.is_file() else None
-        deals.append({"name": path.name, "documents": len(_documents(path)), "reviewed_at": saved})
+        deals.append({"name": path.name, "documents": len(_documents(path)), "reviewed_at": saved,
+                      "removable": found is not None})
     return deals
 
 
@@ -173,10 +209,14 @@ def _mirror(name: str, relative: str, data: bytes) -> None:
         raise TooLarge(str(exc)) from exc
 
 
-def save_upload(root: Path, name: str, relative: str, data: bytes) -> str:
-    """Store one uploaded document in a deal, creating the deal on its first document. Returns its path."""
+def save_upload(root: Path, name: str, relative: str, data: bytes, owner: Optional[str]) -> str:
+    """Store one uploaded document in this visitor's deal, creating the deal on its first document. Returns its path."""
     folder = _deal_path(root, name)
     parts = _document_parts(relative)
+    if owner is None:
+        raise UnsafePath("Adding documents needs this browser's visitor key. Reload the page and try again.")
+    if folder.is_dir() and _owner_of(folder) != owner:
+        raise NotYours(f"'{name}' is already a deal here. Choose another name for yours.")
     if len(data) > MAX_DOCUMENT_BYTES:
         raise TooLarge(f"'{relative}' is larger than {MAX_DOCUMENT_BYTES // (1024 * 1024)} MB.")
     target = (folder / Path(*parts)).resolve()
@@ -184,10 +224,27 @@ def save_upload(root: Path, name: str, relative: str, data: bytes) -> str:
         raise UnsafePath(f"'{relative}' is outside the deal folder.")
     if not target.exists() and folder.is_dir() and len(_documents(folder)) >= MAX_UPLOADS_PER_DEAL:
         raise TooLarge(f"A deal can hold at most {MAX_UPLOADS_PER_DEAL} uploaded documents.")
+    if not folder.is_dir():
+        _mirror(name, OWNER_PATH, owner.encode("ascii"))
+        _write_atomic(folder / OWNER_PATH, owner.encode("ascii"))
     saved = target.relative_to(folder).as_posix()
     _mirror(name, saved, data)
     _write_atomic(target, data)
     return saved
+
+
+def delete_deal(root: Path, name: str, owner: Optional[str]) -> None:
+    """Remove a deal this visitor added, from the database and the disk. Shared deals are never removed."""
+    folder = deal_dir(root, name)
+    found = _owner_of(folder)
+    if found is None:
+        raise NotYours(f"'{name}' is shared, so it cannot be removed from the page.")
+    if found != owner:
+        raise DealNotFound(f"There is no deal folder called '{name}'.")
+    saved = store.active()
+    if saved is not None:
+        saved.delete(name)
+    shutil.rmtree(folder)
 
 
 def export_zip(root: Path, name: str) -> bytes:
@@ -214,8 +271,8 @@ def save_review(root: Path, name: str, review: Dict[str, Any]) -> None:
 
 def _restore_target(root: Path, name: str, relative: str) -> Path:
     folder = _deal_path(root, name)
-    if relative == REVIEW_PATH:
-        return folder / REVIEW_DIR / "review.json"
+    if relative in (REVIEW_PATH, OWNER_PATH):
+        return folder / relative
     target = (folder / Path(*_document_parts(relative))).resolve()
     if folder not in target.parents:
         raise UnsafePath(f"'{relative}' is outside the deal folder.")

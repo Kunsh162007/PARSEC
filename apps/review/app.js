@@ -1469,6 +1469,7 @@
     const headers = Object.assign({ Accept: 'application/json' }, extra || {});
     const code = state.ai.authRequired ? $('ai-code').value.trim() || storedCode() : '';
     if (code) headers['X-Review-Token'] = code;
+    if (window.FinePrintVisitor) headers['X-Deal-Owner'] = window.FinePrintVisitor.key();
     return headers;
   }
 

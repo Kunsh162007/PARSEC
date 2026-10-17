@@ -10,7 +10,7 @@ from packages.deals import workspace
 from packages.review.guard import ReviewGuard
 
 TOKEN = "access-code"
-AUTH = {"X-Review-Token": TOKEN}
+AUTH = {"X-Review-Token": TOKEN, "X-Deal-Owner": "test-visitor-0123456789"}
 PDF = b"%PDF-1.4 practice"
 
 

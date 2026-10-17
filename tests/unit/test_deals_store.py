@@ -9,7 +9,7 @@ from packages.deals import store, workspace
 from packages.review.guard import ReviewGuard
 
 TOKEN = "access-code"
-AUTH = {"X-Review-Token": TOKEN}
+AUTH = {"X-Review-Token": TOKEN, "X-Deal-Owner": "test-visitor-0123456789"}
 PDF = b"%PDF-1.4 practice"
 
 
@@ -42,7 +42,7 @@ def test_uploads_and_reviews_come_back_after_the_disk_is_wiped(client, tmp_path)
     client.put("/api/v1/deals/Judge Demo/review", json={"dismissed": ["fin-1"]})
     wipe_disk(tmp_path)
 
-    assert workspace.restore_saved(workspace.deals_root()) == 2
+    assert workspace.restore_saved(workspace.deals_root()) == 3   # the document, the review and who owns it
 
     assert client.get("/api/v1/deals/Judge Demo/files/01 Financial/accounts.pdf").content == PDF
     assert client.get("/api/v1/deals/Judge Demo/review").json()["review"] == {"dismissed": ["fin-1"]}

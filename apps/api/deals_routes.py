@@ -3,6 +3,9 @@
 These endpoints are free (no model is called) but they read and write the disk, so they check the access code
 when one is configured (REVIEW_API_TOKEN). They are not under the paid-endpoint rate limit: opening a folder fetches
 every document in it. Every path is confined to the deals folder by packages/deals/workspace.py.
+
+The page sends a random key for this browser (X-Deal-Owner). A deal uploaded with it is listed, opened, changed and
+removed only with the same key, so visitors to a shared demo never see each other's documents.
 """
 import json
 import re
@@ -35,33 +38,45 @@ def _call(fn: Callable[[], Any]) -> Any:
         raise HTTPException(status_code=400, detail=str(exc))
     except (workspace.DealNotFound, FileNotFoundError) as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except workspace.NotYours as exc:
+        raise HTTPException(status_code=403, detail=str(exc))
     except store.StoreUnavailable as exc:
         raise HTTPException(status_code=503, detail="This could not be saved right now; try again in a minute.") from exc
 
 
-def list_deals(x_review_token: Optional[str] = Header(default=None)):
-    """Every deal folder: put one folder per deal inside the deals folder, with its documents in it."""
+def _open(deal: str, token: Optional[str], key: Optional[str]) -> None:
+    """Check the access code, then that this deal is shared or this visitor's own."""
+    _guard(token)
+    _call(lambda: workspace.require_visible(workspace.deals_root(), deal, workspace.owner_id(key)))
+
+
+def list_deals(x_review_token: Optional[str] = Header(default=None), x_deal_owner: Optional[str] = Header(default=None)):
+    """The shared deal folders and the ones this browser added."""
     _guard(x_review_token)
     root = workspace.deals_root()
-    return {"root": str(root), "deals": workspace.list_deals(root), "uploads": workspace.uploads_enabled()}
+    deals = workspace.list_deals(root, workspace.owner_id(x_deal_owner))
+    return {"root": str(root), "deals": deals, "uploads": workspace.uploads_enabled()}
 
 
-def list_deal_files(deal: str, x_review_token: Optional[str] = Header(default=None)):
+def list_deal_files(deal: str, x_review_token: Optional[str] = Header(default=None),
+                    x_deal_owner: Optional[str] = Header(default=None)):
     """The documents in one deal folder, including its subfolders (not the marked copies)."""
-    _guard(x_review_token)
+    _open(deal, x_review_token, x_deal_owner)
     return {"deal": deal, "files": _call(lambda: workspace.list_documents(workspace.deals_root(), deal))}
 
 
-def get_deal_file(deal: str, path: str, x_review_token: Optional[str] = Header(default=None)):
+def get_deal_file(deal: str, path: str, x_review_token: Optional[str] = Header(default=None),
+                  x_deal_owner: Optional[str] = Header(default=None)):
     """One document's original bytes; the page reads PDF, Word and text itself."""
-    _guard(x_review_token)
+    _open(deal, x_review_token, x_deal_owner)
     target = _call(lambda: workspace.document_path(workspace.deals_root(), deal, path))
     return FileResponse(target, filename=target.name)
 
 
-async def put_deal_file(deal: str, path: str, request: Request, x_review_token: Optional[str] = Header(default=None)):
-    """Add one document to a deal from the visitor's computer, creating the deal on its first document. The body is
-    the file's bytes; the page reads PDF, Word and text itself when the deal is opened."""
+async def put_deal_file(deal: str, path: str, request: Request, x_review_token: Optional[str] = Header(default=None),
+                        x_deal_owner: Optional[str] = Header(default=None)):
+    """Add one document to this browser's deal, creating the deal on its first document. The body is the file's
+    bytes; the page reads PDF, Word and text itself when the deal is opened."""
     _guard(x_review_token)
     if not workspace.uploads_enabled():
         raise HTTPException(status_code=403, detail="Adding documents is switched off on this server.")
@@ -70,31 +85,43 @@ async def put_deal_file(deal: str, path: str, request: Request, x_review_token: 
         raise HTTPException(status_code=413, detail="Each document may be at most 15 MB.")
     data = await request.body()
     try:
-        saved = _call(lambda: workspace.save_upload(workspace.deals_root(), deal, path, data))
+        saved = _call(lambda: workspace.save_upload(workspace.deals_root(), deal, path, data,
+                                                    workspace.owner_id(x_deal_owner)))
     except workspace.TooLarge as exc:
         raise HTTPException(status_code=413, detail=str(exc))
     return {"deal": deal, "path": saved}
 
 
-def get_export_zip(deal: str, x_review_token: Optional[str] = Header(default=None)):
-    """The marked copies and summary of the last export, as one zip to download."""
+def delete_deal(deal: str, x_review_token: Optional[str] = Header(default=None),
+                x_deal_owner: Optional[str] = Header(default=None)):
+    """Remove a deal this browser added, with its documents, review and marked copies."""
     _guard(x_review_token)
+    _call(lambda: workspace.delete_deal(workspace.deals_root(), deal, workspace.owner_id(x_deal_owner)))
+    return {"deal": deal, "removed": True}
+
+
+def get_export_zip(deal: str, x_review_token: Optional[str] = Header(default=None),
+                   x_deal_owner: Optional[str] = Header(default=None)):
+    """The marked copies and summary of the last export, as one zip to download."""
+    _open(deal, x_review_token, x_deal_owner)
     data = _call(lambda: workspace.export_zip(workspace.deals_root(), deal))
     filename = re.sub(r'[^A-Za-z0-9 ._-]', "_", deal)[:80] or "deal"
     return Response(content=data, media_type="application/zip",
                     headers={"Content-Disposition": f'attachment; filename="{filename} - marked documents.zip"'})
 
 
-def get_deal_review(deal: str, x_review_token: Optional[str] = Header(default=None)):
+def get_deal_review(deal: str, x_review_token: Optional[str] = Header(default=None),
+                    x_deal_owner: Optional[str] = Header(default=None)):
     """The review saved for this deal, if there is one."""
-    _guard(x_review_token)
+    _open(deal, x_review_token, x_deal_owner)
     saved = _call(lambda: workspace.load_review(workspace.deals_root(), deal))
     return {"saved": False} if saved is None else {"saved": True, "review": saved}
 
 
-async def put_deal_review(deal: str, request: Request, x_review_token: Optional[str] = Header(default=None)):
+async def put_deal_review(deal: str, request: Request, x_review_token: Optional[str] = Header(default=None),
+                          x_deal_owner: Optional[str] = Header(default=None)):
     """Save this deal's review (findings, removed marks, decisions) into the deal folder."""
-    _guard(x_review_token)
+    _open(deal, x_review_token, x_deal_owner)
     raw = await request.body()
     if len(raw) > workspace.MAX_REVIEW_BYTES:
         raise HTTPException(status_code=413, detail="The review is too large to save (5 MB at most).")
@@ -129,9 +156,10 @@ def _clean_findings(raw: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return clean
 
 
-def export_deal(deal: str, req: ExportRequest, x_review_token: Optional[str] = Header(default=None)):
+def export_deal(deal: str, req: ExportRequest, x_review_token: Optional[str] = Header(default=None),
+                x_deal_owner: Optional[str] = Header(default=None)):
     """Write a marked copy of every document, plus a summary, into the deal's _marked folder."""
-    _guard(x_review_token)
+    _open(deal, x_review_token, x_deal_owner)
     docs = [d.model_dump() for d in req.documents]
     written = _call(lambda: write_export(workspace.deals_root(), deal, docs, _clean_findings(req.findings)))
     return {"written": written, "folder": str(workspace.deal_dir(workspace.deals_root(), deal) / workspace.MARKED_DIR)}
@@ -143,6 +171,7 @@ ROUTES = [
     ("GET", "/deals/{deal}/files", list_deal_files, "List a deal's documents"),
     ("GET", "/deals/{deal}/files/{path:path}", get_deal_file, "Fetch one document"),
     ("PUT", "/deals/{deal}/files/{path:path}", put_deal_file, "Add a document (creates the deal)"),
+    ("DELETE", "/deals/{deal}", delete_deal, "Remove a deal you added"),
     ("GET", "/deals/{deal}/export.zip", get_export_zip, "Download the marked copies as a zip"),
     ("GET", "/deals/{deal}/review", get_deal_review, "Load the saved review"),
     ("PUT", "/deals/{deal}/review", put_deal_review, "Save the review"),

@@ -99,6 +99,14 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
 @media (prefers-reduced-motion: reduce) { .deal-card, .deal-card:hover { transition: none; } }
 .deal-name { font-size: 1.35rem; font-weight: 800; letter-spacing: -0.015em; line-height: 1.15; overflow-wrap: anywhere; }
 .deal-meta { font-family: var(--font-doc); color: var(--ink-2); }
+.deal-grid li.is-own { position: relative; }
+.deal-remove {
+  position: absolute; top: 14px; right: 14px; z-index: 1; min-height: 32px; padding: 0 12px; border-radius: 4px;
+  font: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+  background: var(--sheet); color: var(--ink-2); border: 1px solid var(--rule-strong);
+}
+.deal-remove:hover, .deal-remove:focus-visible { color: var(--ink); border-color: var(--ink); }
+.deal-remove:disabled { opacity: 0.5; cursor: progress; }
 .deal-state { justify-self: start; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; }
 .deal-state.is-new { background: var(--mark); box-shadow: inset 0 -2px 0 var(--mark-line); }
 .deal-state.is-saved { color: var(--ink-3); border: 1px solid var(--rule-strong); }

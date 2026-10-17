@@ -43,6 +43,7 @@
     const out = Object.assign({ Accept: 'application/json' }, extra || {});
     const code = savedCode();
     if (code) out['X-Review-Token'] = code;
+    if (window.FinePrintVisitor) out['X-Deal-Owner'] = window.FinePrintVisitor.key();
     return out;
   }
 
@@ -69,13 +70,33 @@
   }
   const dealUrl = (name, ask) => `/review/?deal=${enc(name)}${ask ? `&ask=${enc(ask)}` : ''}`;
 
+  async function removeDeal(name, button) {
+    if (!window.confirm(`Remove "${name}"? Its documents, review and marked copies are deleted from this site.`)) return;
+    button.disabled = true;
+    try {
+      const res = await fetch(`/api/v1/deals/${enc(name)}`, { method: 'DELETE', headers: headers() });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(typeof body.detail === 'string' ? body.detail : `the server answered ${res.status}`);
+      }
+      await loadDeals();
+    } catch (err) {
+      button.disabled = false;
+      window.alert(`"${name}" could not be removed: ${err.message}`);
+    }
+  }
+
   function card(d) {
     const saved = d.reviewed_at ? new Date(d.reviewed_at) : null;
-    return el('li', null, el('a', { class: 'deal-card', href: dealUrl(d.name) },
+    const link = el('a', { class: 'deal-card', href: dealUrl(d.name) },
       el('span', { class: `deal-state ${saved ? 'is-saved' : 'is-new'}`, text: saved ? `Reviewed ${saved.toLocaleDateString()}` : 'Not reviewed yet' }),
       el('span', { class: 'deal-name', text: d.name }),
-      el('span', { class: 'deal-meta', text: plural(d.documents, 'document', 'documents') }),
-      el('span', { class: 'deal-open' }, document.createTextNode(saved ? 'Continue review' : 'Open and check'), el('span', { 'aria-hidden': 'true', text: ' →' }))));
+      el('span', { class: 'deal-meta', text: `${plural(d.documents, 'document', 'documents')}${d.removable ? ' · added by you' : ''}` }),
+      el('span', { class: 'deal-open' }, document.createTextNode(saved ? 'Continue review' : 'Open and check'), el('span', { 'aria-hidden': 'true', text: ' →' })));
+    if (!d.removable) return el('li', null, link);
+    const remove = el('button', { type: 'button', class: 'deal-remove', 'aria-label': `Remove ${d.name}`, text: 'Remove' });
+    remove.addEventListener('click', () => removeDeal(d.name, remove));
+    return el('li', { class: 'is-own' }, link, remove);
   }
 
   /* ---- a new deal from the visitor's own folder or files ---- */

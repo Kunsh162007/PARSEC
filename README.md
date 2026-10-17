@@ -361,6 +361,11 @@ On the free plan the service sleeps after 15 minutes without visits and takes ab
 wiped whenever it restarts, including after sleeping. Without `REVIEW_API_TOKEN`, anyone with the address can use the
 AI features until `REVIEW_DAILY_BUDGET_USD` ($2 a day by default) is spent.
 
+**Each visitor's uploads are their own.** The page gives every browser a random key. A deal uploaded from it is
+listed, opened and removed only in that browser (the server keeps a digest of the key), so judges never see each
+other's documents, and the *Remove* button on their own deals frees the space. The practice deal is shared and can
+be neither changed nor removed from the page.
+
 **Keeping uploads and reviews across restarts.** Create a free PostgreSQL database (for example on
 [Neon](https://neon.tech)), copy its connection string and set it as `DATABASE_URL` on the service. Every uploaded
 document and saved review is then written to the database before the disk, and put back when the service starts, so
@@ -421,6 +426,7 @@ Interactive docs: <http://127.0.0.1:8000/docs>.
 | `POST /api/v1/diligence/requirements` · `/memo` · `/deep` | What the file still needs, the cited memo, the cross-category AI read | yes |
 | `GET /api/v1/deals` · `/deals/{deal}/files` · `/deals/{deal}/files/{path}` | Deal folders and their documents | no |
 | `PUT /api/v1/deals/{deal}/files/{path}` · `GET /deals/{deal}/export.zip` | Add a document (creates the deal); download the marked copies | no |
+| `DELETE /api/v1/deals/{deal}` | Remove a deal you added (shared deals cannot be removed) | no |
 | `GET`/`PUT /api/v1/deals/{deal}/review` · `POST /deals/{deal}/export` | Saved review; marked copies into the folder | no |
 | `POST /api/v1/data-room/run` · `GET /data-room/{id}` | The earnings and add-back check | yes |
 | `POST /api/v1/assistant/interpret` | Parsec's Nemotron fallback | yes |

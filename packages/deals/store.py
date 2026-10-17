@@ -65,6 +65,10 @@ class Store:
             "ON CONFLICT (deal, path) DO UPDATE SET data = excluded.data, updated_at = excluded.updated_at",
             (deal, path, data, datetime.now(timezone.utc).isoformat()))
 
+    def delete(self, deal: str) -> None:
+        """Forget every file of one deal."""
+        self._execute("DELETE FROM deal_files WHERE deal = ?", (deal,))
+
     def rows(self) -> Iterator[Tuple[str, str, bytes]]:
         for deal, path, data in self._execute("SELECT deal, path, data FROM deal_files ORDER BY deal, path", fetch=True):
             yield deal, path, bytes(data)
