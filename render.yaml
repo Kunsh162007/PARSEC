@@ -22,3 +22,5 @@ services:
         value: "*.onrender.com,127.0.0.1,localhost"
       - key: DEALS_DIR
         value: /tmp/deals
+      - key: DEAL_UPLOADS          # visitors can add their own folder or files as a new deal
+        value: "on"

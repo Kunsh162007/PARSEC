@@ -5,10 +5,11 @@ when one is configured (REVIEW_API_TOKEN). They are not under the paid-endpoint 
 every document in it. Every path is confined to the deals folder by packages/deals/workspace.py.
 """
 import json
+import re
 from typing import Any, Callable, Dict, List, Optional
 
 from fastapi import Header, HTTPException, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
 
 from packages.deals import workspace
@@ -40,7 +41,7 @@ def list_deals(x_review_token: Optional[str] = Header(default=None)):
     """Every deal folder: put one folder per deal inside the deals folder, with its documents in it."""
     _guard(x_review_token)
     root = workspace.deals_root()
-    return {"root": str(root), "deals": workspace.list_deals(root)}
+    return {"root": str(root), "deals": workspace.list_deals(root), "uploads": workspace.uploads_enabled()}
 
 
 def list_deal_files(deal: str, x_review_token: Optional[str] = Header(default=None)):
@@ -54,6 +55,32 @@ def get_deal_file(deal: str, path: str, x_review_token: Optional[str] = Header(d
     _guard(x_review_token)
     target = _call(lambda: workspace.document_path(workspace.deals_root(), deal, path))
     return FileResponse(target, filename=target.name)
+
+
+async def put_deal_file(deal: str, path: str, request: Request, x_review_token: Optional[str] = Header(default=None)):
+    """Add one document to a deal from the visitor's computer, creating the deal on its first document. The body is
+    the file's bytes; the page reads PDF, Word and text itself when the deal is opened."""
+    _guard(x_review_token)
+    if not workspace.uploads_enabled():
+        raise HTTPException(status_code=403, detail="Adding documents is switched off on this server.")
+    declared = int(request.headers.get("content-length") or 0)
+    if declared > workspace.MAX_DOCUMENT_BYTES:
+        raise HTTPException(status_code=413, detail="Each document may be at most 15 MB.")
+    data = await request.body()
+    try:
+        saved = _call(lambda: workspace.save_upload(workspace.deals_root(), deal, path, data))
+    except workspace.TooLarge as exc:
+        raise HTTPException(status_code=413, detail=str(exc))
+    return {"deal": deal, "path": saved}
+
+
+def get_export_zip(deal: str, x_review_token: Optional[str] = Header(default=None)):
+    """The marked copies and summary of the last export, as one zip to download."""
+    _guard(x_review_token)
+    data = _call(lambda: workspace.export_zip(workspace.deals_root(), deal))
+    filename = re.sub(r'[^A-Za-z0-9 ._-]', "_", deal)[:80] or "deal"
+    return Response(content=data, media_type="application/zip",
+                    headers={"Content-Disposition": f'attachment; filename="{filename} - marked documents.zip"'})
 
 
 def get_deal_review(deal: str, x_review_token: Optional[str] = Header(default=None)):
@@ -113,6 +140,8 @@ ROUTES = [
     ("GET", "/deals", list_deals, "List the deal folders"),
     ("GET", "/deals/{deal}/files", list_deal_files, "List a deal's documents"),
     ("GET", "/deals/{deal}/files/{path:path}", get_deal_file, "Fetch one document"),
+    ("PUT", "/deals/{deal}/files/{path:path}", put_deal_file, "Add a document (creates the deal)"),
+    ("GET", "/deals/{deal}/export.zip", get_export_zip, "Download the marked copies as a zip"),
     ("GET", "/deals/{deal}/review", get_deal_review, "Load the saved review"),
     ("PUT", "/deals/{deal}/review", put_deal_review, "Save the review"),
     ("POST", "/deals/{deal}/export", export_deal, "Write marked copies into the folder"),

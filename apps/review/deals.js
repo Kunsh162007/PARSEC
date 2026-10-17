@@ -249,6 +249,19 @@
     return /[\uD800-\uDFFF]/.test(text) ? Array.from(text.slice(0, units)).length : units;
   }
 
+  // The marked copies of the last export, downloaded to the visitor's computer as one zip.
+  async function downloadZip() {
+    const res = await fetch(`/api/v1/deals/${enc(deal.name)}/export.zip`, { headers: APP.authHeaders() });
+    if (!res.ok) return;
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(await res.blob());
+    link.download = `${deal.name} - marked documents.zip`;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(link.href), 10000);
+  }
+
   async function exportMarked() {
     if (!deal.name || !S.result) return 'Open a deal folder first: exported copies are saved into its folder.';
     const findings = APP.activeFindings().map((f) => ({
@@ -261,7 +274,9 @@
     try {
       const documents = S.analyzed.map((d) => ({ name: d.name, text: d.text }));
       const out = await api(`/api/v1/deals/${enc(deal.name)}/export`, jsonBody('POST', { documents, findings }));
-      const message = `Saved ${APP.plural(out.written.length - 1, 'marked document', 'marked documents')} and a summary in ${out.folder}. Open summary.html there to read them.`;
+      $('deal-download').hidden = false;
+      await downloadZip();
+      const message = `Exported ${APP.plural(out.written.length - 1, 'marked document', 'marked documents')} and a summary: the zip is downloading (open summary.html inside it). They are also in the deal's _marked folder.`;
       status(message);
       return message;
     } catch (err) {
@@ -436,6 +451,7 @@
 
   async function init() {
     $('deal-export').addEventListener('click', exportMarked);
+    $('deal-download').addEventListener('click', downloadZip);
     $('deal-recheck').addEventListener('click', () => openDeal(deal.name, { recheck: true }).catch((err) => status(err.message)));
     await loadDealNames().catch(() => {});
     const VIEW_NAMES = { findings: 'the findings', document: 'the document', followups: 'the questions to send',

@@ -12,7 +12,7 @@ and **NVIDIA Nemotron on Nebius Token Factory** reads what rules cannot, without
 ![Nebius Token Factory](https://img.shields.io/badge/Nebius-Token_Factory-0F1A2C)
 ![Python 3.11+](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
 ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
-![Tests](https://img.shields.io/badge/tests-349_pytest_%C2%B7_138_node-brightgreen)
+![Tests](https://img.shields.io/badge/tests-364_pytest_%C2%B7_138_node-brightgreen)
 
 Built for the **Nebius × NVIDIA Global AI Hackathon**.
 
@@ -61,13 +61,13 @@ and **false flags** they cannot easily remove. Fine Print is built around the op
 
 | | |
 |---|---|
-| **Deal folders** | One folder per deal on your computer. Opening it checks every document (PDF, Word, text, HTML, CSV) in ten due diligence areas: financial, legal, compliance, technology, people, property, tax, customers, suppliers and document integrity. |
+| **Deal folders** | One folder per deal, or **upload your own folder or files from the browser** to make a new deal. Opening a deal checks every document (PDF, Word, text, HTML, CSV) in ten due diligence areas: financial, legal, compliance, technology, people, property, tax, customers, suppliers and document integrity. |
 | **Marks on the real page** | PDFs are shown as their original pages with each problem marked on its words: 🟥 critical, 🟧 high, 🟨 medium, 🟦 low. Select a mark to see what is wrong, why it matters and what to ask. |
 | **Across documents** | When documents disagree (revenue $24.6m in the CIM, $22.9m in the audited accounts), the problem is marked in both, and selecting it opens the other document at the matching passage. |
 | **Earnings quality** | When a document carries an Adjusted EBITDA bridge, Nemotron reads it and code checks every add-back against the ledger: costs called "one-off" that recur every year are disallowed, with the price impact at the deal multiple. |
 | **What is missing** | Nemotron Super reads the opening and headings of each document and lists, in analysts' terms, what to request before relying on the file. |
 | **Not a problem** | Remove a false mark with one click (or by voice). It stays removed, even when the documents change and are checked again. |
-| **Saved and exported** | The review is saved into the deal folder as you work. *Export marked documents* writes a highlighted, numbered copy of each document and a summary into the folder, ready to send. |
+| **Saved and exported** | The review is saved into the deal folder as you work. *Export marked documents* writes a highlighted, numbered copy of each document and a summary into the folder and **downloads them as a zip**, ready to send. |
 | **Scanned PDFs** | Pages that are only images are read with OCR (Tesseract, served by this server, so scans never leave the machine), and marked like any other page. |
 | **Parsec, the assistant** | On every page, typed or spoken: *"Hey Parsec, open Orion"*, *"what's wrong with the customer schedule?"*, *"which problem costs us most on price?"*, *"full screen"*, *"not a problem"*, *"export"*. |
 
@@ -332,6 +332,7 @@ Open **<http://127.0.0.1:8000>**. On Windows use `127.0.0.1` rather than `localh
 | `REVIEW_API_TOKEN` | Optional access code for the paid endpoints and for deal-folder access; set it whenever others can reach the server |
 | `REVIEW_RATE_PER_MINUTE`, `REVIEW_DAILY_BUDGET_USD` | Rate limit and daily spending cap for model calls (defaults 6 and $2.00) |
 | `ALLOWED_HOSTS` | Host names the server answers to (default `127.0.0.1`, `localhost`, `[::1]`) |
+| `DEAL_UPLOADS` | `on` (default) lets visitors add their own folder or files as a new deal; `off` hides it |
 
 Without keys, the rules, connections, folders, export and OCR still work, and every AI feature says that it did not run.
 Nothing is ever simulated.
@@ -351,7 +352,9 @@ parallel rules runs to two (`RULES_CONCURRENCY`) to keep the worst case well ins
 
 1. Click the button (or *New → Blueprint* in Render and pick this repository).
 2. Enter `NEBIUS_API_KEY` (and optionally `TAVILY_API_KEY` and an access code, `REVIEW_API_TOKEN`).
-3. Open the `onrender.com` address once the build finishes; the **Orion Analytics** practice deal is already there.
+3. Open the `onrender.com` address once the build finishes. The **Orion Analytics** practice deal is already there,
+   and visitors can add their own: *Check your own documents as a deal* uploads a folder or files from their computer
+   into a new deal, and *Export* downloads the marked copies as a zip.
 
 On the free plan the service sleeps after 15 minutes without visits and takes about a minute to wake, and its disk is
 reset on each deploy: saved reviews and exports on the hosted copy are temporary. Without `REVIEW_API_TOKEN`, anyone
@@ -359,15 +362,17 @@ with the address can use the AI features until `REVIEW_DAILY_BUDGET_USD` ($2 a d
 
 ## Using it
 
-1. **Make a deal.** Create a folder in your deals folder (for example `~/Deals/Orion Analytics`) and put the documents
-   in it; subfolders are fine. Or run `python scripts/make_pdf_testpack.py --deals` for **Orion Analytics**, a complete
+1. **Make a deal.** On *My deals*, use *Check your own documents as a deal* to choose a folder (subfolders are kept) or
+   files from your computer, or create a folder in the deals folder (for example `~/Deals/Orion Analytics`) and put the
+   documents in it. Or run `python scripts/make_pdf_testpack.py --deals` for **Orion Analytics**, a complete
    practice data room of 14 PDFs with planted problems in every area, including one scanned document.
 2. **Open it** from *My deals*. Every document is read and checked; the deal bar says when it was saved.
 3. **Read the verdict**, the earnings line and *Before relying on this, still needed*, then go through the findings.
    *Questions to send* lists one question per problem; *Deal tracker* gives the request list and Q&A log as CSV.
 4. **Open the Document view.** Problems are marked on the original pages; a dashed mark is also in another document.
    Select a mark to see what is wrong; *Open …* jumps to the other document; *Not a problem* removes the mark.
-5. **Export marked documents** to write highlighted copies and `summary.html` into the deal's `_marked` folder.
+5. **Export marked documents** to write highlighted copies and `summary.html` into the deal's `_marked` folder; they
+   download as a zip as well.
 6. *Check files* (in the menu) checks a few files without a folder; nothing is uploaded unless an AI option is ticked.
 
 
@@ -404,6 +409,7 @@ Interactive docs: <http://127.0.0.1:8000/docs>.
 | `POST /api/v1/diligence` | Several categories at once | with `ai`/`web` |
 | `POST /api/v1/diligence/requirements` · `/memo` · `/deep` | What the file still needs, the cited memo, the cross-category AI read | yes |
 | `GET /api/v1/deals` · `/deals/{deal}/files` · `/deals/{deal}/files/{path}` | Deal folders and their documents | no |
+| `PUT /api/v1/deals/{deal}/files/{path}` · `GET /deals/{deal}/export.zip` | Add a document (creates the deal); download the marked copies | no |
 | `GET`/`PUT /api/v1/deals/{deal}/review` · `POST /deals/{deal}/export` | Saved review; marked copies into the folder | no |
 | `POST /api/v1/data-room/run` · `GET /data-room/{id}` | The earnings and add-back check | yes |
 | `POST /api/v1/assistant/interpret` | Parsec's Nemotron fallback | yes |
@@ -444,7 +450,7 @@ python -m benchmarks.ebitda.fetch && python -m benchmarks.ebitda.run --split tes
 ## Tests
 
 ```bash
-python -m pytest -q     # 349 tests: API, deal folders, export, assistant, rules runner, web check, gateway, pipeline...
+python -m pytest -q     # 364 tests: API, deal folders, uploads, export, assistant, rules runner, web check, gateway, pipeline...
 npm test                # 138 tests: rules engine, connections, workflow, assistant parser, earnings, PDF marks
 ```
 

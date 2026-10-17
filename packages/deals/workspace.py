@@ -4,9 +4,11 @@ Everything stays inside that parent. A deal name is a single folder name; a docu
 and is resolved and checked to still be inside it, so "..", absolute paths and links out are refused. The saved
 review lives in <deal>/.fineprint/review.json and marked copies in <deal>/_marked/; neither counts as a document.
 """
+import io
 import json
 import os
 import tempfile
+import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -38,13 +40,39 @@ def _skipped(part: str) -> bool:
     return part.startswith(".") or part.startswith("_")
 
 
-def deal_dir(root: Path, name: str) -> Path:
-    """The folder of one deal. The name must be exactly one visible folder directly inside the root."""
-    if not name or name != name.strip() or any(c in name for c in "/\\:") or _skipped(name):
+MAX_UPLOADS_PER_DEAL = 50
+
+
+class TooLarge(ValueError):
+    """An upload over the size or count limit."""
+
+
+def uploads_enabled() -> bool:
+    """Whether visitors may add documents through the page (DEAL_UPLOADS=off turns it off)."""
+    return os.getenv("DEAL_UPLOADS", "on").strip().lower() not in {"off", "0", "false", "no"}
+
+
+def _deal_path(root: Path, name: str) -> Path:
+    if not name or name != name.strip() or len(name) > 120 or any(c in name for c in "/\\:") or _skipped(name):
         raise UnsafePath(f"'{name}' is not a deal folder name.")
     path = (root / name).resolve()
     if path.parent != root:
         raise UnsafePath(f"'{name}' is outside the deals folder.")
+    return path
+
+
+def _document_parts(relative: str) -> tuple:
+    parts = Path(relative.replace("\\", "/")).parts
+    if not parts or Path(relative).is_absolute() or ":" in relative or any(p == ".." or _skipped(p) for p in parts):
+        raise UnsafePath(f"'{relative}' is not a document in this deal.")
+    if Path(parts[-1]).suffix.lower() not in SUPPORTED:
+        raise UnsafePath(f"'{relative}' is not a supported document type.")
+    return parts
+
+
+def deal_dir(root: Path, name: str) -> Path:
+    """The folder of one deal. The name must be exactly one visible folder directly inside the root."""
+    path = _deal_path(root, name)
     if not path.is_dir():
         raise DealNotFound(f"There is no deal folder called '{name}'.")
     return path
@@ -87,14 +115,10 @@ def list_documents(root: Path, name: str) -> List[Dict[str, Any]]:
 def document_path(root: Path, name: str, relative: str) -> Path:
     """A document inside the deal, by its path relative to the deal folder."""
     folder = deal_dir(root, name)
-    parts = Path(relative.replace("\\", "/")).parts
-    if not parts or Path(relative).is_absolute() or ":" in relative or any(p == ".." or _skipped(p) for p in parts):
-        raise UnsafePath(f"'{relative}' is not a document in this deal.")
+    parts = _document_parts(relative)
     path = (folder / Path(*parts)).resolve()
     if folder not in path.parents:
         raise UnsafePath(f"'{relative}' is outside the deal folder.")
-    if path.suffix.lower() not in SUPPORTED:
-        raise UnsafePath(f"'{relative}' is not a supported document type.")
     if not path.is_file():
         raise FileNotFoundError(f"There is no document '{relative}' in this deal.")
     if path.stat().st_size > MAX_DOCUMENT_BYTES:
@@ -124,6 +148,42 @@ def write_inside(folder: Path, relative: str, content: str) -> Path:
         Path(tmp).unlink(missing_ok=True)
         raise
     return target
+
+
+def save_upload(root: Path, name: str, relative: str, data: bytes) -> str:
+    """Store one uploaded document in a deal, creating the deal on its first document. Returns its path."""
+    folder = _deal_path(root, name)
+    parts = _document_parts(relative)
+    if len(data) > MAX_DOCUMENT_BYTES:
+        raise TooLarge(f"'{relative}' is larger than {MAX_DOCUMENT_BYTES // (1024 * 1024)} MB.")
+    target = (folder / Path(*parts)).resolve()
+    if folder not in target.parents:
+        raise UnsafePath(f"'{relative}' is outside the deal folder.")
+    if not target.exists() and folder.is_dir() and len(_documents(folder)) >= MAX_UPLOADS_PER_DEAL:
+        raise TooLarge(f"A deal can hold at most {MAX_UPLOADS_PER_DEAL} uploaded documents.")
+    target.parent.mkdir(parents=True, exist_ok=True)
+    fd, tmp = tempfile.mkstemp(dir=target.parent, prefix=".tmp-", suffix=target.suffix)
+    try:
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(data)
+        os.replace(tmp, target)
+    except BaseException:
+        Path(tmp).unlink(missing_ok=True)
+        raise
+    return target.relative_to(folder).as_posix()
+
+
+def export_zip(root: Path, name: str) -> bytes:
+    """The marked copies and summary of the last export, as one zip to download."""
+    marked = deal_dir(root, name) / MARKED_DIR
+    files = sorted(p for p in marked.rglob("*") if p.is_file() and not p.name.startswith(".")) if marked.is_dir() else []
+    if not files:
+        raise FileNotFoundError("Nothing has been exported for this deal yet.")
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        for path in files:
+            archive.write(path, path.relative_to(marked).as_posix())
+    return buffer.getvalue()
 
 
 def save_review(root: Path, name: str, review: Dict[str, Any]) -> None:

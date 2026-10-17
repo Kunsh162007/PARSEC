@@ -40,6 +40,58 @@
       el('span', { class: 'deal-open' }, document.createTextNode(saved ? 'Continue review' : 'Open and check'), el('span', { 'aria-hidden': 'true', text: ' →' }))));
   }
 
+  /* ---- a new deal from the visitor's own folder or files ---- */
+
+  const SUPPORTED = /\.(pdf|docx|txt|md|markdown|csv|tsv|json|log|html?|xml)$/i;
+  const MAX_FILES = 50;
+  const MAX_BYTES = 15 * 1024 * 1024;
+
+  // A folder or file name the server accepts: no separators, not hidden, not too long.
+  const cleanName = (s) => String(s || '').replace(/[\\/:*?"<>|]+/g, '-').replace(/^[._\s]+/, '').trim().slice(0, 120);
+
+  async function addDeal(fileList, fromFolder) {
+    const status = $('new-deal-status');
+    const files = Array.from(fileList || []);
+    if (!files.length) return;
+    const top = fromFolder && files[0].webkitRelativePath ? files[0].webkitRelativePath.split('/')[0] : '';
+    const name = cleanName($('new-deal-name').value) || cleanName(top) || `My deal ${new Date().toISOString().slice(0, 10)}`;
+    const items = [];
+    const skipped = [];
+    for (const f of files) {
+      const parts = (fromFolder && f.webkitRelativePath ? f.webkitRelativePath.split('/').slice(1) : [f.name]).map(cleanName);
+      if (!SUPPORTED.test(f.name) || parts.some((p) => !p)) { skipped.push(f.name); continue; }
+      if (f.size > MAX_BYTES) { skipped.push(`${f.name} (over 15 MB)`); continue; }
+      items.push({ file: f, path: parts.join('/') });
+    }
+    if (!items.length) { status.textContent = 'None of those files can be checked: choose PDF, Word, text, CSV or HTML files.'; return; }
+    if (items.length > MAX_FILES) { status.textContent = `That is ${items.length} documents; a deal can hold ${MAX_FILES}. Choose a smaller folder.`; return; }
+    const failed = [];
+    for (let i = 0; i < items.length; i += 1) {
+      status.textContent = `Adding ${i + 1} of ${items.length} to "${name}": ${items[i].path}`;
+      try {
+        const res = await fetch(`/api/v1/deals/${enc(name)}/files/${items[i].path.split('/').map(enc).join('/')}`, {
+          method: 'PUT', headers: headers({ 'Content-Type': 'application/octet-stream' }), body: items[i].file,
+        });
+        if (!res.ok) {
+          const body = await res.json().catch(() => ({}));
+          failed.push(`${items[i].path}: ${typeof body.detail === 'string' ? body.detail : res.status}`);
+        }
+      } catch (err) {
+        failed.push(`${items[i].path}: the server could not be reached`);
+      }
+    }
+    if (failed.length === items.length) { status.textContent = `Nothing could be added. ${failed[0]}`; return; }
+    status.textContent = `Added ${items.length - failed.length} documents${skipped.length ? `; skipped ${skipped.length} that cannot be checked` : ''}. Opening "${name}"...`;
+    window.location.href = dealUrl(name);
+  }
+
+  function wireNewDeal() {
+    $('pick-folder-btn').addEventListener('click', () => $('pick-folder').click());
+    $('pick-files-btn').addEventListener('click', () => $('pick-files').click());
+    $('pick-folder').addEventListener('change', (e) => addDeal(e.target.files, true));
+    $('pick-files').addEventListener('change', (e) => addDeal(e.target.files, false));
+  }
+
   async function loadDeals() {
     try {
       const res = await fetch('/api/v1/deals', { headers: headers() });
@@ -51,6 +103,7 @@
       $('deals-root').textContent = body.root;
       $('deal-list').replaceChildren(...body.deals.map(card));
       $('deals-empty').hidden = body.deals.length > 0;
+      $('new-deal').hidden = !body.uploads;
     } catch (err) {
       $('deals-root').textContent = 'not available';
       $('deals-error').hidden = false;
@@ -105,6 +158,7 @@
     }
   }
 
+  wireNewDeal();
   loadDeals();
   loadStatus();
   if (window.FinePrintVoice) {

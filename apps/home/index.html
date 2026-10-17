@@ -42,6 +42,23 @@
       <p class="deals-error" id="deals-error" hidden></p>
     </section>
 
+    <section class="new-deal" id="new-deal" aria-labelledby="new-deal-title" hidden>
+      <h2 id="new-deal-title">Check your own documents as a deal</h2>
+      <p>Choose a folder from your computer (its subfolders are kept) or a few files. They become a new deal here:
+        every document is checked, problems are marked on the pages, and you can export and download the marked copies.</p>
+      <div class="new-deal-row">
+        <label class="new-deal-label" for="new-deal-name">Deal name</label>
+        <input id="new-deal-name" type="text" maxlength="120" autocomplete="off" spellcheck="false" placeholder="Taken from the folder if left empty">
+        <button type="button" class="cta" id="pick-folder-btn">Choose a folder</button>
+        <button type="button" class="cta-secondary" id="pick-files-btn">or choose files</button>
+        <input type="file" id="pick-folder" webkitdirectory multiple hidden>
+        <input type="file" id="pick-files" multiple accept=".pdf,.docx,.txt,.md,.markdown,.csv,.tsv,.json,.log,.html,.htm,.xml" hidden>
+      </div>
+      <p class="new-deal-limits">PDF (including scans), Word, text, CSV and HTML; up to 15 MB each and 50 per deal.</p>
+      <p class="new-deal-status" id="new-deal-status" role="status" aria-live="polite"></p>
+      <p class="new-deal-warn">On a shared demo, other visitors can open deals added here. Use practice documents, not confidential ones.</p>
+    </section>
+
     <section class="how" aria-labelledby="how-title">
       <h2 id="how-title">How it works</h2>
       <ol class="steps">
