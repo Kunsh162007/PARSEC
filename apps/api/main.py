@@ -31,6 +31,7 @@ from packages.review.deep import (
 from packages.review import rules as review_rules
 from packages.review.assistant import interpret as interpret_command
 from apps.api import deals_routes
+from packages.deals import store, workspace
 from packages.common.envfile import load_env_defaults
 from packages.review.clauses import clause_findings
 from packages.review.guard import Reservation, ReviewGuard
@@ -82,6 +83,12 @@ async def _lifespan(_app: FastAPI):
     message = _open_access_warning(_bind_host(sys.argv, os.environ), review_guard.auth_required)
     if message:
         logger.warning(message)
+    try:
+        restored = workspace.restore_saved(workspace.deals_root())
+        if restored:
+            logger.info("Restored %d saved deal files from the database.", restored)
+    except store.StoreUnavailable as exc:
+        logger.error("Saved deals could not be restored from the database: %s", exc)
     yield
 
 

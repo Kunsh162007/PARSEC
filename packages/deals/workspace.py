@@ -6,12 +6,17 @@ review lives in <deal>/.fineprint/review.json and marked copies in <deal>/_marke
 """
 import io
 import json
+import logging
 import os
 import tempfile
 import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+from packages.deals import store
+
+logger = logging.getLogger("parsec.deals")
 
 SUPPORTED = {".txt", ".md", ".markdown", ".csv", ".tsv", ".json", ".log", ".html", ".htm", ".xml", ".pdf", ".docx"}
 REVIEW_DIR = ".fineprint"
@@ -20,6 +25,7 @@ MAX_DOCUMENTS = 200
 MAX_DOCUMENT_BYTES = 15 * 1024 * 1024
 MAX_REVIEW_BYTES = 5 * 1024 * 1024
 MAX_UPLOADS_PER_DEAL = 50
+REVIEW_PATH = f"{REVIEW_DIR}/review.json"
 
 
 class UnsafePath(ValueError):
@@ -134,21 +140,37 @@ def load_review(root: Path, name: str) -> Optional[Dict[str, Any]]:
         return None  # a damaged save is treated as no save; the next autosave replaces it
 
 
-def write_inside(folder: Path, relative: str, content: str) -> Path:
-    """Write a file under `folder` atomically (temp file, then rename), refusing anything that would leave it."""
-    target = (folder / relative).resolve()
-    if folder.resolve() not in target.parents:
-        raise UnsafePath(f"'{relative}' is outside the deal folder.")
+def _write_atomic(target: Path, data: bytes) -> None:
+    """Write through a temp file and a rename, so a reader never sees half a file."""
     target.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp = tempfile.mkstemp(dir=target.parent, prefix=".tmp-", suffix=target.suffix)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8") as handle:
-            handle.write(content)
+        with os.fdopen(fd, "wb") as handle:
+            handle.write(data)
         os.replace(tmp, target)
     except BaseException:
         Path(tmp).unlink(missing_ok=True)
         raise
+
+
+def write_inside(folder: Path, relative: str, content: str) -> Path:
+    """Write a text file under `folder` atomically, refusing anything that would leave it."""
+    target = (folder / relative).resolve()
+    if folder.resolve() not in target.parents:
+        raise UnsafePath(f"'{relative}' is outside the deal folder.")
+    _write_atomic(target, content.encode("utf-8"))
     return target
+
+
+def _mirror(name: str, relative: str, data: bytes) -> None:
+    """Copy a file into the database first, when there is one, so it is never on disk only."""
+    saved = store.active()
+    if saved is None:
+        return
+    try:
+        saved.put(name, relative, data)
+    except store.StoreFull as exc:
+        raise TooLarge(str(exc)) from exc
 
 
 def save_upload(root: Path, name: str, relative: str, data: bytes) -> str:
@@ -162,16 +184,10 @@ def save_upload(root: Path, name: str, relative: str, data: bytes) -> str:
         raise UnsafePath(f"'{relative}' is outside the deal folder.")
     if not target.exists() and folder.is_dir() and len(_documents(folder)) >= MAX_UPLOADS_PER_DEAL:
         raise TooLarge(f"A deal can hold at most {MAX_UPLOADS_PER_DEAL} uploaded documents.")
-    target.parent.mkdir(parents=True, exist_ok=True)
-    fd, tmp = tempfile.mkstemp(dir=target.parent, prefix=".tmp-", suffix=target.suffix)
-    try:
-        with os.fdopen(fd, "wb") as handle:
-            handle.write(data)
-        os.replace(tmp, target)
-    except BaseException:
-        Path(tmp).unlink(missing_ok=True)
-        raise
-    return target.relative_to(folder).as_posix()
+    saved = target.relative_to(folder).as_posix()
+    _mirror(name, saved, data)
+    _write_atomic(target, data)
+    return saved
 
 
 def export_zip(root: Path, name: str) -> bytes:
@@ -191,4 +207,36 @@ def save_review(root: Path, name: str, review: Dict[str, Any]) -> None:
     content = json.dumps(review, ensure_ascii=False)
     if len(content.encode("utf-8")) > MAX_REVIEW_BYTES:
         raise ValueError(f"A saved review may be at most {MAX_REVIEW_BYTES // (1024 * 1024)} MB.")
-    write_inside(deal_dir(root, name), f"{REVIEW_DIR}/review.json", content)
+    folder = deal_dir(root, name)
+    _mirror(name, REVIEW_PATH, content.encode("utf-8"))
+    write_inside(folder, REVIEW_PATH, content)
+
+
+def _restore_target(root: Path, name: str, relative: str) -> Path:
+    folder = _deal_path(root, name)
+    if relative == REVIEW_PATH:
+        return folder / REVIEW_DIR / "review.json"
+    target = (folder / Path(*_document_parts(relative))).resolve()
+    if folder not in target.parents:
+        raise UnsafePath(f"'{relative}' is outside the deal folder.")
+    return target
+
+
+def restore_saved(root: Path) -> int:
+    """Put back every file the database holds that is missing on disk; returns how many were written.
+
+    Rows are checked like any upload, so a row that names a path outside the deals folder is skipped."""
+    saved = store.active()
+    if saved is None:
+        return 0
+    restored = 0
+    for name, relative, data in saved.rows():
+        try:
+            target = _restore_target(root, name, relative)
+        except UnsafePath:
+            logger.warning("Skipped a saved file that is not a document in a deal: %r / %r", name, relative)
+            continue
+        if not target.exists():
+            _write_atomic(target, data)
+            restored += 1
+    return restored

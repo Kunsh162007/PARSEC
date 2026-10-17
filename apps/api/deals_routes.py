@@ -12,7 +12,7 @@ from fastapi import Header, HTTPException, Request
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel, Field
 
-from packages.deals import workspace
+from packages.deals import store, workspace
 from packages.deals.export import write_export
 
 # Set by apps/api/main.py: whether a given access code is accepted (always True when none is configured).
@@ -35,6 +35,8 @@ def _call(fn: Callable[[], Any]) -> Any:
         raise HTTPException(status_code=400, detail=str(exc))
     except (workspace.DealNotFound, FileNotFoundError) as exc:
         raise HTTPException(status_code=404, detail=str(exc))
+    except store.StoreUnavailable as exc:
+        raise HTTPException(status_code=503, detail="This could not be saved right now; try again in a minute.") from exc
 
 
 def list_deals(x_review_token: Optional[str] = Header(default=None)):

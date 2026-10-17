@@ -333,6 +333,7 @@ Open **<http://127.0.0.1:8000>**. On Windows use `127.0.0.1` rather than `localh
 | `REVIEW_RATE_PER_MINUTE`, `REVIEW_DAILY_BUDGET_USD` | Rate limit and daily spending cap for model calls (defaults 6 and $2.00) |
 | `ALLOWED_HOSTS` | Host names the server answers to (default `127.0.0.1`, `localhost`, `[::1]`) |
 | `DEAL_UPLOADS` | `on` (default) lets visitors add their own folder or files as a new deal; `off` hides it |
+| `DATABASE_URL` | Optional PostgreSQL connection string. Uploaded documents and saved reviews are also kept there and put back on start-up, so a host that wipes its disk loses nothing (`DATABASE_MAX_MB`, default 400, caps it) |
 
 Without keys, the rules, connections, folders, export and OCR still work, and every AI feature says that it did not run.
 Nothing is ever simulated.
@@ -357,8 +358,13 @@ parallel rules runs to two (`RULES_CONCURRENCY`) to keep the worst case well ins
    into a new deal, and *Export* downloads the marked copies as a zip.
 
 On the free plan the service sleeps after 15 minutes without visits and takes about a minute to wake, and its disk is
-reset on each deploy: saved reviews and exports on the hosted copy are temporary. Without `REVIEW_API_TOKEN`, anyone
-with the address can use the AI features until `REVIEW_DAILY_BUDGET_USD` ($2 a day by default) is spent.
+wiped whenever it restarts, including after sleeping. Without `REVIEW_API_TOKEN`, anyone with the address can use the
+AI features until `REVIEW_DAILY_BUDGET_USD` ($2 a day by default) is spent.
+
+**Keeping uploads and reviews across restarts.** Create a free PostgreSQL database (for example on
+[Neon](https://neon.tech)), copy its connection string and set it as `DATABASE_URL` on the service. Every uploaded
+document and saved review is then written to the database before the disk, and put back when the service starts, so
+a judge's deal is still there after the service has slept. Marked copies are made again by *Export*.
 
 **Sharing it with an access code.** If you set `REVIEW_API_TOKEN`, send people a link that carries it:
 `https://<your-app>.onrender.com/?code=<your code>`. The page keeps the code for that browser tab and removes it from

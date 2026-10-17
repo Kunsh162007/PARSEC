@@ -24,3 +24,5 @@ services:
         value: /tmp/deals
       - key: DEAL_UPLOADS          # visitors can add their own folder or files as a new deal
         value: "on"
+      - key: DATABASE_URL          # optional PostgreSQL (e.g. Neon's free plan): uploads and reviews survive sleep
+        sync: false
