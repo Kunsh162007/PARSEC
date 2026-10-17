@@ -144,6 +144,47 @@
     window.location.href = dealUrl(name);
   }
 
+  /* ---- the visitor's demo code ---- */
+
+  function showCode(message) {
+    $('demo-code-value').textContent = window.FinePrintVisitor.key();
+    $('demo-code-status').textContent = message || '';
+  }
+
+  function switchCode(code, message) {
+    if (!window.FinePrintVisitor.set(code)) {
+      $('demo-code-status').textContent = 'A demo code is at least 12 letters or numbers (dashes are fine).';
+      return;
+    }
+    $('demo-code-form').hidden = true;
+    $('demo-code-change').setAttribute('aria-expanded', 'false');
+    showCode(message);
+    loadDeals();
+  }
+
+  function wireDemoCode() {
+    if (!window.FinePrintVisitor) return;
+    showCode();
+    $('demo-code-copy').addEventListener('click', () => {
+      navigator.clipboard.writeText(window.FinePrintVisitor.key())
+        .then(() => showCode('Copied. Keep it to come back to your work.'))
+        .catch(() => showCode('Select the code and copy it yourself.'));
+    });
+    $('demo-code-change').addEventListener('click', () => {
+      const form = $('demo-code-form');
+      form.hidden = !form.hidden;
+      $('demo-code-change').setAttribute('aria-expanded', String(!form.hidden));
+      if (!form.hidden) $('demo-code-input').focus();
+    });
+    $('demo-code-form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      switchCode($('demo-code-input').value, 'Switched. These are the deals and reviews kept under this code.');
+    });
+    $('demo-code-new').addEventListener('click', () => {
+      switchCode(window.FinePrintVisitor.fresh(), 'A new code: you start with a clean review of every deal.');
+    });
+  }
+
   function wireNewDeal() {
     $('pick-folder-btn').addEventListener('click', () => $('pick-folder').click());
     $('pick-files-btn').addEventListener('click', () => $('pick-files').click());
@@ -221,6 +262,7 @@
   }
 
   adoptCodeFromLink();
+  wireDemoCode();
   wireNewDeal();
   loadDeals();
   loadStatus();

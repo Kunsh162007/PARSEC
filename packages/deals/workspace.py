@@ -4,9 +4,11 @@ Everything stays inside that parent. A deal name is a single folder name; a docu
 and is resolved and checked to still be inside it, so "..", absolute paths and links out are refused. The saved
 review lives in <deal>/.fineprint/review.json and marked copies in <deal>/_marked/; neither counts as a document.
 
-A deal added through the page belongs to the browser that added it: <deal>/.fineprint/owner holds a digest of that
-browser's visitor key, and only that browser lists, opens, adds to or removes it. Folders without that file (the
-practice deal, folders on this computer) are shared: everyone sees them and nobody can change them from the page.
+On a shared demo each visitor has a demo code. A deal added through the page belongs to its code:
+<deal>/.fineprint/owner holds a digest of the code, and only that code lists, opens, adds to or removes the deal.
+Folders without that file (the practice deal, folders on this computer) are shared: everyone sees them and nobody can
+change them from the page. Each code also keeps its own review (.fineprint/reviews/<digest>.json) and its own marked
+copies (_marked/<digest prefix>/) of every deal it opens, shared ones included.
 """
 import hashlib
 import io
@@ -34,7 +36,8 @@ MAX_REVIEW_BYTES = 5 * 1024 * 1024
 MAX_UPLOADS_PER_DEAL = 50
 REVIEW_PATH = f"{REVIEW_DIR}/review.json"
 OWNER_PATH = f"{REVIEW_DIR}/owner"
-VISITOR_KEY = re.compile(r"[A-Za-z0-9_-]{16,128}")
+VISITOR_KEY = re.compile(r"[A-Za-z0-9_-]{12,128}")
+OWN_REVIEW = re.compile(r"\.fineprint/reviews/[0-9a-f]{64}\.json")
 
 
 class UnsafePath(ValueError):
@@ -96,10 +99,20 @@ def deal_dir(root: Path, name: str) -> Path:
 
 
 def owner_id(key: Optional[str]) -> Optional[str]:
-    """The stored form of a visitor key (its SHA-256 digest), or None when the key is missing or malformed."""
-    if not key or not VISITOR_KEY.fullmatch(key):
+    """The stored form of a demo code (the SHA-256 digest of it in capitals), or None when it is missing or malformed."""
+    key = (key or "").strip()
+    if not VISITOR_KEY.fullmatch(key):
         return None
-    return hashlib.sha256(key.encode("ascii")).hexdigest()
+    return hashlib.sha256(key.upper().encode("ascii")).hexdigest()
+
+
+def review_path(owner: Optional[str]) -> str:
+    """Where a review is kept, relative to its deal: one file per demo code, or the folder's own without one."""
+    return f"{REVIEW_DIR}/reviews/{owner}.json" if owner else REVIEW_PATH
+
+
+def marked_dir(owner: Optional[str]) -> str:
+    return f"{MARKED_DIR}/{owner[:16]}" if owner else MARKED_DIR
 
 
 def _owner_of(folder: Path) -> Optional[str]:
@@ -112,10 +125,6 @@ def require_visible(root: Path, name: str, owner: Optional[str]) -> None:
     found = _owner_of(deal_dir(root, name))
     if found is not None and found != owner:
         raise DealNotFound(f"There is no deal folder called '{name}'.")
-
-
-def _review_file(root: Path, name: str) -> Path:
-    return deal_dir(root, name) / REVIEW_DIR / "review.json"
 
 
 def _documents(folder: Path) -> List[Path]:
@@ -136,7 +145,7 @@ def list_deals(root: Path, owner: Optional[str] = None) -> List[Dict[str, Any]]:
         found = _owner_of(path)
         if found is not None and found != owner:
             continue
-        review = path / REVIEW_DIR / "review.json"
+        review = path / review_path(owner)
         saved = datetime.fromtimestamp(review.stat().st_mtime, timezone.utc).isoformat() if review.is_file() else None
         deals.append({"name": path.name, "documents": len(_documents(path)), "reviewed_at": saved,
                       "removable": found is not None})
@@ -166,8 +175,8 @@ def document_path(root: Path, name: str, relative: str) -> Path:
     return path
 
 
-def load_review(root: Path, name: str) -> Optional[Dict[str, Any]]:
-    path = _review_file(root, name)
+def load_review(root: Path, name: str, owner: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    path = deal_dir(root, name) / review_path(owner)
     if not path.is_file():
         return None
     try:
@@ -247,10 +256,10 @@ def delete_deal(root: Path, name: str, owner: Optional[str]) -> None:
     shutil.rmtree(folder)
 
 
-def export_zip(root: Path, name: str) -> bytes:
-    """The marked copies and summary of the last export, as one zip to download."""
-    marked = deal_dir(root, name) / MARKED_DIR
-    files = sorted(p for p in marked.rglob("*") if p.is_file() and not p.name.startswith(".")) if marked.is_dir() else []
+def export_zip(root: Path, name: str, owner: Optional[str] = None) -> bytes:
+    """The marked copies and summary of this demo code's last export, as one zip to download."""
+    marked = deal_dir(root, name) / marked_dir(owner)
+    files = sorted(p for p in marked.iterdir() if p.is_file() and not p.name.startswith(".")) if marked.is_dir() else []
     if not files:
         raise FileNotFoundError("Nothing has been exported for this deal yet.")
     buffer = io.BytesIO()
@@ -260,18 +269,18 @@ def export_zip(root: Path, name: str) -> bytes:
     return buffer.getvalue()
 
 
-def save_review(root: Path, name: str, review: Dict[str, Any]) -> None:
+def save_review(root: Path, name: str, review: Dict[str, Any], owner: Optional[str] = None) -> None:
     content = json.dumps(review, ensure_ascii=False)
     if len(content.encode("utf-8")) > MAX_REVIEW_BYTES:
         raise ValueError(f"A saved review may be at most {MAX_REVIEW_BYTES // (1024 * 1024)} MB.")
     folder = deal_dir(root, name)
-    _mirror(name, REVIEW_PATH, content.encode("utf-8"))
-    write_inside(folder, REVIEW_PATH, content)
+    _mirror(name, review_path(owner), content.encode("utf-8"))
+    write_inside(folder, review_path(owner), content)
 
 
 def _restore_target(root: Path, name: str, relative: str) -> Path:
     folder = _deal_path(root, name)
-    if relative in (REVIEW_PATH, OWNER_PATH):
+    if relative in (REVIEW_PATH, OWNER_PATH) or OWN_REVIEW.fullmatch(relative):
         return folder / relative
     target = (folder / Path(*_document_parts(relative))).resolve()
     if folder not in target.parents:

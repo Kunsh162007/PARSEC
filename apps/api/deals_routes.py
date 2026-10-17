@@ -4,8 +4,9 @@ These endpoints are free (no model is called) but they read and write the disk, 
 when one is configured (REVIEW_API_TOKEN). They are not under the paid-endpoint rate limit: opening a folder fetches
 every document in it. Every path is confined to the deals folder by packages/deals/workspace.py.
 
-The page sends a random key for this browser (X-Deal-Owner). A deal uploaded with it is listed, opened, changed and
-removed only with the same key, so visitors to a shared demo never see each other's documents.
+The page sends the visitor's demo code (X-Deal-Owner). A deal uploaded with it is listed, opened, changed and removed
+only with the same code, and each code keeps its own review and marked copies, so visitors to a shared demo never see
+each other's work.
 """
 import json
 import re
@@ -104,7 +105,7 @@ def get_export_zip(deal: str, x_review_token: Optional[str] = Header(default=Non
                    x_deal_owner: Optional[str] = Header(default=None)):
     """The marked copies and summary of the last export, as one zip to download."""
     _open(deal, x_review_token, x_deal_owner)
-    data = _call(lambda: workspace.export_zip(workspace.deals_root(), deal))
+    data = _call(lambda: workspace.export_zip(workspace.deals_root(), deal, workspace.owner_id(x_deal_owner)))
     filename = re.sub(r'[^A-Za-z0-9 ._-]', "_", deal)[:80] or "deal"
     return Response(content=data, media_type="application/zip",
                     headers={"Content-Disposition": f'attachment; filename="{filename} - marked documents.zip"'})
@@ -114,7 +115,7 @@ def get_deal_review(deal: str, x_review_token: Optional[str] = Header(default=No
                     x_deal_owner: Optional[str] = Header(default=None)):
     """The review saved for this deal, if there is one."""
     _open(deal, x_review_token, x_deal_owner)
-    saved = _call(lambda: workspace.load_review(workspace.deals_root(), deal))
+    saved = _call(lambda: workspace.load_review(workspace.deals_root(), deal, workspace.owner_id(x_deal_owner)))
     return {"saved": False} if saved is None else {"saved": True, "review": saved}
 
 
@@ -131,7 +132,7 @@ async def put_deal_review(deal: str, request: Request, x_review_token: Optional[
         raise HTTPException(status_code=422, detail="The review must be JSON.")
     if not isinstance(review, dict):
         raise HTTPException(status_code=422, detail="The review must be a JSON object.")
-    _call(lambda: workspace.save_review(workspace.deals_root(), deal, review))
+    _call(lambda: workspace.save_review(workspace.deals_root(), deal, review, workspace.owner_id(x_deal_owner)))
     return {"saved": True}
 
 
@@ -161,8 +162,10 @@ def export_deal(deal: str, req: ExportRequest, x_review_token: Optional[str] = H
     """Write a marked copy of every document, plus a summary, into the deal's _marked folder."""
     _open(deal, x_review_token, x_deal_owner)
     docs = [d.model_dump() for d in req.documents]
-    written = _call(lambda: write_export(workspace.deals_root(), deal, docs, _clean_findings(req.findings)))
-    return {"written": written, "folder": str(workspace.deal_dir(workspace.deals_root(), deal) / workspace.MARKED_DIR)}
+    owner = workspace.owner_id(x_deal_owner)
+    written = _call(lambda: write_export(workspace.deals_root(), deal, docs, _clean_findings(req.findings), owner))
+    folder = workspace.deal_dir(workspace.deals_root(), deal) / workspace.marked_dir(owner)
+    return {"written": written, "folder": str(folder)}
 
 
 # (method, path under /api/v1, handler, summary)

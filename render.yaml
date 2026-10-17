@@ -12,7 +12,7 @@ services:
         sync: false
       - key: TAVILY_API_KEY        # optional: public-source checks
         sync: false
-      - key: REVIEW_API_TOKEN      # optional access code; without it anyone can use the AI features up to the budget
+      - key: REVIEW_API_TOKEN      # optional site-wide access code; leave empty for an open demo (budget still caps spend)
         sync: false
       - key: REVIEW_DAILY_BUDGET_USD
         value: "2.0"

@@ -361,20 +361,22 @@ On the free plan the service sleeps after 15 minutes without visits and takes ab
 wiped whenever it restarts, including after sleeping. Without `REVIEW_API_TOKEN`, anyone with the address can use the
 AI features until `REVIEW_DAILY_BUDGET_USD` ($2 a day by default) is spent.
 
-**Each visitor's uploads are their own.** The page gives every browser a random key. A deal uploaded from it is
-listed, opened and removed only in that browser (the server keeps a digest of the key), so judges never see each
-other's documents, and the *Remove* button on their own deals frees the space. The practice deal is shared and can
-be neither changed nor removed from the page.
+**Every visitor gets a demo code.** The home page gives each new visitor a random code such as
+`PARSEC-7KQ2-9XWM-4TBD-H3NA`, or they type their own (at least 12 letters or numbers). Their uploaded deals, their
+review of every deal (the practice deal included) and their marked copies are kept under that code: entering it on
+another device, or opening `https://<your-app>.onrender.com/?demo=<code>`, brings the same work back, and nobody else
+sees it. The server stores only a digest of each code. *Remove* on their own deals deletes them and frees the space;
+the practice deal can be neither changed nor removed from the page.
 
 **Keeping uploads and reviews across restarts.** Create a free PostgreSQL database (for example on
 [Neon](https://neon.tech)), copy its connection string and set it as `DATABASE_URL` on the service. Every uploaded
 document and saved review is then written to the database before the disk, and put back when the service starts, so
 a judge's deal is still there after the service has slept. Marked copies are made again by *Export*.
 
-**Sharing it with an access code.** If you set `REVIEW_API_TOKEN`, send people a link that carries it:
-`https://<your-app>.onrender.com/?code=<your code>`. The page keeps the code for that browser tab and removes it from
-the address bar, so nothing has to be typed. Anyone who opens the plain address is asked for the code once, in the
-page itself.
+**Open to anyone, or behind an access code.** For a public demo, leave `REVIEW_API_TOKEN` empty: visitors go
+straight in with their demo code, and spending is still capped by the daily budget and the rate limit. To keep the
+site private, set it and send people a link that carries it, `https://<your-app>.onrender.com/?code=<access code>`.
+The page keeps it for the tab and removes it from the address bar; anyone opening the plain address is asked once.
 
 ## Using it
 

@@ -32,6 +32,23 @@
       <p class="lede">Each folder in your deals folder is one deal. Open it and every document inside is checked: problems are marked in the text, and your review is saved back into the folder.</p>
     </header>
 
+    <section class="demo-code" aria-labelledby="demo-code-title">
+      <div class="demo-code-row">
+        <h2 id="demo-code-title">Your demo code</h2>
+        <code class="demo-code-value" id="demo-code-value">…</code>
+        <button type="button" class="demo-code-btn" id="demo-code-copy">Copy</button>
+        <button type="button" class="demo-code-btn" id="demo-code-change" aria-expanded="false" aria-controls="demo-code-form">Use another code</button>
+      </div>
+      <p class="demo-code-help">Your uploads and your review of every deal are kept under this code. Enter it on another device to carry on where you left off.</p>
+      <form class="demo-code-form" id="demo-code-form" hidden>
+        <label for="demo-code-input">Demo code</label>
+        <input id="demo-code-input" type="text" minlength="12" maxlength="64" autocomplete="off" spellcheck="false" placeholder="At least 12 letters or numbers">
+        <button type="submit" class="cta">Switch to this code</button>
+        <button type="button" class="demo-code-btn" id="demo-code-new">Make a new code</button>
+      </form>
+      <p class="demo-code-status" id="demo-code-status" role="status" aria-live="polite"></p>
+    </section>
+
     <section class="deals" aria-labelledby="deals-title">
       <div class="deals-head">
         <h2 id="deals-title">Deal folders</h2>

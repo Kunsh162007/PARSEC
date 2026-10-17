@@ -112,3 +112,40 @@ def test_the_visitor_key_is_not_stored_as_given(root):
     upload(visitor(JUDGE_A), "A's deal")
     stored = (root / "A's deal" / ".fineprint" / "owner").read_text(encoding="utf-8")
     assert JUDGE_A not in stored and len(stored) == 64
+
+
+def test_each_demo_code_keeps_its_own_review_of_a_shared_deal(root):
+    a, b = visitor(JUDGE_A), visitor(JUDGE_B)
+    assert a.put("/api/v1/deals/Orion Analytics/review", json={"dismissed": ["fin-1"]}).status_code == 200
+    assert a.get("/api/v1/deals/Orion Analytics/review").json() == {"saved": True, "review": {"dismissed": ["fin-1"]}}
+    assert b.get("/api/v1/deals/Orion Analytics/review").json() == {"saved": False}
+    assert names(b) == {"Orion Analytics": False}
+    reviewed = {d["name"]: d["reviewed_at"] for d in a.get("/api/v1/deals").json()["deals"]}
+    assert reviewed["Orion Analytics"] and not b.get("/api/v1/deals").json()["deals"][0]["reviewed_at"]
+
+
+def test_each_demo_code_downloads_only_its_own_marked_copies(root):
+    a, b = visitor(JUDGE_A), visitor(JUDGE_B)
+    body = {"documents": [{"name": "accounts.txt", "text": "Revenue was $21.8m."}], "findings": []}
+    assert a.post("/api/v1/deals/Orion Analytics/export", json=body).status_code == 200
+    assert a.get("/api/v1/deals/Orion Analytics/export.zip").status_code == 200
+    assert b.get("/api/v1/deals/Orion Analytics/export.zip").status_code == 404
+
+
+def test_a_demo_code_works_in_any_letter_case(root):
+    upload(visitor("PARSEC-7KQ2-9XWM-4TBD"), "Typed deal")
+    assert "Typed deal" in names(visitor("parsec-7kq2-9xwm-4tbd"))
+
+
+def test_a_chosen_code_needs_twelve_characters(root):
+    assert upload(visitor("abcdefghijk"), "Short").status_code == 400
+    assert upload(visitor("abcdefghijkl"), "Long enough").status_code == 200
+
+
+def test_a_codes_review_of_a_shared_deal_survives_a_wiped_disk(root, db):
+    a = visitor(JUDGE_A)
+    a.put("/api/v1/deals/Orion Analytics/review", json={"dismissed": ["fin-1"]})
+    for path in (root / "Orion Analytics" / ".fineprint").rglob("*.json"):
+        path.unlink()
+    assert workspace.restore_saved(workspace.deals_root()) == 1
+    assert a.get("/api/v1/deals/Orion Analytics/review").json()["review"] == {"dismissed": ["fin-1"]}

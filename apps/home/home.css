@@ -78,6 +78,27 @@ main { max-width: 1180px; margin: 0 auto; padding: 0 var(--gutter); }
 
 /* ---------- deal folders ---------- */
 .deals { padding: 8px 0 48px; display: grid; gap: 16px; }
+
+/* ---------- the visitor's demo code ---------- */
+.demo-code { margin-bottom: 24px; padding: 16px 20px; display: grid; gap: 8px; background: var(--sheet); border: 1px solid var(--rule); border-left: 4px solid var(--mark-line); border-radius: 4px; max-width: 760px; }
+.demo-code-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.demo-code h2 { font-size: 1rem; font-weight: 800; }
+.demo-code-value { font-size: 1.05rem; font-weight: 700; letter-spacing: 0.04em; padding: 4px 10px; background: var(--mark); border-radius: 3px; overflow-wrap: anywhere; }
+.demo-code-btn {
+  min-height: 36px; padding: 0 12px; border-radius: 4px; font: inherit; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  background: transparent; color: var(--ink); border: 1px solid var(--rule-strong);
+}
+.demo-code-btn:hover, .demo-code-btn:focus-visible { border-color: var(--ink); }
+.demo-code-help { color: var(--ink-2); font-size: 0.95rem; max-width: 70ch; }
+.demo-code-form { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.demo-code-form label { font-weight: 700; }
+.demo-code-form input {
+  flex: 1 1 240px; min-width: 0; min-height: 44px; padding: 0 12px; border-radius: 6px; font: inherit; text-transform: uppercase;
+  border: 1px solid var(--rule-strong); background: var(--paper); color: var(--ink);
+}
+.demo-code-form .cta { border: 0; cursor: pointer; font: inherit; }
+.demo-code-status { font-weight: 600; }
+.demo-code-status:empty { display: none; }
 .deals-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 20px; }
 .deals-head h2, .how h2, .talk h2, .loose h2 { font-size: 1.4rem; font-weight: 800; letter-spacing: -0.015em; }
 .root { color: var(--ink-3); font-size: 0.95rem; overflow-wrap: anywhere; }

@@ -8,9 +8,9 @@ import re
 from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
-from packages.deals.workspace import MARKED_DIR, deal_dir, write_inside
+from packages.deals.workspace import deal_dir, marked_dir, write_inside
 
 SEVERITIES = ("critical", "high", "medium", "low")
 LABEL = {"critical": "Critical", "high": "High", "medium": "Medium", "low": "Low"}
@@ -160,13 +160,15 @@ def summary_html(deal: str, documents: List[Dict[str, str]], findings: List[Dict
     return _page(f"{deal}: marked documents", body)
 
 
-def write_export(root: Path, deal: str, documents: List[Dict[str, str]], findings: List[Dict[str, Any]]) -> List[str]:
-    """Write a marked copy of every document and a summary into <deal>/_marked/. Returns the paths written."""
+def write_export(root: Path, deal: str, documents: List[Dict[str, str]], findings: List[Dict[str, Any]],
+                 owner: Optional[str] = None) -> List[str]:
+    """Write a marked copy of every document and a summary into the deal's marked folder. Returns the paths written."""
     folder = deal_dir(root, deal)
+    out = marked_dir(owner)
     written = []
     for index, doc in enumerate(documents):
-        rel = f"{MARKED_DIR}/{copy_name(doc['name'])}"
+        rel = f"{out}/{copy_name(doc['name'])}"
         write_inside(folder, rel, marked_html(documents, index, findings))
         written.append(rel)
-    write_inside(folder, f"{MARKED_DIR}/summary.html", summary_html(deal, documents, findings))
-    return [*written, f"{MARKED_DIR}/summary.html"]
+    write_inside(folder, f"{out}/summary.html", summary_html(deal, documents, findings))
+    return [*written, f"{out}/summary.html"]
