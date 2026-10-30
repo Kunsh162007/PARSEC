@@ -16,6 +16,9 @@ and **NVIDIA Nemotron on Nebius Token Factory** reads what rules cannot, without
 
 Built for the **Nebius × NVIDIA Global AI Hackathon**.
 
+**Trying the live demo?** The deal list starts empty. Click *Download the practice deal*, unzip it, then press<br>
+*Choose a folder* and pick it: you get Orion Analytics, the deal shown in the demo video.
+
 <img src="docs/images/pdf-page-marks.png" alt="An audited income statement shown as its original PDF page. The Total revenue row is marked, and a note beside the page explains that the rows add up to 22,900, not the stated 23,900." width="900">
 
 </div>
