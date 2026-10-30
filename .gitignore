@@ -16,6 +16,13 @@ data/
 # OCR engine for scanned PDFs, installed by python scripts/fetch_ocr.py (about 11 MB)
 apps/review/vendor/
 
-# Notes kept locally, not published: only the README is part of the repository
+# Notes kept locally, not published: only the README and the documents below are part of the repository
 *.md
 !/README.md
+!/ARCHITECTURE.md
+!/SECURITY.md
+!/FEEDBACK.md
+!/docs/MEASURED_RESULTS.md
+
+# The demo video is shared outside the repository (about 19 MB)
+demo/video/
